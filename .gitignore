@@ -1,9 +1,9 @@
 node_modules
 
-# Sensitive documents containing API keys and secrets
-PRPs/TASK01.md
-PRPs/TASK02.md
-PRPs/TASK03.md
+# Sensitive documents containing API keys and secrets (local versions only)
+PRPs/TASK01.local.md
+PRPs/TASK02.local.md
+PRPs/TASK03.local.md
 
 # Environment files
 .env
