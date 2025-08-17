@@ -18,6 +18,13 @@
 !draft/
 !draft/**
 
+# Environment and configuration files
+!.env
+!.env.local
+!.env.production
+!.env.development
+!.ignore
+
 # Note: node_modules/ intentionally excluded - should be rebuilt via npm install
 
 # IDE Configuration Notes:

@@ -5,11 +5,12 @@ Context-Engineering-Intro/
 draft/
 .claude/
 
-# Environment files
+# Environment and configuration files (use .ignore for IDE access)
 .env
 .env.local
 .env.production
 .env.development
+.ignore
 
 # Build outputs
 .next/
