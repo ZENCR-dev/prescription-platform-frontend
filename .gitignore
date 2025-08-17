@@ -1,9 +1,9 @@
-node_modules
-
-# Sensitive documents containing API keys and secrets (local versions only)
-PRPs/TASK01.local.md
-PRPs/TASK02.local.md
-PRPs/TASK03.local.md
+# Core directories excluded from Git (use .ignore for IDE access)
+node_modules/
+PRPs/
+Context-Engineering-Intro/
+draft/
+.claude/
 
 # Environment files
 .env

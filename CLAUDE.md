@@ -49,6 +49,12 @@
 - ❌ **Never merge without passing quality gates** (tests, lint, type check)
 - ❌ **Never implement backend business logic** in frontend components
 
+### Document Protection Violations (NON-NEGOTIABLE)
+- ❌ **Never modify core project documents without explicit user authorization**
+- 🛡️ **Protected Documents**: `@CLAUDE.md`, `@INITIAL.md`, `@PLANNING.md`, `@PRPs/TASK0X.md`
+- ⚠️ **Authorization Required**: AI agents must receive explicit user instruction to modify protected documents
+- 📝 **Scope**: This protection applies to all structural modifications, content changes, and deletions
+
 ---
 
 ## ✅ Required Frontend Development Practices
