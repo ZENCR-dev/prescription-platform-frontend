@@ -54,11 +54,11 @@ Layer 2: User Story/Component Level (INITIAL.md + PRPs/TASK0X.md)
 ├── 接口契约定义 → API documentation要求和数据模型
 └── 验收标准 → 每个atomic task的acceptance criteria
 
-Layer 3: TDD Atomic Task Sequence (Agent临时生成)
-├── 测试驱动开发强制执行 → 红灯-绿灯-重构-验证循环
-├── 串行原子任务执行 → 一次只执行一个原子任务的3+1 TDD步骤
-├── TDD-Todos临时生成 → 使用TodoWrite工具为当前原子任务创建
-└── 完整TDD开发循环 → 3+1 TDD步骤模式 (参见CLAUDE.md)
+Layer 3: ACD Atomic Task Sequence (Agent临时生成)
+├── 敏捷组件开发执行 → 分析-实现-验证-集成循环
+├── 串行原子任务执行 → 一次只执行一个原子任务的4步ACD循环
+├── ACD-Todos临时生成 → 使用TodoWrite工具为当前原子任务创建
+└── 完整ACD开发循环 → 4步ACD循环模式 (参见CLAUDE.md)
 ```
 
 ### Layer 1 到 Layer 2 映射关系
@@ -297,8 +297,8 @@ Operation_Execution_Validation:
 - **TypeScript**: >95% coverage with strict mode, zero `any` types
 - **Performance**: Core Web Vitals compliance, Lighthouse Score >95
 - **Accessibility**: WCAG 2.1 AA compliance validation
-- **TDD Compliance**: 强制测试驱动开发，先写测试后写实现，禁止跳过TDD流程
-- **Testing**: >90% component coverage, 100% user workflow coverage, TDD测试套件完整
+- **ACD Compliance**: 敏捷组件驱动开发，灵活测试策略，保持MVP开发效率
+- **Testing**: >90% component coverage, 100% user workflow coverage, 功能测试套件完整
 
 **Security & Compliance Standards** (强制传递到所有层级):
 - **Privacy**: Zero patient PII in frontend, anonymous identifiers only
@@ -318,7 +318,7 @@ Simplified_Validation_Chain:
 
 **敏捷失败处理**:
 - **基础验证失败** → 人工识别问题，创建简单修复任务
-- **修复任务执行** → 使用3+1 TDD步骤模式解决（红灯-绿灯-重构-验证）
+- **修复任务执行** → 使用4步ACD循环模式解决（分析-实现-验证-集成）
 - **持续改进** → 基于实际执行数据定期优化验证标准
 
 **Implementation Commands**: See `DevEnv.md#commands` for all quality gate commands

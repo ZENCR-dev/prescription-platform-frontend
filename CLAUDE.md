@@ -12,8 +12,8 @@
 **Document Type**: AI Collaboration & Execution Rules (Layer 2-3)  
 **Project**: Traditional Chinese Medicine Prescription Platform - Frontend UI/UX  
 **Repository Scope**: Frontend Development Only  
-**Layer 3职责**: Layer 3 TDD-Todos自主执行协议和3+1步骤执行模式  
-**框架版本**: v6.0 Compliance - 3+1步骤敏捷执行，轻量级质量验证  
+**Layer 3职责**: Layer 3 ACD-Todos敏捷组件开发协议和4步执行模式  
+**框架版本**: v6.0 Compliance - 4步ACD敏捷执行，MVP开发适配  
 
 ---
 
@@ -197,7 +197,7 @@ git push origin --tags               # 推送标签
 
 ---
 
-## 🏗️ Layer 3: TDD-Todos自主执行协议 {#layer3-execution-protocol}
+## 🏗️ Layer 3: ACD-Todos敏捷组件开发协议 {#layer3-execution-protocol}
 
 ### Agent执行触发机制
 
@@ -207,80 +207,81 @@ git push origin --tags               # 推送标签
 1. 接收到来自Layer 2的具体atomic task assignment  
 2. 确认Layer 1(PLANNING.md)约束和Layer 2(INITIAL.md + PRPs/TASK0X.md)验收标准
 3. 创建对应的`PRPs/TASK0X_LOG.md`开发操作日志文档
-4. 开始使用Claude Code内置`TodoWrite`工具生成临时TDD-Todos
+4. 开始使用Claude Code内置`TodoWrite`工具生成临时ACD-Todos
 
 **执行原则** (NON-NEGOTIABLE):
-- **TDD强制执行**: 必须采用测试驱动开发，先写测试后写实现，严禁跳过TDD流程
+- **ACD敏捷开发**: 采用敏捷组件驱动开发，平衡开发速度与质量保证，支持MVP快速迭代
 - **串行执行**: 一次只执行一个原子任务，完成全部3+1步骤后才开始下一个原子任务
 - **临时性**: Layer 3 TDD-Todos由Agent临时生成，**不创建持久化文档**
 - **自主性**: Agent根据atomic task复杂度自主决定具体步骤数量和内容
-- **3+1 TDD步骤**: 基于测试驱动的3+1步骤执行模式（测试-实现-重构-验证）
+- **4步ACD循环**: 基于敏捷组件开发的4步执行模式（分析规划-实现构建-验证优化-集成反馈）
 - **质量验证**: 实施轻量级Phase完成验证，原子任务仅做基础检查
 - **操作记录**: 所有开发操作必须实时记录到对应的TASK0X_LOG.md文档
 
 **🚨 关键约束**:
 - ❌ **禁止并行执行原子任务**: 同时只能有一个原子任务处于active状态
-- ❌ **禁止跳过测试编写**: 每个原子任务必须从编写失败测试开始
-- ❌ **禁止批量创建todos**: 只为当前执行的原子任务创建3+1 todos
-- ✅ **正确执行流程**: 选择原子任务 → 创建3+1 TDD todos → 完整执行 → 下一个原子任务
+- ❌ **禁止跳过需求分析**: 每个原子任务必须从分析和规划开始
+- ❌ **禁止批量创建todos**: 只为当前执行的原子任务创建4步ACD todos
+- ✅ **正确执行流程**: 选择原子任务 → 创建4步ACD todos → 完整执行 → 下一个原子任务
 
-### 3+1 TDD步骤执行模式 (测试驱动开发流程)
+### 4步ACD敏捷开发循环 (敏捷组件开发流程)
 
-Agent执行Layer 2 atomic task时，使用`TodoWrite`工具生成标准的**3+1 TDD步骤**执行流程：
+Agent执行Layer 2 atomic task时，使用`TodoWrite`工具生成标准的**4步ACD循环**执行流程：
 
-#### 1. 测试设计与需求分析 【TDD红灯阶段】(主实现角色负责)
+#### 1. 分析与规划 【需求分析阶段】(主实现角色负责)
 ```bash
 # SuperClaude命令 (根据任务类型选择)
-/sc:analyze [atomic-task] --persona-[frontend|backend|architect] --tdd
+/sc:analyze [atomic-task] --persona-[frontend|backend|architect]
 
 # Agent行为
 - 主实现角色分析atomic task的需求和技术方案
-- **编写应该失败的测试用例（TDD红灯）**
-- 定义清晰的验收标准和成功指标
-- 识别依赖关系和潜在风险
-- 确保测试用例覆盖核心功能需求
+- **需求分析和技术可行性评估**
+- 组件设计和接口定义
+- 验收标准制定和风险识别
+- 输出：技术方案、验收清单、依赖分析
 ```
 
-#### 2. 最小实现与测试通过 【TDD绿灯阶段】(主实现角色负责)
+#### 2. 实现与构建 【快速实现阶段】(主实现角色负责)
 ```bash
 # SuperClaude命令
-/sc:implement [feature] --persona-[frontend|backend|architect] --tdd-minimal
-/sc:test --validate-green-light
+/sc:implement [feature] --persona-[frontend|backend|architect]
+/sc:build --optimize
 
 # Agent行为
-- 同一主实现角色编写最少代码使测试通过（TDD绿灯）
-- **专注让失败的测试变为通过，不做过度设计**
+- 同一主实现角色按设计快速实现核心功能
+- **集成现有组件和服务**
+- 基础功能验证和规范检查
 - 执行代码格式化和基础lint检查
-- 验证所有测试用例通过
-- 满足Layer 2定义的验收标准
+- 输出：可运行代码、基础测试
 ```
 
-#### 3. 重构优化与集成准备 【TDD重构阶段】(主实现角色负责)
+#### 3. 验证与优化 【质量保证阶段】(主实现角色负责)
 ```bash
 # SuperClaude命令
-/sc:refactor --maintain-tests --optimize
-/sc:validate --dependencies --integration
+/sc:test --comprehensive
+/sc:improve --quality --performance
 
 # Agent行为
-- 同一主实现角色改进代码结构和性能（TDD重构）
-- **保持所有测试持续通过，绝不破坏测试**
-- 验证与其他模块的接口兼容性
-- 准备集成所需的配置和文档
-- 确保代码符合项目约定和规范
+- 同一主实现角色进行全面功能测试和质量检查
+- **性能优化和用户体验改进**
+- 代码质量深度验证
+- 确保满足Layer 2定义的验收标准
+- 输出：测试报告、优化建议
 ```
 
-#### 4. 质量验证与提交 【最终验证阶段】(qa persona负责)
+#### 4. 集成与反馈 【提交阶段】(qa persona负责)
 ```bash
 # SuperClaude命令
-/sc:test --comprehensive --all-suites
-/sc:git --validate --commit
+/sc:test --all-suites
+/sc:git add . --safe-mode
+/sc:git commit --safe-mode --smart-commit
 
 # Agent行为
-- qa persona执行完整质量检查
+- qa persona执行最终质量检查
 - 运行全部测试套件确保无回归
 - 验证功能完整性和集成准备状态
-- 执行最终的lint和build检查
-- 提交代码并更新任务状态
+- **测试通过后进行安全Git提交**
+- 更新任务状态准备下一轮迭代
 ```
 
 ### 轻量级Phase完成验证 (v6.0简化版)
@@ -293,14 +294,14 @@ Agent执行Layer 2 atomic task时，使用`TodoWrite`工具生成标准的**3+1 
 - `npm run build` - 构建完整性验证
 - 功能手动验证通过
 
-**失败处理**: 检查失败时人工识别问题，创建简单修复任务，使用3+1步骤模式解决。
+**失败处理**: 检查失败时人工识别问题，创建简单修复任务，使用4步ACD模式解决。
 
 ### AI Agent估算与执行适配
 
 **估算标准**: 参见 [`PLANNING.md#AI Agent估算标准定义`](./PLANNING.md#ai-agent估算标准定义) Layer 1权威标准
 
 **扩展执行指导**:
-Agent可在3+1基础步骤上根据任务复杂度增加必要的中间步骤，但必须保持同一主实现角色的连续性，避免频繁角色切换。常见扩展场景：
+Agent可在4步ACD基础循环上根据任务复杂度增加必要的中间步骤，但必须保持同一主实现角色的连续性，避免频繁角色切换。常见扩展场景：
 - **技术调研**: 新技术栈需要POC验证
 - **原型验证**: 复杂功能需要快速原型
 - **依赖协调**: 多模块集成需要额外准备
@@ -314,31 +315,31 @@ Agent可在3+1基础步骤上根据任务复杂度增加必要的中间步骤，
 4. **上下文链接**: 每个todo包含对Layer 2 atomic task的引用
 5. **日志记录**: 每个todo执行时必须记录到对应的TASK0X_LOG.md
 
-**正确的TDD TodoWrite示例**:
+**正确的ACD TodoWrite示例**:
 ```javascript  
-// 单个原子任务的正确3+1 TDD todos示例 (如: Task 1.1 Next.js Foundation)
+// 单个原子任务的正确4步ACD todos示例 (如: Task 1.1 Next.js Foundation)
 TodoWrite([
   {
     id: "task01-1-step1",
-    content: "【frontend persona】Step 1 TDD红灯: 编写Next.js初始化测试、Supabase连接测试、路由配置失败测试用例",
+    content: "【frontend persona】Step 1 分析与规划: 分析Next.js项目需求、设计Supabase集成方案、制定验收标准和技术可行性评估",
     status: "in_progress",
     priority: "high"
   },
   {
     id: "task01-1-step2", 
-    content: "【frontend persona】Step 2 TDD绿灯: 实现Next.js项目、配置Supabase客户端，使所有测试通过",
+    content: "【frontend persona】Step 2 实现与构建: 快速实现Next.js项目、配置Supabase客户端、集成组件和基础验证",
     status: "pending",
     priority: "high"
   },
   {
     id: "task01-1-step3",
-    content: "【frontend persona】Step 3 TDD重构: 优化代码结构、提升性能，保持测试通过",
+    content: "【frontend persona】Step 3 验证与优化: 全面功能测试、性能优化、代码质量检查，确保验收标准满足",
     status: "pending",  
     priority: "medium"
   },
   {
     id: "task01-1-step4",
-    content: "【qa persona】Step 4 最终验证: 运行完整测试套件、lint检查、build验证、git commit",
+    content: "【qa persona】Step 4 集成与反馈: 最终质量检查、运行测试套件、测试通过后安全Git提交",
     status: "pending",
     priority: "high"
   }
@@ -354,10 +355,10 @@ TodoWrite([
   {content: "Task 1.3: Auth Documentation", ...} // 错误: 违反串行原则
 ])
 
-// ❌ 错误: 跳过测试编写步骤
+// ❌ 错误: 跳过分析规划步骤
 TodoWrite([
-  {content: "直接实现功能", ...},  // 错误: 跳过TDD红灯阶段
-  {content: "后补测试", ...}      // 错误: 不是测试驱动
+  {content: "直接实现功能", ...},  // 错误: 跳过分析规划阶段
+  {content: "后补分析", ...}      // 错误: 不是需求驱动
 ])
 ```
 
@@ -369,20 +370,20 @@ TodoWrite([
 - **纯操作记录**: 只记录实际执行的开发动作，不做评价或预测
 - **倒序排列**: 最新操作在顶部，格式：`[时间戳] 阶段标识 操作描述`
 - **技术语言**: 简洁准确的技术描述，避免主观性语言
-- **阶段标注**: 使用3+1步骤的阶段标识 (📋 分析设计、🚀 实现自测、🔧 集成准备、✅ 质量提交)
+- **阶段标注**: 使用4步ACD的阶段标识 (📋 分析规划、🚀 实现构建、🔧 验证优化、✅ 集成反馈)
 - **Git独行**: commit信息独立section，包含完整commit hash和不超过一行字的标题式message
 
 **记录格式模板**:
 ```markdown
-### [YYYY-MM-DD HH:MM:SS] 🚀 实现自测 - Task X.Y
+### [YYYY-MM-DD HH:MM:SS] 🚀 实现构建 - Task X.Y
 - 创建组件文件: `src/components/auth/AuthUI.tsx`
-- 编写单元测试: `__tests__/auth/AuthUI.test.tsx`
+- 配置Supabase客户端集成: `lib/supabase.ts`
 - 执行基础lint检查，修复格式问题
 
-### [YYYY-MM-DD HH:MM:SS] 📋 分析设计 - Task X.Y
-- 分析Supabase Auth集成需求
+### [YYYY-MM-DD HH:MM:SS] 📋 分析规划 - Task X.Y
+- 分析Supabase Auth集成需求和技术可行性
 - 设计组件接口和状态管理方案
-- 确定测试策略和验证标准
+- 制定验收标准和依赖分析
 ```
 
 **Git操作记录格式**:
@@ -408,20 +409,20 @@ TodoWrite([
 
 ### Layer 2 职责简化定义
 
-**v6.0职责**: 任务分解和验收标准制定 + 统一3+1工作流模板
+**v6.0职责**: 任务分解和验收标准制定 + 统一4步ACD工作流模板
 
-**简化原则**: 移除复杂分类和智能门控，专注功能交付和基础质量保障
+**简化原则**: 移除复杂分类和智能门控，专注功能交付和MVP开发效率
 
-### 统一敏捷工作流模板
+### 统一ACD敏捷工作流模板
 
-**所有任务统一使用3+1步骤模板**:
+**所有任务统一使用4步ACD模板**:
 ```yaml
-# 统一工作流模板 (适用于所有任务类型)
-标准3+1步骤序列:
-  1. 需求分析与设计 (主实现角色: frontend/backend/architect)
-  2. 实现与自测 (同一主实现角色)
-  3. 集成准备 (同一主实现角色)
-  4. 质量验证与提交 (qa角色)
+# 统一ACD工作流模板 (适用于所有任务类型)
+标准4步ACD循环:
+  1. 分析与规划 (主实现角色: frontend/backend/architect)
+  2. 实现与构建 (同一主实现角色)
+  3. 验证与优化 (同一主实现角色)
+  4. 集成与反馈 (qa角色)
 
 基础完成标准:
   - 所有原子任务完成
@@ -429,7 +430,7 @@ TodoWrite([
   - npm run lint 通过
   - 功能手动验证通过
 
-失败处理: 人工识别问题，创建简单修复任务
+失败处理: 人工识别问题，创建简单修复任务，使用4步ACD循环解决
 ```
 
 ### v6.0敏捷验证机制
@@ -437,7 +438,7 @@ TodoWrite([
 **Phase完成轻量级验证**:
 - **基础检查**: test/lint/build通过 + 功能验证
 - **通过处理**: 直接进入下一Phase
-- **失败处理**: 人工review，创建修复任务，使用3+1步骤解决
+- **失败处理**: 人工review，创建修复任务，使用4步ACD循环解决
 
 ---
 
