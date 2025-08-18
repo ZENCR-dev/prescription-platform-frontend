@@ -1,0 +1,37 @@
+# .ignore - IDE Access Whitelist for Git-excluded directories
+# This file enables local IDE access to directories excluded by .gitignore
+# while maintaining Git security by keeping them out of version control
+
+# Project documentation and task management
+!PRPs/
+!PRPs/**
+
+# Development environment configuration
+!.claude/
+!.claude/**
+
+# Context engineering and examples
+!Context-Engineering-Intro/
+!Context-Engineering-Intro/**
+
+# Draft files and working documents  
+!draft/
+!draft/**
+
+# Environment and configuration files
+!.env
+!.env.local
+!.env.production
+!.env.development
+!.ignore
+
+# Note: node_modules/ intentionally excluded - should be rebuilt via npm install
+
+# IDE Configuration Notes:
+# - VS Code: Add ".ignore" support via extensions if needed
+# - JetBrains IDEs: Configure file patterns in Settings > Editor > File Types
+# - Vim/Neovim: Add appropriate configurations for file access
+
+# Security Note:
+# This whitelist ensures local development convenience while preventing
+# sensitive documents from being committed to Git repository

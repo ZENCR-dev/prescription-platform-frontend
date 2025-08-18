@@ -1,0 +1,3 @@
+// Set environment variables for testing
+process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://dosbevgbkxrtixemfjfl.supabase.co'
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvc2Jldmdia3hydGl4ZW1mamZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyMDcwMjEsImV4cCI6MjA2OTc4MzAyMX0.xDbE8E8Fg84109qRQi9SFbi4PPUtCTBL1-Jj2R80lmI'

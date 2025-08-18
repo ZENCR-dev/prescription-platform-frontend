@@ -1,15 +1,16 @@
-node_modules
+# Core directories excluded from Git (use .ignore for IDE access)
+node_modules/
+PRPs/
+Context-Engineering-Intro/
+draft/
+.claude/
 
-# Sensitive documents containing API keys and secrets
-PRPs/TASK01.md
-PRPs/TASK02.md
-PRPs/TASK03.md
-
-# Environment files
+# Environment and configuration files (use .ignore for IDE access)
 .env
 .env.local
 .env.production
 .env.development
+.ignore
 
 # Build outputs
 .next/
