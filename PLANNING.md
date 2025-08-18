@@ -18,6 +18,25 @@
 
 ---
 
+## 🔄 Golden Workflow & Security Protocols {#golden-workflow-path}
+
+This project operates under a single, mandatory "Golden Workflow Path" to ensure security, quality, and predictability. All development activities must adhere to this protocol without exception.
+
+**Core Principles:**
+- **Golden Path:** Follow the prescribed sequence for all development and integration.
+- **Anti-Patterns:** Strictly avoid forbidden practices that compromise project integrity.
+- **Manual Confirmation:** Critical, high-impact operations require explicit user approval.
+
+---
+> **📖 Detailed Implementation Guide**
+>
+> The complete, step-by-step guide for the Golden Workflow Path, including all protocols, checklists, and anti-patterns, is maintained in the following document:
+>
+> ### ➡️ **[`examples/golden-workflow.md`](./examples/golden-workflow.md)**
+>
+> *This external document is the single source of truth for all "how-to" execution details.*
+---
+
 ## 🎯 Executive Summary {#executive-summary}
 
 ### Frontend Mission Statement

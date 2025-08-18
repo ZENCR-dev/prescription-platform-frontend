@@ -224,15 +224,21 @@ Manual_Fix_Mechanism:
 
 ### Branch Health Status Legend
 **Reference**: [`PLANNING.md#强制性分支操作协议`](./PLANNING.md) - 9步验证流程详细说明
+**Golden Workflow Integration**: [`examples/golden-workflow.md`](./examples/golden-workflow.md) - Happy Path procedures
+**Emergency Protocols**: [`examples/emergency-recovery.md`](./examples/emergency-recovery.md) - Recovery procedures
 
-| Branch Health Indicator | Meaning | Action Required |
-|-------------------------|---------|-----------------|
-| ✅ **Merged & Synced** | Branch successfully merged, local and remote fully synchronized | None - Continue to next task |
-| 🔄 **Local Lead Required** | Local development must begin to establish lead over remote | Execute 9-step pre-operation validation before Git operations |
-| ⚠️ **Validation Required** | Remote-local sync status needs verification before proceeding | Check remote branch state, ensure local priority principle |
-| 🚨 **Conflict Detected** | Version inconsistency or remote-ahead situation detected | Apply conflict resolution protocol, analyze branch divergence |
+| Branch Health Indicator | Meaning | Action Required | Recovery Reference |
+|-------------------------|---------|-----------------|-------------------|
+| ✅ **Merged & Synced** | Branch successfully merged, local and remote fully synchronized | None - Continue to next task | N/A |
+| 🔄 **Local Lead Required** | Local development must begin to establish lead over remote | Execute 9-step pre-operation validation before Git operations | [`examples/golden-workflow.md`](./examples/golden-workflow.md) |
+| ⚠️ **Validation Required** | Remote-local sync status needs verification before proceeding | Check remote branch state, ensure local priority principle | [`examples/emergency-recovery.md`](./examples/emergency-recovery.md) |
+| 🚨 **Conflict Detected** | Version inconsistency or remote-ahead situation detected | Apply conflict resolution protocol, analyze branch divergence | [`examples/emergency-recovery.md`](./examples/emergency-recovery.md) |
+| 🛡️ **Security Hold** | Branch contains potential security issues or failed security scan | Run security audit, resolve issues before proceeding | [`examples/emergency-recovery.md#security-incident-response`](./examples/emergency-recovery.md#security-incident-response) |
+| 🚧 **Quality Gate Failed** | Branch failed automated quality checks (test/lint/build) | Fix quality issues using TDD approach | [`examples/golden-workflow.md#pre-flight-checklist`](./examples/golden-workflow.md#pre-flight-checklist) |
 
-**Important**: Before any Git branch operations, execute the 9-step mandatory validation protocol from PLANNING.md to prevent version confusion and ensure "local development always leads" principle.
+**Golden Workflow Integration**: Before any Git branch operations, execute the 9-step mandatory validation protocol from PLANNING.md to prevent version confusion and ensure "local development always leads" principle. For standard development, follow the Happy Path procedures in [`examples/golden-workflow.md`](./examples/golden-workflow.md).
+
+**Tool Integration**: Use [`examples/tool-matrix.md`](./examples/tool-matrix.md) command aliases for automated status checking and quality validation.
 
 ### Quick Task Navigation
 **Click any TASK link above to jump directly to detailed atomic tasks and acceptance criteria.**

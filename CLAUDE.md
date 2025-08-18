@@ -55,6 +55,30 @@
 - ⚠️ **Authorization Required**: AI agents must receive explicit user instruction to modify protected documents
 - 📝 **Scope**: This protection applies to all structural modifications, content changes, and deletions
 
+### NEW: Environment & Secret Management Violations (NON-NEGOTIABLE)
+- ❌ **Never hardcode production URLs or endpoints** - Use environment variables exclusively
+- ❌ **Never expose internal system architecture** in error messages or logs visible to users
+- ❌ **Never store authentication tokens** in browser localStorage or sessionStorage
+- ❌ **Never bypass environment variable validation** - All required vars must be verified before app start
+- ❌ **Never commit `.env.local` or `.env.production`** files to version control
+- ❌ **Never use development keys in production** - Environment separation is mandatory
+
+### NEW: Data Protection & Privacy Violations (NON-NEGOTIABLE)
+- ❌ **Never log sensitive user data** (passwords, tokens, PII) even in development
+- ❌ **Never cache sensitive data** in browser or service worker caches
+- ❌ **Never transmit patient data over HTTP** - HTTPS required for all sensitive communications
+- ❌ **Never include debug information** that exposes internal data structures in production
+- ❌ **Never store medical data** in frontend state management (Redux, Zustand, etc.)
+- ❌ **Never use patient identifiers** in URLs, query parameters, or browser history
+
+### NEW: Deployment & Production Violations (NON-NEGOTIABLE)
+- ❌ **Never deploy without passing quality gates** - All tests, lint, build must succeed
+- ❌ **Never skip security scans** before production deployment
+- ❌ **Never deploy with console.log statements** in production builds
+- ❌ **Never ignore TypeScript errors** - Type safety is mandatory for production
+- ❌ **Never deploy with hardcoded development configurations** 
+- ❌ **Never bypass manual confirmation protocols** for critical infrastructure changes
+
 ---
 
 ## ✅ Required Frontend Development Practices
@@ -71,6 +95,55 @@
 ### Quality Gates & Standards
 **Reference**: `PLANNING.md#quality-gates` for complete requirements  
 **Commands**: See `DevEnv.md#commands` for complete command reference
+
+## 🔧 Golden Workflow Tool Matrix {#golden-workflow-tool-matrix}
+
+### Command Aliases for Standardized Operations
+
+**Status Monitoring Aliases**:
+- `status-all` → `git status && npm run type-check --noEmit && npm run lint --quiet`
+- `branch-health` → `git branch -vv && git fetch origin && git log --oneline -3`
+- `env-check` → Verify `.env.local` exists and contains required Supabase variables
+
+**Quality Validation Aliases**:
+- `quality-full` → `npm run test && npm run lint && npm run type-check && npm run build`
+- `quality-quick` → `npm run lint && npm run type-check --noEmit`
+- `pre-commit` → `npm run test -- --watchAll=false && npm run lint --fix`
+
+**Security Scanning Aliases**:
+- `security-scan` → `npm audit && git log --grep="secret\|key\|password" --oneline`
+- `env-audit` → Check for sensitive data in tracked files and verify .env.local is gitignored
+- `dependency-check` → `npm audit --audit-level=moderate`
+
+**Emergency Recovery Aliases**:
+- `safe-reset` → `git stash && git checkout main && git pull origin main`
+- `backup-current` → `git branch backup-$(date +%Y%m%d-%H%M) && git add -A && git commit -m "emergency backup"`
+- `restore-clean` → Reset to last known good state with full backup
+
+### Tool Integration Matrix
+
+| Operation | Primary Tool | Backup Tool | Emergency Fallback |
+|-----------|-------------|-------------|-------------------|
+| **Branch Management** | `git` commands | GitHub CLI (`gh`) | Manual GitHub web interface |
+| **Code Quality** | `npm run lint` | ESLint CLI | Manual code review |
+| **Type Checking** | `npm run type-check` | TypeScript CLI | IDE type checking |
+| **Testing** | `npm run test` | Jest CLI | Manual testing |
+| **Build Validation** | `npm run build` | Next.js CLI | Local development server |
+| **Environment Check** | Custom script | Manual .env verification | Environment template comparison |
+
+### Workflow Automation Integration
+
+**Pre-Operation Checklist** (Automated via aliases):
+1. `status-all` - Verify clean working directory and no type/lint errors
+2. `branch-health` - Confirm branch state and remote sync
+3. `env-check` - Validate environment configuration
+4. `security-scan` - Quick security audit before major operations
+
+**Post-Operation Validation** (Automated via aliases):
+1. `quality-full` - Complete quality gate validation
+2. `security-scan` - Final security check
+3. `backup-current` - Create safety backup before commit
+4. Document completion in appropriate TASK0X_LOG.md
 
 ---
 
@@ -440,6 +513,24 @@ TodoWrite([
 - **通过处理**: 直接进入下一Phase
 - **失败处理**: 人工review，创建修复任务，使用4步ACD循环解决
 
+## 🚨 Emergency Recovery & Advanced Tools {#emergency-recovery-tools}
+
+This project implements comprehensive emergency recovery protocols and advanced tool integration to ensure system stability and rapid problem resolution.
+
+**Core Features**:
+- **Automated Recovery**: Multi-level recovery procedures with user confirmation gates
+- **Tool Matrix**: Standardized command aliases and integration patterns
+- **Security Response**: Incident detection and containment procedures
+
+---
+> **📖 Detailed Implementation Guides**
+>
+> Complete specifications for emergency procedures and advanced tooling:
+>
+> ### ➡️ **[`examples/emergency-recovery.md`](./examples/emergency-recovery.md)**
+> ### ➡️ **[`examples/tool-matrix.md`](./examples/tool-matrix.md)**
+>
+> *These external documents contain all operational details and procedures.*
 ---
 
 **Document References**: [`PLANNING.md`](./PLANNING.md) (Strategy) | [`INITIAL.md`](./INITIAL.md) (Navigation) | [`DevEnv.md`](./DevEnv.md) (Environment) | [`PRPs/TASK0x.md`](./PRPs/) (Tasks) 
