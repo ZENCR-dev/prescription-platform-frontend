@@ -114,40 +114,84 @@
 
 **三层Git工作流程** (与3+1步骤集成):
 
+#### Pre-Operation Mandatory Validation (强制前置验证)
+**Reference**: [`PLANNING.md#强制性分支操作协议`](./PLANNING.md) - Layer 1权威协议  
+**执行时机**: 每次Git分支操作前强制执行  
+**估算**: 9步验证流程 (3步本地检查 + 4步远程管理 + 2步执行验证)
+
+```bash
+# Step 1-3: 操作前强制验证 (Pre-Operation Validation)
+git status                    # 步骤1: 验证工作目录清洁
+git branch -vv               # 步骤1: 检查本地分支追踪状态
+git fetch origin             # 步骤2: 获取最新远程状态
+git log --oneline -10        # 步骤2: 对比本地与远程commit历史
+# 步骤3: 确认本地分支领先或等同于远程分支 (本地优先原则)
+
+# Step 4-7: 远程分支管理策略 (Remote Branch Management)
+# 步骤4: 验证本地优先原则 - 禁止远程领先本地TASK分支
+# 步骤5-6: 根据三层分支架构执行推送策略
+# 步骤7: 监控分支健康状态和架构合规性
+
+# Step 8-9: 操作执行与验证 (Operation Execution)
+# 步骤8: 执行Git操作 (create/merge/push)
+# 步骤9: 验证操作结果和更新状态追踪
+```
+
 #### Branch 3 (日期分支) - 原子任务级别
 ```bash
-# 1. 开始原子任务时创建分支
+# 1. 执行强制前置验证 (9步协议)
+# 参见上方Pre-Operation Mandatory Validation
+
+# 2. 开始原子任务时创建分支
 git checkout TASK01
 git checkout -b 2024-01-15-1430
+git push -u origin 2024-01-15-1430  # 立即建立远程追踪
 
-# 2. 执行3+1步骤开发循环
-# 步骤1-3: 需求分析、实现自测、集成准备
+# 3. 执行3+1步骤开发循环
+# 步骤1-3: 测试设计、最小实现、重构优化
 # 步骤4: 质量验证与提交
 git add .
 git commit -m "atomic(01.1): [step4-verified] implement auth component"
+git push origin 2024-01-15-1430     # 推送原子任务进度
 ```
 
 #### Branch 2 (TASK分支) - Phase级别
 ```bash
-# Phase完成时合并日期分支
+# 1. 执行强制前置验证 (9步协议)
+# 验证TASK分支领先或等同于远程main分支
+
+# 2. Phase完成时合并日期分支
 git checkout TASK01
 git merge 2024-01-15-1430 --no-ff
-git branch -d 2024-01-15-1430  # 清理临时分支
-git tag "TASK01-phase1"  # 标记Phase完成
+git branch -d 2024-01-15-1430       # 清理临时分支
+git tag "TASK01-phase1"              # 标记Phase完成
+git push origin TASK01               # 推送Phase级别进度
+git push origin --tags               # 推送标签
 ```
 
 #### Branch 1 (Main分支) - TASK文档级别  
 ```bash
-# TASK文档完成时合并到main
-git checkout main
-git merge TASK01 --no-ff
-git tag "TASK01-complete"
+# 1. 执行强制前置验证 (9步协议)  
+# 确保main分支不领先于TASK分支 (版本一致性)
+
+# 2. TASK文档完成时通过PR合并到main
+# 使用GitHub PR替代直接合并，保持审查流程
+# git checkout main
+# git merge TASK01 --no-ff          # 生产环境改用PR流程
+# git tag "TASK01-complete"
 ```
+
+**Remote Branch Protection & Version Consistency**:
+- **本地优先原则**: 本地分支必须始终领先或等同于对应远程分支
+- **版本倒置检测**: 发现远程领先时立即暂停并分析原因
+- **分支健康监控**: 定期检查分支同步状态和架构合规性
+- **标准化冲突处理**: 使用git log分析分歧点和建立回滚机制
 
 **质量验证与Git集成**:
 - 第4步"质量验证与提交"必须包含Git commit操作
 - 所有合并操作必须通过轻量级验证(test/lint/build)
 - TodoWrite状态与Git分支状态保持同步
+- 执行9步强制验证协议预防版本混乱
 
 **详细命令参考**: See `DevEnv.md#workflow` for additional Git commands
 
