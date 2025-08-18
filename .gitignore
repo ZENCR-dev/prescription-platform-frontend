@@ -1,16 +1,10 @@
-# Core directories excluded from Git (use .ignore for IDE access)
+# Dependencies
 node_modules/
-PRPs/
-Context-Engineering-Intro/
-draft/
-.claude/
 
-# Environment and configuration files (use .ignore for IDE access)
+# Environment variables - sensitive information
 .env
-.env.local
-.env.production
-.env.development
-.ignore
+.env*.local
+!.env.example
 
 # Build outputs
 .next/
