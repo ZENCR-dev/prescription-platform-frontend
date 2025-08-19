@@ -62,6 +62,22 @@ Run these checks locally to ensure your PR will pass review.
   git rebase main
   ```
 
+### 🏥 Medical Compliance Checks
+
+These additional checks preserve critical audit and safety requirements for medical software:
+
+- **Local Priority Verified:** Confirm your local branch has no remote-ahead commits (`git log ..@{u}` returns empty). This preserves audit trail integrity for medical compliance.
+  ```bash
+  # Should return nothing if local is ahead or equal
+  git log ..@{u}
+  ```
+- **Traceability Check:** Ensure your commit messages clearly reference the relevant TASK number (e.g., "feat(TASK01): add auth component") for compliance audit requirements.
+- **Version State Validated:** Verify clean working directory (`git status` shows no untracked changes) and confirm branch tracking is correctly established.
+  ```bash
+  git status  # Should show "working tree clean"
+  git branch -vv  # Verify tracking relationship
+  ```
+
 ---
 
 ## 🚫 The Anti-Pattern Redlist (Don't Do This)

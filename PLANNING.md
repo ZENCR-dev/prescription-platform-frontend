@@ -187,77 +187,33 @@ interface FrontendPrescriptionModel {
 - **Testing**: Jest + React Testing Library + Playwright
 - **Deployment**: Vercel with Supabase integration
 
-### Git分支管理架构策略 (NON-NEGOTIABLE)
+### Git Workflow Management Strategy (NON-NEGOTIABLE)
 
-**三层分支映射原则**:
-- **Branch 1 (Main)**: 预备发布版本，仅接收完整TASK文档合并
-- **Branch 2 (TASK0X)**: 任务文档分支，聚合Phase级别进度  
-- **Branch 3 (Date)**: 原子任务分支，执行3+1步骤开发循环
+**Golden Workflow Path Integration**:
+All Git operations must follow the unified **Golden Workflow Path** with Medical Compliance Checks to ensure audit trail integrity and regulatory compliance.
 
-**架构约束**:
-- **Branch命名规范**: main, TASK01-TASK09, YYYY-MM-DD-HHMM
-- **分支数量控制**: 最多11个分支 (1+9+1)
-- **合并策略**: 使用--no-ff保持历史，通过质量验证后合并
+---
+> **📖 Complete Git Workflow Specification**
+>
+> The detailed Git workflow strategy and compliance requirements:
+>
+> ### ➡️ **[`examples/golden-workflow.md`](./examples/golden-workflow.md)**
+>
+> *This unified workflow preserves all critical compliance principles while simplifying development operations from 9-step validation to enhanced Pre-Flight Checklist.*
+---
 
-**Layer 1决策传递**:
-- 所有Layer 2和Layer 3必须遵循此分支架构约束
-- Git操作必须与三层任务树状态同步
-- 违反分支管理策略视为架构违规
+**Key Strategic Principles Preserved**:
+- **Local Priority Principle**: Local branches must lead or equal remote branches to prevent audit trail loss
+- **Version Consistency**: Deterministic version states required for medical software compliance
+- **Audit Trail Integrity**: Complete traceability of all changes to specific tasks and requirements
+- **Quality Gate Integration**: All Git operations must pass validation (test/lint/build)
 
-### 强制性分支操作协议 (MANDATORY PRE-OPERATION PROTOCOLS)
+**Architecture Constraints**:
+- **Branch Naming**: `TASKXX/short-description` format for feature branches
+- **Merge Strategy**: Pull Request workflow with quality validation
+- **Compliance Validation**: Enhanced Pre-Flight Checklist before all PR submissions
 
-**Phase 1: 操作前强制验证** (3步验证循环):
-```yaml
-Pre_Operation_Validation_Protocol:
-  步骤1_本地分支状态检查:
-    - git status 验证工作目录清洁
-    - git branch -vv 检查本地分支追踪状态
-    - 确认当前分支与预期操作分支一致
-  步骤2_远程分支同步验证:
-    - git fetch origin 获取最新远程状态
-    - git log --oneline -10 对比本地与远程commit历史
-    - 验证本地分支领先或等同于对应远程分支
-  步骤3_分支版本一致性确认:
-    - 确认main分支不领先于TASK分支
-    - 验证TASK分支包含所有本地开发进度
-    - 检查不存在未追踪的重要文件变更
-```
-
-**Phase 2: 远程分支管理策略** (4步管理流程):
-```yaml
-Remote_Branch_Management_Strategy:
-  步骤1_本地优先原则执行:
-    - 本地开发进度必须始终领先或等同于远程分支
-    - 禁止远程分支领先本地TASK分支的情况
-    - 发现版本倒置时立即暂停操作并分析原因
-  步骤2_三层分支推送策略:
-    - Branch 3推送: git push -u origin YYYY-MM-DD-HHMM
-    - Branch 2合并: 合并Branch 3到TASK0X后推送更新
-    - Branch 1保护: 仅通过PR方式合并完整TASK到main
-  步骤3_分支健康状态监控:
-    - 定期检查远程分支与本地分支的同步状态
-    - 监控未合并的分支数量不超过架构限制
-    - 确保分支命名规范和生命周期管理合规
-  步骤4_冲突预防与解决:
-    - 操作前执行强制验证避免版本冲突
-    - 发现问题时使用git log分析分支分歧点
-    - 建立标准化冲突解决流程和回滚机制
-```
-
-**Phase 3: 操作执行与验证** (2步执行验证):
-```yaml
-Operation_Execution_Validation:
-  步骤1_Git操作执行:
-    - 按照验证通过的计划执行Git操作
-    - 使用--no-ff保持分支历史完整性
-    - 每步操作后立即验证预期结果
-  步骤2_操作后状态确认:
-    - git status确认操作成功完成
-    - git log --graph验证分支历史结构正确
-    - 更新INITIAL.md Progress Tracker分支状态
-```
-
-**估算标准**: 完整协议执行需要9步操作 (3+4+2步验证管理流程)，适合所有Git分支操作的标准化预防性检查。
+**Emergency Protocols**: See [`examples/emergency-recovery.md`](./examples/emergency-recovery.md) for recovery procedures
 
 ---
 

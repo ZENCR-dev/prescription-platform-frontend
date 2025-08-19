@@ -223,9 +223,9 @@ Manual_Fix_Mechanism:
 | [`TASK09`](./PRPs/TASK09.md) | Quality Assurance        | 5 Tasks      | 30 steps        | 📋 Ready     | `TASK09` → `main`          | 🔄 **Local Lead Required**    | E2E testing coordination             |
 
 ### Branch Health Status Legend
-**Reference**: [`PLANNING.md#强制性分支操作协议`](./PLANNING.md) - 9步验证流程详细说明
-**Golden Workflow Integration**: [`examples/golden-workflow.md`](./examples/golden-workflow.md) - Happy Path procedures
+**Primary Workflow**: [`examples/golden-workflow.md`](./examples/golden-workflow.md) - Complete Git workflow with Medical Compliance Checks
 **Emergency Protocols**: [`examples/emergency-recovery.md`](./examples/emergency-recovery.md) - Recovery procedures
+**Tool Integration**: [`examples/tool-matrix.md`](./examples/tool-matrix.md) - Command aliases and automation
 
 | Branch Health Indicator | Meaning | Action Required | Recovery Reference |
 |-------------------------|---------|-----------------|-------------------|
@@ -236,7 +236,7 @@ Manual_Fix_Mechanism:
 | 🛡️ **Security Hold** | Branch contains potential security issues or failed security scan | Run security audit, resolve issues before proceeding | [`examples/emergency-recovery.md#security-incident-response`](./examples/emergency-recovery.md#security-incident-response) |
 | 🚧 **Quality Gate Failed** | Branch failed automated quality checks (test/lint/build) | Fix quality issues using TDD approach | [`examples/golden-workflow.md#pre-flight-checklist`](./examples/golden-workflow.md#pre-flight-checklist) |
 
-**Golden Workflow Integration**: Before any Git branch operations, execute the 9-step mandatory validation protocol from PLANNING.md to prevent version confusion and ensure "local development always leads" principle. For standard development, follow the Happy Path procedures in [`examples/golden-workflow.md`](./examples/golden-workflow.md).
+**Golden Workflow Integration**: Follow the unified Git workflow in [`examples/golden-workflow.md`](./examples/golden-workflow.md) for all development activities. The enhanced Pre-Flight Checklist includes Medical Compliance Checks that preserve audit trail integrity while maintaining development efficiency.
 
 **Tool Integration**: Use [`examples/tool-matrix.md`](./examples/tool-matrix.md) command aliases for automated status checking and quality validation.
 
