@@ -1,0 +1,68 @@
+name: Documentation Guard
+
+on:
+  pull_request:
+    branches: [docs-main]
+    paths:
+      - 'CLAUDE.md'
+      - 'INITIAL.md'
+      - 'PLANNING.md'
+      - 'FRONTEND_PLAYBOOK.md'
+      - 'LEGACY_ASSETS_INVENTORY.md'
+      - 'examples/**'
+
+jobs:
+  protect-governance-docs:
+    name: Governance Document Protection
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Check for protected file changes
+        run: |
+          echo "🔍 Checking for changes to protected governance documents..."
+          
+          CHANGED_FILES=$(git diff --name-only origin/docs-main..HEAD)
+          PROTECTED_FILES=""
+          
+          for file in $CHANGED_FILES; do
+            case $file in
+              CLAUDE.md|INITIAL.md|PLANNING.md|FRONTEND_PLAYBOOK.md|LEGACY_ASSETS_INVENTORY.md|examples/*)
+                PROTECTED_FILES="$PROTECTED_FILES $file"
+                ;;
+            esac
+          done
+          
+          if [ -n "$PROTECTED_FILES" ]; then
+            echo "⚠️ Protected governance documents are being modified:"
+            echo "$PROTECTED_FILES"
+            echo "📋 This PR requires approval from CODEOWNERS"
+            echo "🔒 Governance document changes require explicit authorization"
+          else
+            echo "✅ No protected governance documents modified"
+          fi
+          
+      - name: Validate document structure
+        run: |
+          echo "📊 Validating document structure..."
+          
+          # Check for required sections in key documents
+          if [ -f "CLAUDE.md" ]; then
+            if ! grep -q "## 🚨 Critical \"Do NOT\" Rules" CLAUDE.md; then
+              echo "❌ CLAUDE.md missing required 'Do NOT Rules' section"
+              exit 1
+            fi
+          fi
+          
+          if [ -f "INITIAL.md" ]; then
+            if ! grep -q "## 📊 Progress Tracker" INITIAL.md; then
+              echo "❌ INITIAL.md missing required 'Progress Tracker' section"
+              exit 1
+            fi
+          fi
+          
+          echo "✅ Document structure validation passed"
