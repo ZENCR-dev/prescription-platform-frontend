@@ -1,101 +1,71 @@
-# Golden Workflow: The Practical Playbook
+# 🚀 Golden Workflow: The Simple Path
 
-This guide provides the scannable, step-by-step process for all development. It is the practical implementation of the strategy defined in `PLANNING.md`.
+**One-page reference for all development work - no exceptions, no complexity.**
 
-### Guiding Philosophy
-- **Follow the Happy Path:** Stick to the numbered steps for 99% of your work.
-- **Use the Checklist:** Before creating a Pull Request, run through the pre-flight checklist.
-- **Avoid Anti-Patterns:** If you're unsure about an action, check the "Don't Do This" list.
+## The 4-Step Happy Path
 
----
+**1. Start Clean**
+```bash
+git checkout main && git pull origin main
+```
 
-## 🚀 The Happy Path: From Task Start to Finish
+**2. Create Feature Branch** 
+```bash
+git checkout -b TASKXX/short-description  # e.g., TASK01/supabase-auth
+```
 
-Follow these steps sequentially for every new piece of work.
+**3. Develop & Commit**
+```bash
+# Code your changes
+npm run test && npm run lint && npm run type-check
+git add . && git commit -m "feat(scope): clear description"
+git push -u origin TASKXX/short-description
+```
 
-**1. Sync Your Branch**
-- Start from the `main` branch and ensure it's up to date.
-  ```bash
-  git checkout main
-  git pull origin main
-  ```
-
-**2. Create Your Feature Branch**
-- Create a new branch from main using the `TASKXX/short-description` naming convention.
-  ```bash
-  git checkout -b TASK01/setup-supabase-auth
-  ```
-
-**3. Develop (The "Red-Green-Refactor" Loop)**
-- Write a failing test that defines your goal.
-- Write the simplest code to make the test pass.
-- Refactor and improve the code, ensuring tests still pass.
-- Commit atomically. Make small, logical commits with clear messages.
-  ```bash
-  npm run test
-  git add .
-  git commit -m "feat(auth): add initial login component"
-  git push -u origin TASK01/setup-supabase-auth
-  ```
-
-**4. Create the Pull Request (PR)**
-- Before creating the PR, run the Pre-Flight Checklist below.
-- Open a PR on GitHub from your feature branch into main.
-- Ensure all automated checks pass and request a review.
+**4. Create Pull Request**
+- Run [Pre-Flight Checklist](#pre-flight-checklist) below
+- Open PR on GitHub: feature branch → main
+- Wait for automated checks + review approval
 
 ---
 
-## ✅ Pre-Flight Checklist (Before Every PR)
+## ✅ Pre-Flight Checklist
 
-Run these checks locally to ensure your PR will pass review.
+**Run these commands before every PR:**
 
-- **All Tests Pass:** `npm run test`
-- **Code is Linted:** `npm run lint`
-- **Types are Correct:** `npm run type-check`
-- **Application Builds:** `npm run build`
-- **Secrets are Secure:** No keys or secrets are present in the code (`.env` only).
-- **Branch is Rebased:** Your feature branch is up to date with main.
-  ```bash
-  git checkout main
-  git pull origin main
-  git checkout TASK01/setup-supabase-auth
-  git rebase main
-  ```
+```bash
+npm run test        # ✅ All tests pass
+npm run lint        # ✅ Code follows standards  
+npm run type-check  # ✅ No TypeScript errors
+npm run build       # ✅ Application builds successfully
+git status          # ✅ Working directory clean
+git log ..@{u}      # ✅ Should return empty (local ahead/equal)
+```
 
-### 🏥 Medical Compliance Checks
-
-These additional checks preserve critical audit and safety requirements for medical software:
-
-- **Local Priority Verified:** Confirm your local branch has no remote-ahead commits (`git log ..@{u}` returns empty). This preserves audit trail integrity for medical compliance.
-  ```bash
-  # Should return nothing if local is ahead or equal
-  git log ..@{u}
-  ```
-- **Traceability Check:** Ensure your commit messages clearly reference the relevant TASK number (e.g., "feat(TASK01): add auth component") for compliance audit requirements.
-- **Version State Validated:** Verify clean working directory (`git status` shows no untracked changes) and confirm branch tracking is correctly established.
-  ```bash
-  git status  # Should show "working tree clean"
-  git branch -vv  # Verify tracking relationship
-  ```
+**Manual Checks:**
+- ✅ No secrets in code (use `.env.local` only)
+- ✅ Commit messages reference TASK number
+- ✅ Branch name follows `TASKXX/description` pattern
 
 ---
 
-## 🚫 The Anti-Pattern Redlist (Don't Do This)
+## 🚫 Never Do This
 
-These actions are strictly forbidden.
+| ❌ Forbidden | ✅ Do This Instead |
+|-------------|-------------------|
+| Commit to `main` directly | Create feature branch + PR |
+| Commit secrets/keys | Use `.env.local` exclusively |
+| Force-push shared branches | Create new branch if needed |
+| Skip quality checks | Run full pre-flight checklist |
+| Bypass Supabase SDK | Use official Supabase client |
 
-| Category | Forbidden Action |
-|----------|------------------|
-| **Security** | Committing secrets, keys, or tokens. Use `.env` files exclusively. |
-| **Git Workflow** | Committing directly to main; Force-pushing to shared branches. |
-| **Architecture** | Bypassing the Supabase SDK for custom auth/API clients. |
-| **Process** | Merging code that fails any automated quality check (test, lint, build). |
+## 🚨 Emergency Recovery
 
----
+**If something breaks:**
+1. **GitHub**: Revert the problematic PR 
+2. **Local**: `git checkout main && git pull origin main`
+3. **Nuclear**: Ask team lead for help
 
-## 🚨 Emergency Protocols
-
-These actions are high-impact and require extreme caution.
-
-- **Manual Confirmation:** Critical operations like `git reset --hard` or modifying core project documents require explicit approval from the project lead. The AI Agent is programmed to halt and ask for this.
-- **Recovery:** If a major error is introduced, the primary recovery method is to revert the problematic Pull Request on GitHub.
+**Links:**
+- 📖 [Advanced Recovery](./emergency-recovery.md)
+- 🔧 [Tool Commands](./tool-matrix.md)

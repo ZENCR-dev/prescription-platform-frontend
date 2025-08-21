@@ -1,0 +1,54 @@
+name: Pre-Flight Quality Gates
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '**/*.js'
+      - '**/*.jsx' 
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '**/*.json'
+      - 'package*.json'
+
+jobs:
+  quality-gates:
+    name: Quality Gates Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run tests
+        run: npm run test
+        
+      - name: Run linting
+        run: npm run lint
+        
+      - name: Run type checking
+        run: npm run type-check
+        
+      - name: Build application
+        run: npm run build
+        
+      - name: Security audit
+        run: npm audit --audit-level=moderate
+        
+      - name: Check for secrets
+        run: |
+          if git log --grep="secret\|key\|password" --oneline HEAD~10..HEAD | grep -q .; then
+            echo "⚠️ Warning: Potential secrets detected in recent commits"
+            git log --grep="secret\|key\|password" --oneline HEAD~10..HEAD
+          else
+            echo "✅ No obvious secrets detected in recent commits"
+          fi
