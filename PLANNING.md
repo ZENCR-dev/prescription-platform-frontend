@@ -47,7 +47,8 @@ Build a production-ready, accessible, and privacy-compliant frontend interface t
 - **Development Velocity**: 60-80% time savings through strategic component reuse
 - **Supabase Integration**: 100% client-side integration with Auth, Realtime, and Storage
 - **Performance Standards**: <3s load time, Core Web Vitals compliance, 95%+ Lighthouse scores
-- **Backend Coordination**: Seamless API integration following established protocols
+- **Backend API Dependency Management**: 100% compliance with backend-delivered API specifications
+- **Backend Integration**: Seamless API integration following established dependency protocols
 
 ---
 
@@ -154,6 +155,26 @@ Phase_Completion_Validation:
 
 ---
 
+## 🚧 Frontend Planning Boundaries (NON-NEGOTIABLE) {#planning-boundaries}
+
+### Strategic Planning Constraints
+**Frontend planning authority is explicitly limited by backend architectural decisions:**
+
+- **API Design Authority**: Frontend cannot plan API endpoints, data schemas, or business logic
+- **Integration Timeline Dependencies**: All frontend milestones depend on backend deliverable completion
+- **Technology Stack Constraints**: Frontend technology choices must align with backend service capabilities
+- **Data Model Limitations**: Frontend data planning constrained by backend-provided schemas
+
+### Planning Dependency Hierarchy
+1. **Backend delivers** → API specifications, data schemas, integration requirements
+2. **Frontend consumes** → API contracts, follows data models, implements UI layer
+3. **Frontend cannot proceed** → without official backend deliverables from `~/APIdocs/APIv1.md`
+
+### Violation Protocol
+**Any frontend planning that assumes backend capabilities or designs APIs constitutes a boundary violation requiring immediate correction.**
+
+---
+
 ## 🏗️ Architecture & Technology Constraints {#architecture}
 
 ### Supabase-First Frontend Principles (NON-NEGOTIABLE)
@@ -239,7 +260,7 @@ All Git operations must follow the unified **Golden Workflow Path** with Medical
 ### Phase 3: Data Integration (Week 5) {#phase-3-data-integration}
 **Deliverable**: Complete frontend-backend data integration
 
-**🚨 BACKEND COORDINATION REQUIRED**: 
+**🚨 BACKEND API DEPENDENCY**: 
 - **API Documentation**: Must receive `~/APIdocs/APIv1.md` before proceeding
 - **No Self-Mocking**: Frontend cannot proceed without official API specifications
 
@@ -248,19 +269,23 @@ All Git operations must follow the unified **Golden Workflow Path** with Medical
 
 ---
 
-## 🔄 Backend Coordination Protocol {#syncpoints}
+## 🔄 Backend API Dependencies {#api-dependencies}
 
 ### API Documentation Requirements
 **Single Source of Truth**: `~/APIdocs/APIv1.md`
 - **Maintained by**: Backend development team
+- **Exclusive Authority**: Backend team has sole authority over API design and specification
 - **Frontend Dependency**: Cannot proceed with API integration without this documentation
+- **Frontend Constraint**: All frontend planning, development, and testing constrained by backend-provided API specifications
 - **No Self-Mocking**: Frontend must wait for official API specifications
+- **No Frontend API Assumptions**: Frontend cannot assume, design, or implement API contracts independently
+- **Specification Completeness**: Backend responsible for complete, accurate, and timely API documentation delivery
 
-### Critical Synchronization Points {#syncpoints-detail}
-- **🔄 Sync Point A**: Week 3 - Data model alignment
-- **🔄 Sync Point B**: Week 4 - API contract review  
-- **🔄 Sync Point C**: Week 5 - Edge Functions integration
-- **🔄 Sync Point D**: Week 6 - Production API validation
+### Critical API Delivery Dependencies {#api-delivery-dependencies}
+- **📋 API Dependency A**: Week 3 - Data schema delivery from backend
+- **📋 API Dependency B**: Week 4 - Complete API specification delivery
+- **📋 API Dependency C**: Week 5 - Edge Functions endpoints ready for consumption
+- **📋 API Dependency D**: Week 6 - Production API endpoints validated and available
 
 ---
 
@@ -309,7 +334,7 @@ Simplified_Validation_Chain:
 - **Browser Compatibility**: Cross-browser testing for medical compliance
 
 ### Mitigation Strategies
-- **API Documentation**: Enforce coordination checkpoints
+- **API Documentation**: Enforce dependency checkpoints
 - **Privacy Validation**: Automated PII detection in CI/CD
 - **Performance Monitoring**: Bundle analysis and Core Web Vitals tracking
 - **Testing Strategy**: Comprehensive cross-browser test coverage

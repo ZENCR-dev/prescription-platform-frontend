@@ -16,7 +16,7 @@
 - **📍 Current Position**: `PRPs/TASK01.md` (Foundation Setup) - Ready to begin after v6.0 framework upgrade ✅
 - **🚀 Enter Development**: Click → [`PRPs/TASK01.md`](./PRPs/TASK01.md) ← for page specs & acceptance criteria
 - **📝 Progress Update**: Mark tasks complete in [Progress Tracker](#progress-tracker) below
-- **🔄 Backend Sync**: Check [Backend Coordination](#backend-sync) before proceeding
+- **🔄 Backend Sync**: Check [Backend Dependencies](#backend-sync) before proceeding
 
 ---
 
@@ -51,87 +51,39 @@
 
 ### 统一ACD敏捷工作流模板 (v6.0 MVP适配版)
 
-**ACD工作流定义** (所有任务类型采用ACD敏捷模板):
-```yaml
-# 统一ACD工作流模板 (适用于所有任务类型)
-标准4步ACD循环:
-  1. 分析与规划 【需求分析】(主实现角色: frontend/backend/architect)
-     - 需求分析和技术可行性评估
-     - 组件设计和接口定义
-  2. 实现与构建 【快速实现】(同一主实现角色)
-     - 按设计快速实现核心功能
-     - 集成现有组件和服务
-  3. 验证与优化 【质量保证】(同一主实现角色)
-     - 全面功能测试和质量检查
-     - 性能优化和用户体验改进
-  4. 集成与反馈 【提交阶段】(qa角色)
-     - 最终质量检查和测试套件
-     - 测试通过后进行安全Git提交
+**标准4步ACD循环**: 所有任务统一采用分析规划→实现构建→验证优化→集成反馈的敏捷开发模式。
 
-ACD执行约束:
-  - ❌ 禁止跳过需求分析 - 每个原子任务必须从分析规划开始
-  - ❌ 禁止并行执行原子任务 - 一次只执行一个原子任务的4步ACD循环
-  - ❌ 禁止批量创建todos - 只为当前原子任务创建4步ACD todos
-  - ✅ 正确执行流程 - 分析规划→实现构建→验证优化→集成反馈→下一个原子任务
-
-基础完成标准:
-  - 当前原子任务的4步ACD循环全部完成
-  - npm run test 通过 (功能测试套件)
-  - npm run lint 通过
-  - 功能手动验证通过
-
-失败处理: 人工识别问题，创建简单修复任务，使用4步ACD循环解决
-```
+**完整工作流定义**: 详见 [`FRONTEND_PLAYBOOK.md`](./FRONTEND_PLAYBOOK.md#前端PRP标准模板) - ACD执行循环章节
 
 ### AI Agent简化估算体系 (v6.0敏捷版)
 
-**统一估算标准**: 参见 [`PLANNING.md#AI Agent估算标准定义`](./PLANNING.md#ai-agent估算标准定义) - Layer 1权威标准
+**统一估算标准**: 采用4维度体系(步骤/文件/轮次/复杂度)进行快速估算。
+
+**权威定义**: 详见 [`PLANNING.md#AI Agent估算标准定义`](./PLANNING.md#ai-agent估算标准定义) 和 [`FRONTEND_PLAYBOOK.md`](./FRONTEND_PLAYBOOK.md#AI-Agent估算)
 
 ### 人工修复机制 (v6.0简化版)
 
-**轻量级失败处理** (敏捷修复流程):
-```yaml
-Manual_Fix_Mechanism:
-  Basic_Validation_Failure:
-    - 触发: npm run test/lint/build 失败
-    - 处理: 人工识别问题，创建简单修复任务
-    - 解决: 使用4步ACD循环处理具体问题
-    
-  Human_Review_Process:
-    1. 识别具体失败原因
-    2. 创建针对性修复任务
-    3. 使用标准工作流解决
-    4. 验证修复效果
-    
-  Agile_Principles:
-    - 直接有效的问题解决
-    - 减少自动化复杂性
-    - 保持人工灵活性和判断力
-```
+**轻量级失败处理**: 基础验证失败时人工识别问题，创建修复任务，使用4步ACD循环解决。
+
+**完整修复流程**: 详见 [`FRONTEND_PLAYBOOK.md`](./FRONTEND_PLAYBOOK.md) - 质量保证与修复机制章节
 
 ### 轻量级验证系统 (v6.0敏捷版)
 
-**统一Phase完成验证**: 所有任务类型使用相同的轻量级验证标准，详见[`CLAUDE.md#轻量级Phase完成验证`](./CLAUDE.md)
+**统一Phase完成验证**: test/lint/build通过 + 功能验证，失败时人工review修复。
 
-**基础验证标准** (统一对所有任务类型):
-- **npm run test 通过**: 基础单元测试验证
-- **npm run lint 通过**: 代码规范检查
-- **npm run build 通过**: 构建完整性验证  
-- **功能手动验证通过**: 基础功能正确性验证
-
-**简化触发机制**: Phase内所有原子任务完成时自动执行，检查失败时人工review和修复
+**详细验证标准**: 详见 [`CLAUDE.md#轻量级Phase完成验证`](./CLAUDE.md) 和 [`FRONTEND_PLAYBOOK.md`](./FRONTEND_PLAYBOOK.md) - 质量验证章节
 
 ### SuperClaude Development Acceleration Framework
 
 **Task-Specific Command Mappings**:
 - **TASK01 (Foundation)**: `/sc:build --frontend --optimize` + `/sc:implement foundation --supabase` + `/sc:test --integration --basic`
-- **TASK02 (Infrastructure)**: `/sc:design schema --privacy-compliant` + `/sc:implement setup --security` + `/sc:validate compliance --gdpr`  
+- **TASK02 (Infrastructure)**: `/sc:implement setup --frontend-env` + `/sc:validate env-config --supabase` + `/sc:test connectivity --basic`  
 - **TASK03 (Auth Migration)**: `/sc:analyze auth --migration-strategy` + `/sc:implement auth --supabase --secure` + `/sc:test auth --comprehensive`
-- **TASK04 (Database & RLS)**: `/sc:design schema --medical --privacy` + `/sc:implement rls-policies --comprehensive` + `/sc:validate security --data`
+- **TASK04 (Database Integration)**: `/sc:implement supabase-client --rls-integration` + `/sc:test data-access --permissions` + `/sc:validate privacy --compliance`
 - **TASK05 (Component Migration)**: `/sc:analyze components --migration-levels` + `/sc:implement migration --supabase` + `/sc:test components --privacy`
-- **TASK06 (Edge Functions)**: `/sc:design edge-functions --secure` + `/sc:implement payment --stripe --audit` + `/sc:validate security --comprehensive`
-- **TASK07 (Realtime)**: `/sc:design realtime --subscriptions` + `/sc:implement notifications --optimization` + `/sc:test performance --realtime`
-- **TASK08 (Production)**: `/sc:design deployment --production` + `/sc:implement monitoring --comprehensive` + `/sc:validate production --security`
+- **TASK06 (Payment Integration)**: `/sc:implement payment-ui --stripe-client` + `/sc:test payment-flows --comprehensive` + `/sc:validate security --frontend`
+- **TASK07 (Realtime)**: `/sc:implement realtime-subscriptions --supabase` + `/sc:test notifications --client-side` + `/sc:validate performance --realtime`
+- **TASK08 (Production)**: `/sc:build --production` + `/sc:implement monitoring --frontend` + `/sc:validate deployment --vercel`
 - **TASK09 (Testing & QA)**: `/sc:design testing --framework` + `/sc:implement tests --comprehensive` + `/sc:validate quality --coverage`
 
 **⚡ Workflow Acceleration Patterns**:
@@ -142,29 +94,29 @@ Manual_Fix_Mechanism:
 # → Auto-activates: Magic for UI, Next.js optimization, Medical branding
 
 # Infrastructure Setup (TASK02) 
-/sc:design schema --privacy-compliant --medical --security
-/sc:implement setup --supabase --team-access --comprehensive
+/sc:implement client-setup --supabase --env-config
+/sc:test connectivity --supabase --validation
 # → Auto-activates: Sequential logic, Context7 for Supabase patterns
 
 # Auth Migration (TASK03)
 /sc:analyze auth --migration-strategy --security-focus
-/sc:implement auth --supabase --secure --rls-integration
-# → Auto-activates: Backend auth logic, RLS integration, Privacy compliance
+/sc:implement auth --supabase-client --ui-integration
+# → Auto-activates: Frontend auth components, Client-side integration, Privacy compliance
 
-# Database & RLS (TASK04)
-/sc:design schema --medical --privacy --comprehensive
-/sc:implement rls-policies --security --data-isolation
-# → Auto-activates: Architect design, Backend RLS policies, Data privacy
+# Database Integration (TASK04)
+/sc:implement client-integration --supabase --rls-aware
+/sc:test data-access --permissions --privacy
+# → Auto-activates: Frontend data layer, Client permissions, Data privacy
 
 # Component Migration (TASK05)
 /sc:analyze components --migration-levels --strategy
 /sc:implement migration --supabase --privacy --parallel
-# → Auto-activates: Frontend components, Backend privacy, Architecture migration
+# → Auto-activates: Frontend components, Privacy compliance, Architecture migration
 
-# Edge Functions & Payment (TASK06)
-/sc:design edge-functions --secure --stripe --audit-trail
-/sc:implement payment --comprehensive --security --monitoring
-# → Auto-activates: Backend logic, Architect patterns, Payment processing
+# Payment Integration (TASK06)
+/sc:implement payment-ui --stripe-client --secure
+/sc:test payment-flows --comprehensive --frontend
+# → Auto-activates: Frontend payment UI, Client-side processing, Security validation
 ```
 
 **🎯 Persona Auto-Activation Intelligence** (v6.0简化角色系统):
@@ -209,17 +161,17 @@ Manual_Fix_Mechanism:
 
 ### Development Status Overview
 
-| SOP                          | Phase                    | Atomic Tasks | AI Agent Est.   | Status        | Target Branch              | Branch Health Status            | Backend Coordination                 |
+| SOP                          | Phase                    | Atomic Tasks | AI Agent Est.   | Status        | Target Branch              | Branch Health Status            | Backend Dependencies                 |
 | ---------------------------- | ------------------------ | ------------ | --------------- | ------------- | -------------------------- | ------------------------------- | ------------------------------------ |
 | [`TASK00`](./PRPs/TASK00.md) | Framework Upgrade        | 9 Tasks      | 46 steps        | ✅ Complete  | `TASK00` → `main`          | ✅ **Merged & Synced**        | None (Documentation only)            |
 | [`TASK01`](./PRPs/TASK01.md) | Foundation Setup         | 5 Tasks      | 30 steps        | 📋 Ready     | `TASK01` → `main`          | 🔄 **Local Lead Required**    | Environment alignment                |
 | [`TASK02`](./PRPs/TASK02.md) | Infrastructure Setup     | 5 Tasks      | 28 steps        | 📋 Ready     | `TASK02` → `main`          | 🔄 **Local Lead Required**    | Shared Supabase project              |
 | [`TASK03`](./PRPs/TASK03.md) | Auth Migration           | 4 Tasks      | 24 steps        | 📋 Ready     | `TASK03` → `main`          | 🔄 **Local Lead Required**    | Auth system alignment                |
-| [`TASK04`](./PRPs/TASK04.md) | Database & RLS           | 4 Tasks      | 22 steps        | 🚫 Blocked   | `TASK04` → `main`          | ⚠️ **Validation Required**    | 🚨 **Data schema confirmation**      |
+| [`TASK04`](./PRPs/TASK04.md) | Database & RLS           | 4 Tasks      | 22 steps        | 🚫 Blocked   | `TASK04` → `main`          | ⚠️ **Validation Required**    | 🚨 **Waiting for data schema from backend** |
 | [`TASK05`](./PRPs/TASK05.md) | Component Migration      | 4 Tasks      | 20 steps        | 📋 Ready     | `TASK05` → `main`          | 🔄 **Local Lead Required**    | Integration testing                  |
 | [`TASK06`](./PRPs/TASK06.md) | Edge Functions & Payment | 5 Tasks      | 30 steps        | 🚫 Blocked   | `TASK06` → `main`          | ⚠️ **Validation Required**    | 🚨 **`~/APIdocs/APIv1.md` required** |
 | [`TASK07`](./PRPs/TASK07.md) | Realtime & Notifications | 4 Tasks      | 24 steps        | 📋 Ready     | `TASK07` → `main`          | 🔄 **Local Lead Required**    | Realtime endpoints                   |
-| [`TASK08`](./PRPs/TASK08.md) | Production Deployment    | 5 Tasks      | 32 steps        | 🚫 Blocked   | `TASK08` → `main`          | ⚠️ **Validation Required**    | 🚨 **Production API validation**     |
+| [`TASK08`](./PRPs/TASK08.md) | Production Deployment    | 5 Tasks      | 32 steps        | 🚫 Blocked   | `TASK08` → `main`          | ⚠️ **Validation Required**    | 🚨 **Waiting for production API validation** |
 | [`TASK09`](./PRPs/TASK09.md) | Quality Assurance        | 5 Tasks      | 30 steps        | 📋 Ready     | `TASK09` → `main`          | 🔄 **Local Lead Required**    | E2E testing coordination             |
 
 ### Branch Health Status Legend
@@ -260,17 +212,17 @@ Manual_Fix_Mechanism:
 
 ---
 
-## 🔄 Backend Synchronization Points {#backend-sync}
+## 🔄 Backend Dependencies {#backend-sync}
 
-### Critical Coordination Checkpoints
+### Critical Dependency Checkpoints
 - **🔄 Sync Point A** (Week 3): Data model alignment - Details: `PLANNING.md#syncpoints-detail`
 - **🔄 Sync Point B** (Week 4): API contract review - Requires: `~/APIdocs/APIv1.md`  
 - **🔄 Sync Point C** (Week 5): Edge Functions integration - Backend endpoints ready
 - **🔄 Sync Point D** (Week 6): Production API validation - E2E testing coordination
 
 ### How to Handle Blocked Tasks
-1. **Check Dependencies**: Review backend coordination requirements above
-2. **Coordinate**: Contact backend team for required deliverables
+1. **Check Dependencies**: Review backend dependency requirements above
+2. **Request**: Contact backend team for required deliverables
 3. **Work Around**: Focus on non-blocked tasks in parallel
 4. **Document**: Update progress tracker when dependencies resolved
 
@@ -315,12 +267,12 @@ open DevEnv.md      # For ports, commands, CORS setup
 
 ### Backend Team Responsibilities  
 - **API Documentation**: Maintain `~/APIdocs/APIv1.md` for frontend dependencies
-- **Sync Point Communication**: Notify frontend team when coordination requirements met
+- **Dependency Updates**: Notify frontend team when dependency requirements are resolved
 - **Dependency Resolution**: Unblock frontend tasks by providing required deliverables
 
 ### Team Lead Responsibilities
 - **Review & Approval**: Review and approve SOP branch merges
-- **Coordination Oversight**: Ensure backend synchronization points are met
+- **Dependency Oversight**: Ensure backend dependency requirements are resolved
 - **Quality Validation**: Ensure all quality gates pass before task completion
 
 ---
