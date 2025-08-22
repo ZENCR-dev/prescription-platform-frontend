@@ -1,5 +1,10 @@
 # INITIAL.md - Frontend Task Navigation & Progress Hub
 
+> 指南V3.2指针（只链接不复制）
+> 本文件为需求底本，执行期一切以里程碑/模块/组件为单位，详见《指南V3.2》：`../Supabase-First架构下前后端协作与PRP生成指南V3.1.md`
+> - 采用：EUD工程量、线性模块执行、模块解锁机制
+> - 参阅：1.5质量门控兼容层、1.6 EUD→时间映射、4.0命名、4.2模板
+
 > **📋 Document Purpose & Boundaries**
 > 
 > This document provides **task navigation and progress tracking only**:

@@ -13,6 +13,11 @@
 **Document Type**: Strategic Planning Document (Layer 1)  
 **Project**: Traditional Chinese Medicine Prescription Platform - Frontend UI/UX  
 **Architecture**: Supabase-First Frontend Integration  
+> 指南V3.2指针（只链接不复制）
+> 本文件已指针化，所有流程/模板/规则以《Supabase-First架构下前后端协作与PRP生成指南V3.2》为唯一权威。
+> 请参见项目根：`../Supabase-First架构下前后端协作与PRP生成指南V3.1.md`
+> - 废弃：CKP、时间分期、TASK*.md命名
+> - 请参阅：第二章（价值流路线图）、第四章（4.0/4.2/4.3）、第五章（5.0滚动式规划）
 **Timeline**: 7-Week Frontend MVP Delivery  
 **Repository Scope**: Frontend UI/UX Development Only  
 

@@ -1,4 +1,10 @@
 # CLAUDE.md - Frontend AI Collaboration Rules
+
+> 指南V3.2指针（只链接不复制）
+> 执行阶段流程、4步循环的适用层级、并行白名单策略，统一以《指南V3.2》为准：
+> `../Supabase-First架构下前后端协作与PRP生成指南V3.1.md` 中 1.5/1.6、2.0、4.2、4.3 的规定。
+> - 组件级执行=4步ACD循环；禁止跨组件并行
+> - PRP与Git强绑定（task/ 与 atomic/）按模板执行
 ## Medical Prescription Platform - Frontend Development Guidelines
 
 > **📋 Document Purpose & References**
