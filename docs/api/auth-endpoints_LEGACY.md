@@ -1,3 +1,31 @@
+# LEGACY DOCUMENT - ARCHIVED 2025-08-28
+
+## ⚠️ **GOVERNANCE VIOLATION - ARCHIVED DOCUMENT**
+
+**This document violated established API governance protocols and has been archived.**
+
+### **Governance Violation Details**:
+- **Created**: Outside of Backend Lead → Global Architect → Frontend Lead workflow
+- **Authority**: Bypassed Backend Lead exclusive API modification rights
+- **Scope**: Contains M2+ features beyond current M1 milestone
+- **Compliance**: Not aligned with current Supabase-First architecture
+
+### **Correct API Source**:
+- **Authoritative**: `prescription-platform-backend/APIdocs/APIv1.md` (Backend Lead authority)
+- **Distributed**: `prescription-platform-frontend/docs/api/APIv1.md` (Global Architect certified)
+- **Process**: Backend Lead → Global Architect review → Frontend distribution
+
+### **Action Taken**:
+- Frontend Lead redirected to use officially distributed APIv1.md
+- This legacy document archived for reference only
+- Proper governance workflow reestablished
+
+---
+
+**ORIGINAL CONTENT PRESERVED BELOW FOR REFERENCE**
+
+---
+
 # Authentication API Endpoints Documentation
 ## Medical Prescription Platform - Frontend-Backend Coordination Contract
 
@@ -24,7 +52,7 @@
 
 ## 🔐 Core Authentication Endpoints
 
-### 1. User Registration - `POST /api/auth/register`
+### 1. User Registration - `POST /auth/v1/signup`
 
 **Purpose**: Register new medical platform users with role-based validation
 
@@ -79,7 +107,7 @@
 
 ---
 
-### 2. User Authentication - `POST /api/auth/login`
+### 2. User Authentication - `POST /auth/v1/token`
 
 **Purpose**: Authenticate users and establish session with medical platform context
 
@@ -128,7 +156,7 @@
 
 ---
 
-### 3. Session Refresh - `POST /api/auth/refresh`
+### 3. Session Refresh - `POST /auth/v1/token`
 
 **Purpose**: Refresh expired access tokens while maintaining medical platform context
 
@@ -159,7 +187,7 @@
 
 ---
 
-### 4. Guest Session Creation - `POST /api/auth/guest`
+### 4. Guest Session Creation - `POST /auth/v1/signup`
 
 **Purpose**: Create limited-capability guest sessions for prescription lookup
 
@@ -193,7 +221,7 @@
 
 ## 🏥 Role Management Endpoints
 
-### 5. Get User Permissions - `GET /api/auth/permissions`
+### 5. Get User Permissions - `GET /rest/v1/user_permissions`
 
 **Purpose**: Retrieve current user's effective permissions
 
@@ -216,7 +244,7 @@
 }
 ```
 
-### 6. Update User Role - `PUT /api/auth/users/{userId}/role`
+### 6. Update User Role - `PUT /rest/v1/user_roles/{userId}`
 
 **Purpose**: Administrative role updates (admin only)
 
@@ -236,7 +264,7 @@
 
 ## 🏢 Organization Management Endpoints
 
-### 7. Validate Organization - `GET /api/auth/organization/{code}/validate`
+### 7. Validate Organization - `GET /rest/v1/organizations/{code}/validate`
 
 **Purpose**: Validate organization exists and user has access
 
@@ -266,7 +294,7 @@
 
 ## 🔍 Audit and Compliance Endpoints
 
-### 8. Log Authentication Event - `POST /api/auth/audit`
+### 8. Log Authentication Event - `POST /rest/v1/audit_logs`
 
 **Purpose**: Record authentication events for compliance tracking
 
@@ -286,7 +314,7 @@
 }
 ```
 
-### 9. Get Compliance Status - `GET /api/auth/compliance/{organizationCode}`
+### 9. Get Compliance Status - `GET /rest/v1/compliance/{organizationCode}`
 
 **Purpose**: Retrieve organization compliance status
 
@@ -341,7 +369,7 @@ All API endpoints follow consistent error response pattern:
 ### Medical Platform Error Codes
 
 | Error Code | HTTP Status | Description | Recovery Action |
-|------------|-------------|-------------|----------------|
+|------------|-------------|-------------|-----------------|
 | `INVALID_LICENSE` | 400 | Professional license validation failed | Re-enter license number |
 | `ORGANIZATION_NOT_FOUND` | 404 | Organization code invalid | Contact administrator |
 | `ROLE_MISMATCH` | 403 | User role insufficient for action | Request role elevation |

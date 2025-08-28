@@ -1,25 +1,37 @@
-# PLANNING.md - Frontend Development Strategic Plan
-## Medical Prescription Platform - Frontend Layer Strategy
+# PLANNING.md - Frontend M1 PRP Index
+## Core Authentication & User Management - Frontend Components
 
-> **📋 Document Boundaries & References**
+> **📋 Document Purpose: M1 PRP Index**
 > 
-> This document contains **strategic constraints and upper-level requirements only**:
-> - Execution rules & workflows: see `CLAUDE.md`
-> - Task navigation & progress: see `INITIAL.md`
-> - Development environment/ports/CORS/commands: see `DevEnv.md`
-> - Page/component/data contracts & acceptance: see `PRPs/TASK0x.md`
+> This document provides **M1 module navigation and PRP index only**:
+> - Strategic governance: see `~/INITIAL.md`, `~/SOP.md`, `~/GOVERNANCE.md`
+> - Execution workflows: see `FRONTEND_PLAYBOOK.md`
+> - Current PRP tasks: see `PRPs/PRP-M1.X-*.md` files below
 > - API contracts: see `~/APIdocs/APIv1.md` & `APIv1_log.md`
 
-**Document Type**: Strategic Planning Document (Layer 1)  
+**Document Type**: PRP Index Document (M1 Modules)  
 **Project**: Traditional Chinese Medicine Prescription Platform - Frontend UI/UX  
 **Architecture**: Supabase-First Frontend Integration  
 > 指南V3.2指针（只链接不复制）
 > 本文件已指针化，所有流程/模板/规则以《Supabase-First架构下前后端协作与PRP生成指南V3.2》为唯一权威。
-> 请参见项目根：`../Supabase-First架构下前后端协作与PRP生成指南V3.1.md`
+> 请参见项目根：`../Supabase-First架构下前后端协作与PRP生成指南V3.2.md`
 > - 废弃：CKP、时间分期、TASK*.md命名
 > - 请参阅：第二章（价值流路线图）、第四章（4.0/4.2/4.3）、第五章（5.0滚动式规划）
 **Timeline**: 7-Week Frontend MVP Delivery  
 **Repository Scope**: Frontend UI/UX Development Only  
+
+## 🔧 Enforcement & Scripts
+
+**Governance Validation Scripts**:
+- **[`/dev/scripts/validate-governance.sh`](/dev/scripts/validate-governance.sh)** - Comprehensive governance compliance validation
+- **[`scripts/prp-boundary-validator.sh`](scripts/prp-boundary-validator.sh)** - Frontend-Backend职责边界验证
+- **[`scripts/api-consistency-checker.sh`](scripts/api-consistency-checker.sh)** - Frontend API依赖与Backend API规范一致性检查
+
+**API变更与兼容策略**:
+- **版本管理**: 语义化版本控制和弃用窗口策略由 [`~/APIdocs/APIv1_log.md`](~/APIdocs/APIv1_log.md) 统一管理
+- **Frontend适配**: API变更对Frontend组件影响评估和适配策略集中定义
+
+*Frontend专用的governance脚本配置和执行时机详见各质量保证章节*
 
 ---
 
@@ -57,45 +69,32 @@ Build a production-ready, accessible, and privacy-compliant frontend interface t
 
 ---
 
-## 🏛️ 三层任务树协作开发系统 - Layer 1 定义 {#task-tree-layer1}
+## 🏗️ Layer 1 Strategic Navigation (Frontend M1 Milestone Coordination)
 
-### 本文档在任务树架构中的定位
+**本文档Layer 1职责**: Frontend M1里程碑级战略规划 → 为Layer 2 (PRPs) 提供Frontend战略约束和API消费计划 → 管理`main/milestone`分支质量门控。
 
-**PLANNING.md 职责定义**: Layer 1 Feature Level 文档
-- **核心责任**: 业务价值定义、技术架构决策、质量门控标准制定
-- **目标受众**: 架构师、项目经理、技术领导
-- **决策范围**: 战略层面约束、技术选型、合规要求
-
-### 三层任务树架构概览
-
-```
-Layer 1: Feature Level (本文档 - PLANNING.md)
-├── 业务价值定义 → Frontend Mission Statement
-├── 技术架构决策 → Supabase-First Principles & Technology Stack
-└── 质量门控标准 → Quality Gates & Security Standards
-
-Layer 2: User Story/Component Level (INITIAL.md + PRPs/TASK0X.md)
-├── 具体功能描述 → 每个TASK的objectives和user stories
-├── 接口契约定义 → API documentation要求和数据模型
-└── 验收标准 → 每个atomic task的acceptance criteria
-
-Layer 3: ACD Atomic Task Sequence (Agent临时生成)
-├── 敏捷组件开发执行 → 分析-实现-验证-集成循环
-├── 串行原子任务执行 → 一次只执行一个原子任务的4步ACD循环
-├── ACD-Todos临时生成 → 使用TodoWrite工具为当前原子任务创建
-└── 完整ACD开发循环 → 4步ACD循环模式 (参见CLAUDE.md)
+Frontend战略框架: PLANNING.md (Layer 1战略) → PRPs/PRP-M1.X-*.md (Layer 2战术) → TodoWrite todos (Layer 3执行) → 完整三层架构详见[FRONTEND_PLAYBOOK.md](FRONTEND_PLAYBOOK.md#🏗️-frontend-layer-execution-framework-workspace-implementation)。
 ```
 
-### Layer 1 到 Layer 2 映射关系
+## 📋 M1 Frontend PRP Index
 
-本文档的开发阶段与Layer 2执行任务(PRPs/TASK0X.md)的对应关系：
+### M1 Frontend Responsibilities & PRP Index
 
-| Layer 1 Development Phase | Timeline | Layer 2 Implementation Tasks | Strategic Objectives |
-|---------------------------|----------|------------------------------|---------------------|
-| **Phase 1: Foundation Setup** | Week 1 | [`TASK01`](./PRPs/TASK01.md): Next.js + Supabase Foundation<br>[`TASK02`](./PRPs/TASK02.md): Shared Project & AUTH Setup | 建立开发环境和基础架构 |
-| **Phase 2: Authentication & UI** | Week 2-4 | [`TASK03`](./PRPs/TASK03.md): AUTH System Migration<br>[`TASK04`](./PRPs/TASK04.md): Database & RLS Policies<br>[`TASK05`](./PRPs/TASK05.md): Component Migration | 实现核心认证和UI组件 |
-| **Phase 3: Data Integration** | Week 5 | [`TASK06`](./PRPs/TASK06.md): Edge Functions & Payment<br>[`TASK07`](./PRPs/TASK07.md): Realtime & Notifications | 完成后端数据集成 |
-| **Phase 4: Production Deployment** | Week 6-7 | [`TASK08`](./PRPs/TASK08.md): Production Deployment<br>[`TASK09`](./PRPs/TASK09.md): Quality Assurance & E2E Testing | 生产环境部署和质量保证 |
+| M1 Module | Frontend Role | PRP Document | Implementation Focus |
+|-----------|---------------|--------------|----------------------|
+| **M1.4 - Profile Management** | **Primary Lead** | ⚠️ *Pending Governance Fix* | User profile interfaces, account settings, responsive design |
+| **M1.2 - Auth Client Integration** | **Primary Lead** | [`PRPs/PRP-M1.2-Auth-Client-Integration-Frontend.md`](PRPs/PRP-M1.2-Auth-Client-Integration-Frontend.md) | @supabase/ssr integration, middleware.ts, auth UI components, session management |
+| **M1.5 - User Verification** | UI Coordination | ⚠️ *Pending Governance Fix* | Document upload UI, verification status display |
+| **M1.6 - Authentication Security** | UI Coordination | ⚠️ *Pending Governance Fix* | MFA interfaces, security settings, auth flows |
+
+**⚠️ Governance Cleanup Status**: 
+- **M1.4**: Corrected to Frontend Profile Management (was previously M1.3)
+- **M1.2**: Now Backend responsibility, Frontend provides UI coordination only
+- All existing PRPs archived due to non-compliance with M1 scope (authentication focus required). New compliant PRPs will be generated after PRP_GENERATION_PLAN corrections.
+
+**Role Definitions**:
+- **Primary Lead**: Frontend owns the complete user experience and coordinates with Backend APIs
+- **UI Coordination**: Frontend provides UI components while Backend leads the core implementation
 
 ### Layer 1 决策对下游影响
 
@@ -243,34 +242,48 @@ All Git operations must follow the unified **Golden Workflow Path** with Medical
 
 ---
 
-## 📅 Development Roadmap {#roadmap}
+## 🚀 M1 Execution Roadmap {#m1-execution-roadmap}
 
-### Phase 1: Foundation Setup (Week 1)
-**Deliverable**: Fully operational frontend development environment
-**Reference**: Environment setup details in `DevEnv.md`
+### M1.4 - Profile Management Frontend (Primary)
+**PRP**: ⚠️ *Pending Governance Fix*
+**Dependencies**: M1.1 (Backend Auth), M1.2 (Backend Registration)
 
-**Milestones**:
-- Next.js 14 + Supabase starter kit initialization
-- TypeScript configuration and Supabase type generation
-- Component library setup and development toolchain
+**Deliverables**:
+- User profile management interfaces for all user roles
+- Account settings and credential management UI
+- Responsive profile editing with real-time validation
+- Accessibility compliance (WCAG 2.1 AA) verification
 
-### Phase 2: Authentication & UI Components (Week 2-4)
-**Deliverable**: Complete authentication UI and core components
+### M1.2 - Registration UI Coordination
+**PRP**: ⚠️ *Backend Workspace Assignment*
+**Dependencies**: M1.1 (Backend Auth), M1.2 (Backend Registration System)
 
-**Milestones**:
-- Supabase Auth UI integration
-- Component migration from `recycle/` directory
-- Anonymous prescription creation UI (GDPR/HIPAA compliant)
+**Coordination Scope**:
+- Multi-role registration forms (TCM practitioners, pharmacies)
+- Email verification UI components and flows
+- User onboarding interfaces and welcome processes
 
-### Phase 3: Data Integration (Week 5) {#phase-3-data-integration}
-**Deliverable**: Complete frontend-backend data integration
+### M1 Backend Dependencies {#m1-backend-dependencies}
+**Critical Coordination Points**: Frontend development blocked without Backend completion
 
-**🚨 BACKEND API DEPENDENCY**: 
-- **API Documentation**: Must receive `~/APIdocs/APIv1.md` before proceeding
-- **No Self-Mocking**: Frontend cannot proceed without official API specifications
+**🚨 BACKEND-FIRST ENFORCEMENT**: 
+- **API Documentation**: Must receive `~/APIdocs/APIv1.md` updates from Backend PRPs
+- **No Self-Mocking**: Frontend cannot proceed without Backend M1.1/M1.2/M1.3/M1.5/M1.6 completion
+- **CKP-1 Requirement**: API contract validation required before Frontend integration
 
-### Phase 4: Production Deployment (Week 6-7)
-**Deliverable**: Production-ready frontend with comprehensive testing
+**📋 Corrected Backend Dependencies** (After PRP_GENERATION_PLAN fix):
+- M1.1 → M1.2 → M1.3 (Backend Primary Path must complete first)
+- M1.4 (Frontend Profile Management) - Can start parallel after M1.2 completion
+
+### M1.5/M1.6 - Security & Verification UI Coordination
+**PRPs**: ⚠️ *Pending Governance Fix*
+**Dependencies**: Backend M1.5/M1.6 completion per Backend-First constraint
+
+**Coordination Scope**:
+- Document upload interfaces for professional license verification
+- Verification status display and progress tracking
+- Multi-factor authentication UI components and flows
+- Security settings and advanced session management interfaces
 
 ---
 
@@ -286,11 +299,12 @@ All Git operations must follow the unified **Golden Workflow Path** with Medical
 - **No Frontend API Assumptions**: Frontend cannot assume, design, or implement API contracts independently
 - **Specification Completeness**: Backend responsible for complete, accurate, and timely API documentation delivery
 
-### Critical API Delivery Dependencies {#api-delivery-dependencies}
-- **📋 API Dependency A**: Week 3 - Data schema delivery from backend
-- **📋 API Dependency B**: Week 4 - Complete API specification delivery
-- **📋 API Dependency C**: Week 5 - Edge Functions endpoints ready for consumption
-- **📋 API Dependency D**: Week 6 - Production API endpoints validated and available
+### M1 Module Dependencies {#m1-module-dependencies}
+- **📋 M1.1 Dependency**: Backend Core Authentication complete before Frontend auth flows
+- **📋 M1.2 Dependency**: Backend Registration system ready for Frontend UI coordination
+- **📋 M1.4 Dependency**: Backend RBAC policies complete before Frontend role-based UI
+- **📋 M1.5 Dependency**: Backend Verification workflow ready for Frontend UI components
+- **📋 M1.6 Dependency**: Backend Security features complete before Frontend MFA interfaces
 
 ---
 
@@ -346,16 +360,16 @@ Simplified_Validation_Chain:
 
 ---
 
-## 📋 Component Reuse Strategy {#component-reuse}
+## 📋 M1 Technical Guidelines {#m1-technical-guidelines}
 
-### Legacy Component Migration (from `recycle/`)
-**Adaptation Requirements**: See `CLAUDE.md#legacy-component-migration` for complete procedure
-- Remove all patient PII fields completely
-- Replace API calls with Supabase Client calls
-- Add RLS policy integration
-- Implement Supabase Realtime subscriptions
-- Test with anonymized data only
-- Validate privacy compliance
+### Supabase-First Frontend Architecture
+**Compliance Requirements**: Align with M1 Backend architecture decisions
+- Supabase Auth client integration for all M1 authentication flows
+- Supabase Client direct integration (no custom HTTP clients for M1 modules)
+- RLS policy compliance in all M1 user data access patterns
+- Real-time subscription integration for user status updates
+- Zero patient PII architecture maintained across all M1 UI components
+- HIPAA compliance validation for all M1 user interface elements
 
 ---
 
@@ -392,4 +406,4 @@ Simplified_Validation_Chain:
 
 ---
 
-**This PLANNING.md serves as the authoritative strategic specification for frontend development. All execution details and environment configuration are maintained in linked documents to prevent duplication and ensure single source of truth.**
+**This PLANNING.md serves as the M1 PRP Index for frontend development. Strategic governance is centralized in global documents (`~/INITIAL.md`, `~/SOP.md`, `~/GOVERNANCE.md`), execution details are in individual PRP files, and technical workflows are in `FRONTEND_PLAYBOOK.md`.**

@@ -25,9 +25,55 @@
 > - **核心治理原则**: [`FRONTEND_PLAYBOOK.md#🎯 Global Governance Framework`](FRONTEND_PLAYBOOK.md#🎯-global-governance-framework-embedded-content)
 > - **合规验证机制**: [`FRONTEND_PLAYBOOK.md#🛡️ Compliance and Validation Framework`](FRONTEND_PLAYBOOK.md#🛡️-compliance-and-validation-framework)
 > - **执行标准指南**: [`FRONTEND_PLAYBOOK.md#🔧 Frontend Execution Standards`](FRONTEND_PLAYBOOK.md#🔧-frontend-execution-standards)
+> - **EUDs客观估算**: [`FRONTEND_PLAYBOOK.md#📊 Engineering Unit Definitions (EUDs)`](FRONTEND_PLAYBOOK.md#📊-engineering-unit-definitions-euds---objective-effort-estimation-system)
 > - **API消费接口**: `docs/api/APIv1.md` - 前端工作区API消费文档（版本由Global Architect分发）
 > - **执行模式**: 4-Step QAD Cycle，Frontend Lead权限范围内执行
 > - **关键约束**: 禁止自Mock API，禁止越权集成，必须等待Backend API契约
+
+## 📊 EUDs客观估算系统 (Engineering Unit Definitions)
+
+### **核心概念**
+EUDs是**客观、可计算的工程量度系统**，用于替代主观的时间预估，实现基于工作量本质的精确规划和进度跟踪。
+
+### **四层架构体系**
+```yaml
+Dev-Step (原子级): 1个完整的4-Step QAD循环
+  └── Research → Implement → Test → Commit
+
+Component (组件级): 3-8个Dev-Step组成
+  └── Frontend UI组件、认证组件、路由组件等
+
+Module (模块级): 5-15个Component组成  
+  └── M1.2 Authentication Client Integration
+
+Milestone (里程碑级): 3-7个Module组成
+  └── M1 Core Authentication & User Management
+```
+
+### **替代时间预估的核心价值**
+- ❌ **传统时间预估问题**: 主观性、不可比较、难以追踪、积累偏差
+- ✅ **EUDs客观优势**: 可量化、标准化、可验证、可预测
+
+### **Frontend Lead EUDs应用**
+```yaml
+正确的EUDs分解示例:
+  Component 1: @supabase/ssr Integration (5 Dev-Steps)
+  Component 2: Next.js Middleware Setup (4 Dev-Steps)  
+  Component 3: Auth UI Components (6 Dev-Steps)
+  Component 4: Route Protection (3 Dev-Steps)
+  
+EUD-to-Time转换:
+  内部规划: 纯EUD单位 (18 Dev-Steps)
+  外部沟通: EUDs ÷ 团队速率 = 时间区间
+  动态调整: 基于实际完成速率调整预期
+```
+
+### **与4-Step QAD的集成**
+- 每个Dev-Step = 1个完整的4-Step QAD循环
+- Frontend Lead使用TodoWrite创建Dev-Step级别的todos
+- 基于完成的Dev-Steps计数追踪进度
+
+> **📖 完整EUDs定义参考**: [`FRONTEND_PLAYBOOK.md#📊 Engineering Unit Definitions`](FRONTEND_PLAYBOOK.md#📊-engineering-unit-definitions-euds---objective-effort-estimation-system)
 ## 🏗️ Layer 3 Executor Protocol (Frontend Lead)
 
 **Layer 3职责**: TodoWrite todos执行 → 4-Step QAD循环 → `atomic/component`分支管理 → 严格零Mock API合规。完整Layer框架详见[FRONTEND_PLAYBOOK.md](FRONTEND_PLAYBOOK.md#🏗️-frontend-layer-execution-framework-workspace-implementation)。
