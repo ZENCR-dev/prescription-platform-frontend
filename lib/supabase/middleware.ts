@@ -53,7 +53,7 @@ export const defaultRouteConfig: MiddlewareRouteConfig = {
   ],
   publicRoutes: [
     '/',
-    '/auth/signin',
+    '/auth/login',
     '/auth/signup',
     '/auth/forgot-password',
     '/auth/reset-password',
@@ -228,58 +228,146 @@ export async function getMiddlewareUserClaims(
 }
 
 /**
- * Refresh session in middleware if needed
+ * Session refresh result for middleware operations
+ * Enhanced return type for better error handling and redirect logic
+ */
+export interface SessionRefreshResult {
+  refreshed: boolean
+  shouldRedirect: boolean
+  redirectUrl?: string
+  error?: string
+}
+
+/**
+ * Refresh lock to prevent concurrent session refreshes
+ * Uses in-memory lock for edge runtime compatibility
+ */
+let refreshLock = false
+let lastRefreshTime = 0
+
+/**
+ * Enhanced session refresh in middleware with comprehensive error handling
  * Handles automatic session refresh for expired or expiring sessions
+ * 
+ * Dev-Step 2.3 Enhancement: Added refresh lock, better error handling, and graceful logout
  * 
  * @param request NextRequest object from middleware
  * @param response NextResponse object from middleware
- * @returns Promise<boolean> - true if session was refreshed, false otherwise
- * @usage Middleware automatic session management
- * @performance Edge runtime optimized with minimal overhead
+ * @returns Promise<SessionRefreshResult> - Detailed refresh result with redirect info
+ * @usage Middleware automatic session management with failure handling
+ * @performance Edge runtime optimized with refresh lock to prevent duplicates
  */
 export async function refreshMiddlewareSession(
   request: NextRequest,
   response: NextResponse
-): Promise<boolean> {
+): Promise<SessionRefreshResult> {
+  const result: SessionRefreshResult = {
+    refreshed: false,
+    shouldRedirect: false
+  }
+
+  // Prevent concurrent refreshes (edge runtime safe)
+  const now = Date.now()
+  if (refreshLock && (now - lastRefreshTime) < 10000) { // 10 second lock
+    console.log('Session refresh already in progress, skipping...')
+    return result
+  }
+
   const supabase = createMiddlewareSupabaseClient(request, response)
   
   try {
+    refreshLock = true
+    lastRefreshTime = now
+
     const { data: { session }, error } = await supabase.auth.getSession()
     
     if (error) {
       console.warn('Middleware session check error:', error.message)
-      return false
+      result.error = error.message
+      return result
     }
     
     if (!session) {
-      return false
+      // No session exists, no refresh needed
+      return result
     }
     
     // Check if session is close to expiring (within 5 minutes)
     const expiresAt = session.expires_at ? new Date(session.expires_at * 1000) : null
-    const now = new Date()
+    const currentTime = new Date()
     const fiveMinutes = 5 * 60 * 1000 // 5 minutes in milliseconds
+    const oneMinute = 60 * 1000 // 1 minute for critical refresh
     
-    if (expiresAt && (expiresAt.getTime() - now.getTime()) < fiveMinutes) {
-      console.log('Refreshing session in middleware due to upcoming expiration')
+    if (!expiresAt) {
+      console.warn('Session has no expiration time, considering invalid')
+      result.shouldRedirect = true
+      result.redirectUrl = `/auth/login?reason=invalid_session&return=${encodeURIComponent(request.nextUrl.pathname)}`
+      return result
+    }
+
+    const timeUntilExpiry = expiresAt.getTime() - currentTime.getTime()
+    
+    // Session already expired
+    if (timeUntilExpiry <= 0) {
+      console.log('Session already expired, redirecting to login')
+      result.shouldRedirect = true
+      result.redirectUrl = `/auth/login?reason=expired&return=${encodeURIComponent(request.nextUrl.pathname)}`
+      return result
+    }
+    
+    // Session needs refresh (within 5 minutes of expiry)
+    if (timeUntilExpiry < fiveMinutes) {
+      const isCritical = timeUntilExpiry < oneMinute
+      console.log(`${isCritical ? 'CRITICAL: ' : ''}Refreshing session (expires in ${Math.floor(timeUntilExpiry / 1000)}s)`)
       
       const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession()
       
       if (refreshError) {
-        console.error('Middleware session refresh failed:', refreshError.message)
-        return false
+        console.error('Session refresh failed:', refreshError.message)
+        result.error = refreshError.message
+        
+        // On refresh failure, redirect to login with return URL
+        result.shouldRedirect = true
+        result.redirectUrl = `/auth/login?reason=refresh_failed&return=${encodeURIComponent(request.nextUrl.pathname)}`
+        
+        // Clear invalid session cookies
+        try {
+          await supabase.auth.signOut()
+        } catch (signOutError) {
+          console.error('Failed to sign out after refresh failure:', signOutError)
+        }
+        
+        return result
       }
       
       if (refreshData.session) {
-        console.log('Middleware session refreshed successfully')
-        return true
+        const newExpiry = refreshData.session.expires_at 
+          ? new Date(refreshData.session.expires_at * 1000).toISOString() 
+          : 'unknown'
+        console.log(`Session refreshed successfully (new expiry: ${newExpiry})`)
+        result.refreshed = true
+        
+        // Set refresh success header for monitoring
+        if (process.env.NODE_ENV === 'development') {
+          response.headers.set('X-Session-Refreshed', 'true')
+          response.headers.set('X-Session-Expiry', newExpiry)
+        }
+      } else {
+        console.warn('Refresh returned no session, redirecting to login')
+        result.shouldRedirect = true
+        result.redirectUrl = `/auth/login?reason=no_session&return=${encodeURIComponent(request.nextUrl.pathname)}`
       }
     }
     
-    return false
+    return result
   } catch (error) {
-    console.error('Error refreshing middleware session:', error)
-    return false
+    console.error('Unexpected error during session refresh:', error)
+    result.error = error instanceof Error ? error.message : 'Unknown error'
+    result.shouldRedirect = true
+    result.redirectUrl = `/auth/login?reason=error&return=${encodeURIComponent(request.nextUrl.pathname)}`
+    return result
+  } finally {
+    refreshLock = false
   }
 }
 
@@ -361,7 +449,14 @@ export async function protectMiddlewareRoute(
   
   if (isPublicRoute) {
     // Allow session refresh on public routes but don't require auth
-    await refreshMiddlewareSession(request, response)
+    const refreshResult = await refreshMiddlewareSession(request, response)
+    
+    // Even on public routes, redirect if session refresh critically failed
+    if (refreshResult.shouldRedirect && refreshResult.redirectUrl) {
+      console.log(`Redirecting from public route due to session issue: ${refreshResult.error}`)
+      return NextResponse.redirect(new URL(refreshResult.redirectUrl, request.url))
+    }
+    
     return response
   }
   
@@ -371,11 +466,24 @@ export async function protectMiddlewareRoute(
   // Check if user is authenticated
   if (!userClaims) {
     console.log(`Middleware: Unauthenticated access attempt to ${pathname}`)
-    return NextResponse.redirect(new URL('/auth/signin', request.url))
+    // Preserve return URL for after login
+    const returnUrl = encodeURIComponent(pathname)
+    return NextResponse.redirect(new URL(`/auth/login?return=${returnUrl}`, request.url))
   }
   
-  // Refresh session if needed for authenticated users
-  await refreshMiddlewareSession(request, response)
+  // Enhanced session refresh for authenticated users (Dev-Step 2.3)
+  const refreshResult = await refreshMiddlewareSession(request, response)
+  
+  // Handle refresh failures with graceful redirect
+  if (refreshResult.shouldRedirect && refreshResult.redirectUrl) {
+    console.log(`Session refresh required redirect: ${refreshResult.error || 'Session invalid'}`)
+    return NextResponse.redirect(new URL(refreshResult.redirectUrl, request.url))
+  }
+  
+  // Log successful refresh in development
+  if (refreshResult.refreshed && process.env.NODE_ENV === 'development') {
+    console.log(`Session refreshed for user ${userClaims.role} on ${pathname}`)
+  }
   
   // Check admin routes
   const isAdminRoute = routeConfig.adminRoutes.some(route => 
