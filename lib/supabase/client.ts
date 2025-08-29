@@ -22,6 +22,22 @@ export interface UserClaims {
   business_name: string
   verification_status?: 'pending' | 'verified' | 'rejected'
   aal?: 'aal1' | 'aal2' // Authentication Assurance Level (MFA)
+  
+  // Enhanced JWT Claims from Global Architect directive (APIv1.md lines 700-727)
+  profile_status?: 'incomplete' | 'complete' | 'pending_review'
+  business_info?: {
+    status?: 'active' | 'suspended' | 'pending'
+    location?: {
+      country: string
+      province?: string
+      city?: string
+    }
+    features?: {
+      beta_access?: boolean
+      advanced_analytics?: boolean
+      priority_support?: boolean
+    }
+  } | null
 }
 
 export interface AuthUser {
