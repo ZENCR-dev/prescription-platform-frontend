@@ -1,16 +1,22 @@
 /**
  * Next.js Middleware - Main Application Middleware
  * 
- * Frontend Lead Implementation: M1.2 Auth Client Integration
- * Implements Supabase authentication and route protection for the entire application
+ * Frontend Lead Implementation: Dev-Step 2.2 Role-based Route Protection
+ * Implements Supabase authentication and comprehensive route protection with pharmacy role support
  * 
  * @usage Automatically applied by Next.js to all routes matching the config
- * @compliance APIv1.md v1.0.0-alpha, Enhanced JWT Claims support
- * @dependencies lib/supabase/middleware.ts
+ * @compliance APIv1.md v1.0.0-alpha, Enhanced JWT Claims support, Role-based access control
+ * @dependencies lib/supabase/middleware.ts, lib/supabase/middleware-config.ts
  */
 
-// Export the default Supabase middleware with custom route configuration
-export { default } from './lib/supabase/middleware'
+import { NextRequest, NextResponse } from 'next/server'
+import { createSupabaseMiddleware } from './lib/supabase/middleware'
+import { getRouteConfig } from './lib/supabase/middleware-config'
+
+// Create middleware with custom route configuration for all three roles
+const customMiddleware = createSupabaseMiddleware(getRouteConfig())
+
+export default customMiddleware
 
 // Export the middleware configuration
 export const config = {
@@ -28,52 +34,50 @@ export const config = {
 }
 
 /**
- * Middleware Configuration Notes:
+ * Dev-Step 2.2: Comprehensive Role-Based Route Protection
  * 
- * The default middleware exported from lib/supabase/middleware provides:
+ * Custom middleware with support for all three platform user roles:
  * 
- * ✅ Automatic session refresh
- * ✅ Route-based access control
- * ✅ Enhanced JWT claims support (role, profile_status, business_info)
- * ✅ Edge runtime optimization
- * ✅ Security headers injection
+ * ✅ Automatic session refresh and JWT validation
+ * ✅ Role-based access control (admin/tcm_practitioner/pharmacy)
+ * ✅ Enhanced JWT claims support (role, verification_status, profile_status, business_info)
+ * ✅ Verification status checking for sensitive operations
+ * ✅ MFA enforcement for critical functions
+ * ✅ Edge runtime optimization with security headers
+ * ✅ 403 Access Denied handling for unauthorized role access
  * 
- * Protected Routes (require authentication):
- * - /dashboard/*
- * - /profile/*
- * - /prescriptions/*
- * - /patients/*
- * - /inventory/*
- * - /reports/*
+ * Role-Based Route Architecture:
  * 
- * Public Routes (no authentication required):
- * - /
- * - /auth/*
- * - /about, /contact, /help
- * - /legal/privacy, /legal/terms
+ * **Admin Routes** (admin role required):
+ * - /admin/* - Complete administrative dashboard and system management
+ * - /admin/users, /admin/verification, /admin/reports, /admin/audit
  * 
- * Admin Routes (require admin role):
- * - /admin/*
+ * **TCM Practitioner Routes** (tcm_practitioner role required):
+ * - /prescriptions/* - Prescription management and creation
+ * - /patients/* - Patient management (verification required)
+ * - /professional/* - Professional dashboard and license management
  * 
- * Professional Routes (require tcm_practitioner role):
- * - /prescriptions/create
- * - /prescriptions/dispense
- * - /patients/add
- * - /patients/history
+ * **Pharmacy Routes** (pharmacy role required) - NEW in Dev-Step 2.2:
+ * - /pharmacy/* - Pharmacy operations dashboard
+ * - /pharmacy/orders, /pharmacy/inventory, /pharmacy/fulfillment
+ * - /pharmacy/compliance, /pharmacy/reports (verification required)
  * 
- * Verification Required Routes (require verified status):
- * - /prescriptions/create
- * - /prescriptions/dispense
- * - /patients/add
- * - /professional/license
+ * **Protected Routes** (authentication required, any role):
+ * - /dashboard, /profile, /settings, /support, /notifications
  * 
- * MFA Required Routes (require aal2):
- * - /admin/*
- * - /prescriptions/controlled
- * - /audit/reports
- * - /settings/security
+ * **Public Routes** (no authentication required):
+ * - /, /auth/*, /about, /contact, /help, /legal/*, /403
  * 
- * To customize route configuration, see:
- * - lib/supabase/middleware.ts (main implementation)
- * - lib/supabase/middleware-examples.ts (advanced examples)
+ * **Verification Required** (verified professional/business status):
+ * - Prescription creation and management operations
+ * - Patient management and sensitive medical functions
+ * - Pharmacy order fulfillment and compliance features
+ * 
+ * **MFA Required** (aal2 authentication level):
+ * - All admin functions and system management
+ * - Controlled substance operations
+ * - Security settings and audit access
+ * 
+ * Configuration Source: lib/supabase/middleware-config.ts
+ * Environment-aware: Production vs. Development configurations
  */

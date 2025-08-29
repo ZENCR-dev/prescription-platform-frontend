@@ -30,6 +30,8 @@ export interface MiddlewareRouteConfig {
   adminRoutes: string[]
   // Professional routes requiring tcm_practitioner role
   professionalRoutes: string[]
+  // Pharmacy routes requiring pharmacy role (Dev-Step 2.2 Addition)
+  pharmacyRoutes?: string[]
   // Verification required routes
   verificationRequiredRoutes: string[]
   // MFA required routes
@@ -382,7 +384,7 @@ export async function protectMiddlewareRoute(
   
   if (isAdminRoute && userClaims.role !== 'admin') {
     console.log(`Middleware: Non-admin access attempt to ${pathname} by role: ${userClaims.role}`)
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+    return NextResponse.redirect(new URL('/403', request.url))
   }
   
   // Check professional routes
@@ -392,7 +394,17 @@ export async function protectMiddlewareRoute(
   
   if (isProfessionalRoute && userClaims.role !== 'tcm_practitioner') {
     console.log(`Middleware: Non-professional access attempt to ${pathname} by role: ${userClaims.role}`)
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+    return NextResponse.redirect(new URL('/403', request.url))
+  }
+  
+  // Check pharmacy routes (Dev-Step 2.2 Addition)
+  const isPharmacyRoute = (routeConfig.pharmacyRoutes || []).some(route => 
+    pathname === route || pathname.startsWith(route + '/')
+  )
+  
+  if (isPharmacyRoute && userClaims.role !== 'pharmacy') {
+    console.log(`Middleware: Non-pharmacy access attempt to ${pathname} by role: ${userClaims.role}`)
+    return NextResponse.redirect(new URL('/403', request.url))
   }
   
   // Check verification required routes
