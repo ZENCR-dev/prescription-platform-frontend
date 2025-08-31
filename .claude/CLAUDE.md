@@ -74,6 +74,32 @@ EUD-to-Time转换:
 - 基于完成的Dev-Steps计数追踪进度
 
 > **📖 完整EUDs定义参考**: [`FRONTEND_PLAYBOOK.md#📊 Engineering Unit Definitions`](FRONTEND_PLAYBOOK.md#📊-engineering-unit-definitions-euds---objective-effort-estimation-system)
+
+## 🎨 Layer 2 UI/UX Component分解执行规则 (MANDATORY)
+
+### **UI/UX用户参与强制要求**
+当Frontend Lead接收到包含UI/UX开发的PRP任务时，在Layer 2将Component分解为Dev-Steps时**必须**包含用户参与环节。
+
+### **Component分解执行模板**
+```yaml
+UI/UX Component分解模式:
+  分析阶段: 1-2个Dev-Steps (需求分析、原型设计)
+  用户参与1: 1个Dev-Step (【强制】原型评审和反馈收集)
+  实现阶段: 2-3个Dev-Steps (根据反馈实现组件)
+  用户参与2: 1个Dev-Step (【强制】UI测试和体验优化)
+  完成阶段: 1个Dev-Step (最终优化和文档)
+```
+
+### **执行工具和命令**
+- **迭代设计**: 使用 `/sc:improve --loop --interactive` 支持用户反馈循环
+- **原型创建**: HTML原型必须在Dev-Step 2完成供用户评审
+- **反馈记录**: 所有用户反馈必须记录在PRP-MX.Y_LOG.md
+- **验证要求**: 用户参与Dev-Steps必须有明确的反馈记录
+
+### **违规处理**
+- ❌ **禁止跳过用户参与**: UI/UX Component不得省略用户参与Dev-Steps
+- ❌ **禁止假设用户需求**: 必须通过实际用户反馈验证设计
+- ❌ **禁止直接实现**: 必须先创建原型获得用户确认
 ## 🏗️ Layer 3 Executor Protocol (Frontend Lead)
 
 **Layer 3职责**: TodoWrite todos执行 → 4-Step QAD循环 → `atomic/component`分支管理 → 严格零Mock API合规。完整Layer框架详见[FRONTEND_PLAYBOOK.md](FRONTEND_PLAYBOOK.md#🏗️-frontend-layer-execution-framework-workspace-implementation)。

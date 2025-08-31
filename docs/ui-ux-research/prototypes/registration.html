@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 - 中医处方平台 | Register - TCM Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sage': {
+                            DEFAULT: '#7e998a',
+                            50: '#f6f7f6',
+                            100: '#e5ebe8',
+                            200: '#ccd7d1',
+                            300: '#b2c2b9',
+                            400: '#98aea2',
+                            500: '#7e998a',
+                            600: '#637e6f',
+                            700: '#4a5e53',
+                            800: '#313f37',
+                            900: '#191f1c'
+                        },
+                        'cambridge': {
+                            DEFAULT: '#7fbeab',
+                            50: '#f0f6f4',
+                            100: '#e5f2ee',
+                            200: '#cbe5dd',
+                            300: '#b2d8cd',
+                            400: '#98cbbc',
+                            500: '#7fbeab',
+                            600: '#55a88f',
+                            700: '#407e6b',
+                            800: '#2a5448',
+                            900: '#152a24'
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'Noto Sans SC', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .yin-yang {
+            animation: rotate 20s linear infinite;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 语言切换器 -->
+    <div class="fixed top-4 right-4 z-50">
+        <button onclick="toggleLanguage()" 
+                class="px-4 py-2 bg-white/80 backdrop-blur border border-gray-200 rounded-full text-sm font-medium text-gray-700 hover:bg-white transition-all shadow-sm flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+            </svg>
+            <span id="lang-toggle-text">English</span>
+        </button>
+    </div>
+
+    <!-- 主容器 -->
+    <div class="min-h-screen flex">
+        <!-- 左侧面板 - 桌面端显示 -->
+        <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-sage-50 to-cambridge-50 items-center justify-center relative overflow-hidden">
+            <!-- 背景装饰 -->
+            <div class="absolute inset-0">
+                <div class="absolute top-20 left-20 w-64 h-64 bg-cambridge-100 rounded-full opacity-30 blur-3xl"></div>
+                <div class="absolute bottom-20 right-20 w-96 h-96 bg-sage-100 rounded-full opacity-30 blur-3xl"></div>
+            </div>
+            
+            <!-- 内容 -->
+            <div class="relative z-10 max-w-md px-8">
+                <!-- 太极图标 -->
+                <div class="mb-8 flex justify-center">
+                    <svg class="w-24 h-24 text-sage-600 yin-yang" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="48" fill="currentColor" opacity="0.1"/>
+                        <path d="M50,2 A48,48 0 0,1 50,98 A24,24 0 0,0 50,50 A24,24 0 0,1 50,2" fill="currentColor" opacity="0.3"/>
+                        <circle cx="50" cy="26" r="8" fill="currentColor" opacity="0.3"/>
+                        <circle cx="50" cy="74" r="8" fill="white"/>
+                    </svg>
+                </div>
+                
+                <!-- 标题 -->
+                <h1 class="text-3xl font-light text-sage-800 text-center mb-4">
+                    <span class="zh">加入我们</span>
+                    <span class="en hidden">Join Us</span>
+                </h1>
+                
+                <p class="text-sage-600 text-center text-lg font-light">
+                    <span class="zh">成为传统医学现代化的一员</span>
+                    <span class="en hidden">Be Part of Traditional Medicine Modernization</span>
+                </p>
+                
+                <!-- 注册优势 -->
+                <div class="mt-12 space-y-4">
+                    <div class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-cambridge-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div>
+                            <p class="text-sage-700 font-medium">
+                                <span class="zh">专业认证</span>
+                                <span class="en hidden">Professional Certification</span>
+                            </p>
+                            <p class="text-sm text-sage-500">
+                                <span class="zh">执业医师资质验证</span>
+                                <span class="en hidden">Licensed practitioner verification</span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-cambridge-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                        <div>
+                            <p class="text-sage-700 font-medium">
+                                <span class="zh">数据安全</span>
+                                <span class="en hidden">Data Security</span>
+                            </p>
+                            <p class="text-sm text-sage-500">
+                                <span class="zh">HIPAA合规，端到端加密</span>
+                                <span class="en hidden">HIPAA compliant, end-to-end encryption</span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-cambridge-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <div>
+                            <p class="text-sage-700 font-medium">
+                                <span class="zh">即时启用</span>
+                                <span class="en hidden">Instant Access</span>
+                            </p>
+                            <p class="text-sm text-sage-500">
+                                <span class="zh">注册后立即使用所有功能</span>
+                                <span class="en hidden">All features available immediately</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧注册表单 -->
+        <div class="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+            <div class="w-full max-w-md">
+                <!-- 移动端Logo -->
+                <div class="lg:hidden mb-8 text-center">
+                    <svg class="w-16 h-16 text-sage-600 mx-auto mb-4" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="48" fill="currentColor" opacity="0.1"/>
+                        <path d="M50,2 A48,48 0 0,1 50,98 A24,24 0 0,0 50,50 A24,24 0 0,1 50,2" fill="currentColor" opacity="0.3"/>
+                        <circle cx="50" cy="26" r="8" fill="currentColor" opacity="0.3"/>
+                        <circle cx="50" cy="74" r="8" fill="white"/>
+                    </svg>
+                    <h1 class="text-2xl font-light text-sage-800">
+                        <span class="zh">中医处方平台</span>
+                        <span class="en hidden">TCM Platform</span>
+                    </h1>
+                </div>
+
+                <!-- 注册表单 -->
+                <div class="bg-white p-8 shadow-sm border border-gray-100">
+                    <!-- 表单标题 -->
+                    <h2 class="text-2xl font-light text-gray-800 mb-2">
+                        <span class="zh">创建账户</span>
+                        <span class="en hidden">Create Account</span>
+                    </h2>
+                    <p class="text-gray-500 text-sm mb-8">
+                        <span class="zh">请填写您的专业信息</span>
+                        <span class="en hidden">Please provide your professional information</span>
+                    </p>
+
+                    <!-- 角色选择标签 -->
+                    <div class="mb-6">
+                        <label class="block text-sm text-gray-600 mb-3">
+                            <span class="zh">账户类型</span>
+                            <span class="en hidden">Account Type</span>
+                        </label>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="selectRole('practitioner')" 
+                                    id="role-practitioner"
+                                    class="flex-1 py-2 px-3 text-sm border-2 border-cambridge-500 text-cambridge-700 bg-cambridge-50 transition-all">
+                                <span class="zh">中医师</span>
+                                <span class="en hidden">TCM Practitioner</span>
+                            </button>
+                            <button type="button" onclick="selectRole('pharmacy')"
+                                    id="role-pharmacy" 
+                                    class="flex-1 py-2 px-3 text-sm border-2 border-gray-200 text-gray-600 hover:border-gray-300 transition-all">
+                                <span class="zh">药房</span>
+                                <span class="en hidden">Pharmacy</span>
+                            </button>
+                            <button type="button" onclick="selectRole('admin')"
+                                    id="role-admin"
+                                    class="flex-1 py-2 px-3 text-sm border-2 border-gray-200 text-gray-600 hover:border-gray-300 transition-all">
+                                <span class="zh">管理员</span>
+                                <span class="en hidden">Admin</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <form class="space-y-5">
+                        <!-- 基本信息 -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-2">
+                                    <span class="zh">姓名</span>
+                                    <span class="en hidden">Name</span>
+                                </label>
+                                <input type="text" required
+                                       class="w-full px-0 py-2 border-0 border-b-2 border-gray-200 focus:border-cambridge-500 focus:outline-none transition-colors text-gray-800 placeholder-gray-400"
+                                       placeholder="张医生">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-2">
+                                    <span class="zh">手机号</span>
+                                    <span class="en hidden">Phone</span>
+                                </label>
+                                <input type="tel" required
+                                       class="w-full px-0 py-2 border-0 border-b-2 border-gray-200 focus:border-cambridge-500 focus:outline-none transition-colors text-gray-800 placeholder-gray-400"
+                                       placeholder="138xxxx0000">
+                            </div>
+                        </div>
+
+                        <!-- 邮箱 -->
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-2">
+                                <span class="zh">邮箱地址</span>
+                                <span class="en hidden">Email Address</span>
+                            </label>
+                            <input type="email" required
+                                   class="w-full px-0 py-2 border-0 border-b-2 border-gray-200 focus:border-cambridge-500 focus:outline-none transition-colors text-gray-800 placeholder-gray-400"
+                                   placeholder="your@email.com">
+                        </div>
+
+                        <!-- 动态字段 - 根据角色显示 -->
+                        <div id="dynamic-fields">
+                            <!-- 中医师执业证号 -->
+                            <div id="practitioner-fields">
+                                <label class="block text-sm text-gray-600 mb-2">
+                                    <span class="zh">执业证号</span>
+                                    <span class="en hidden">License Number</span>
+                                </label>
+                                <input type="text" 
+                                       class="w-full px-0 py-2 border-0 border-b-2 border-gray-200 focus:border-cambridge-500 focus:outline-none transition-colors text-gray-800 placeholder-gray-400"
+                                       placeholder="110000xxxxxxxxxxxx">
+                            </div>
+                            
+                            <!-- 药房名称 - 默认隐藏 -->
+                            <div id="pharmacy-fields" class="hidden">
+                                <label class="block text-sm text-gray-600 mb-2">
+                                    <span class="zh">药房名称</span>
+                                    <span class="en hidden">Pharmacy Name</span>
+                                </label>
+                                <input type="text"
+                                       class="w-full px-0 py-2 border-0 border-b-2 border-gray-200 focus:border-cambridge-500 focus:outline-none transition-colors text-gray-800 placeholder-gray-400"
+                                       placeholder="同仁堂">
+                            </div>
+                            
+                            <!-- 邀请码 - 默认隐藏 -->
+                            <div id="admin-fields" class="hidden">
+                                <label class="block text-sm text-gray-600 mb-2">
+                                    <span class="zh">邀请码</span>
+                                    <span class="en hidden">Invite Code</span>
+                                </label>
+                                <input type="text"
+                                       class="w-full px-0 py-2 border-0 border-b-2 border-gray-200 focus:border-cambridge-500 focus:outline-none transition-colors text-gray-800 placeholder-gray-400"
+                                       placeholder="ADMIN-XXXX-XXXX">
+                            </div>
+                        </div>
+
+                        <!-- 密码 -->
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-2">
+                                <span class="zh">设置密码</span>
+                                <span class="en hidden">Set Password</span>
+                            </label>
+                            <input type="password" required
+                                   class="w-full px-0 py-2 border-0 border-b-2 border-gray-200 focus:border-cambridge-500 focus:outline-none transition-colors text-gray-800 placeholder-gray-400"
+                                   placeholder="至少8位字符">
+                        </div>
+
+                        <!-- 确认密码 -->
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-2">
+                                <span class="zh">确认密码</span>
+                                <span class="en hidden">Confirm Password</span>
+                            </label>
+                            <input type="password" required
+                                   class="w-full px-0 py-2 border-0 border-b-2 border-gray-200 focus:border-cambridge-500 focus:outline-none transition-colors text-gray-800 placeholder-gray-400"
+                                   placeholder="再次输入密码">
+                        </div>
+
+                        <!-- 服务条款 -->
+                        <div class="flex items-start">
+                            <input type="checkbox" required
+                                   class="mt-1 mr-2 text-cambridge-600 focus:ring-cambridge-500">
+                            <label class="text-sm text-gray-600">
+                                <span class="zh">我已阅读并同意</span>
+                                <span class="en hidden">I have read and agree to the</span>
+                                <a href="#" class="text-sage-600 hover:text-sage-700">
+                                    <span class="zh">服务条款</span>
+                                    <span class="en hidden">Terms of Service</span>
+                                </a>
+                                <span class="zh">和</span>
+                                <span class="en hidden">and</span>
+                                <a href="#" class="text-sage-600 hover:text-sage-700">
+                                    <span class="zh">隐私政策</span>
+                                    <span class="en hidden">Privacy Policy</span>
+                                </a>
+                            </label>
+                        </div>
+
+                        <!-- 注册按钮 -->
+                        <button type="submit"
+                                class="w-full py-3 bg-sage-600 text-white font-light tracking-wide hover:bg-sage-700 transition-all transform hover:scale-[1.02] active:scale-[0.98]">
+                            <span class="zh">创建账户</span>
+                            <span class="en hidden">Create Account</span>
+                        </button>
+                    </form>
+
+                    <!-- 分隔线 -->
+                    <div class="my-6 relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-200"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-4 bg-white text-gray-400">
+                                <span class="zh">或使用以下方式注册</span>
+                                <span class="en hidden">Or sign up with</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 第三方注册 -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <button class="py-2.5 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24">
+                                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                            </svg>
+                            <span class="text-sm text-gray-600">Google</span>
+                        </button>
+
+                        <button class="py-2.5 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/>
+                            </svg>
+                            <span class="text-sm text-gray-600">Apple</span>
+                        </button>
+                    </div>
+
+                    <!-- 登录链接 -->
+                    <p class="mt-6 text-center text-sm text-gray-500">
+                        <span class="zh">已有账户？</span>
+                        <span class="en hidden">Already have an account?</span>
+                        <a href="login-v3-minimal-tcm.html" class="text-sage-600 hover:text-sage-700 font-medium ml-1">
+                            <span class="zh">立即登录</span>
+                            <span class="en hidden">Sign in</span>
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 语言状态管理
+        let currentLang = 'zh';
+        let selectedRole = 'practitioner';
+
+        // 切换语言函数
+        function toggleLanguage() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            
+            document.querySelectorAll('.zh').forEach(el => {
+                el.style.display = currentLang === 'zh' ? 'inline' : 'none';
+            });
+            
+            document.querySelectorAll('.en').forEach(el => {
+                el.style.display = currentLang === 'en' ? 'inline' : 'none';
+            });
+            
+            const toggleText = document.getElementById('lang-toggle-text');
+            toggleText.textContent = currentLang === 'zh' ? 'English' : '中文';
+            
+            document.body.classList.add('fade-in');
+            setTimeout(() => {
+                document.body.classList.remove('fade-in');
+            }, 300);
+            
+            localStorage.setItem('preferredLanguage', currentLang);
+        }
+
+        // 角色选择函数
+        function selectRole(role) {
+            selectedRole = role;
+            
+            // 重置所有按钮样式
+            document.querySelectorAll('[id^="role-"]').forEach(btn => {
+                btn.className = 'flex-1 py-2 px-3 text-sm border-2 border-gray-200 text-gray-600 hover:border-gray-300 transition-all';
+            });
+            
+            // 设置选中按钮样式
+            document.getElementById(`role-${role}`).className = 
+                'flex-1 py-2 px-3 text-sm border-2 border-cambridge-500 text-cambridge-700 bg-cambridge-50 transition-all';
+            
+            // 显示/隐藏对应字段
+            document.getElementById('practitioner-fields').classList.toggle('hidden', role !== 'practitioner');
+            document.getElementById('pharmacy-fields').classList.toggle('hidden', role !== 'pharmacy');
+            document.getElementById('admin-fields').classList.toggle('hidden', role !== 'admin');
+        }
+
+        // 页面加载时检查语言偏好
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLang = localStorage.getItem('preferredLanguage');
+            if (savedLang && savedLang !== currentLang) {
+                toggleLanguage();
+            }
+        });
+
+        // 表单提交处理
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const message = currentLang === 'zh' 
+                ? `${selectedRole === 'practitioner' ? '中医师' : selectedRole === 'pharmacy' ? '药房' : '管理员'}注册功能将在后端API准备好后实现` 
+                : `${selectedRole} registration will be implemented when backend API is ready`;
+            alert(message);
+        });
+    </script>
+</body>
+</html>

@@ -80,21 +80,33 @@ Frontend战略框架: PLANNING.md (Layer 1战略) → PRPs/PRP-M1.X-*.md (Layer 
 
 ### M1 Frontend Responsibilities & PRP Index
 
-| M1 Module | Frontend Role | PRP Document | Implementation Focus |
-|-----------|---------------|--------------|----------------------|
-| **M1.4 - Profile Management** | **Primary Lead** | ⚠️ *Pending Governance Fix* | User profile interfaces, account settings, responsive design |
-| **M1.2 - Auth Client Integration** | **Primary Lead** | [`PRPs/PRP-M1.2-Auth-Client-Integration-Frontend.md`](PRPs/PRP-M1.2-Auth-Client-Integration-Frontend.md) | @supabase/ssr integration, middleware.ts, auth UI components, session management |
-| **M1.5 - User Verification** | UI Coordination | ⚠️ *Pending Governance Fix* | Document upload UI, verification status display |
-| **M1.6 - Authentication Security** | UI Coordination | ⚠️ *Pending Governance Fix* | MFA interfaces, security settings, auth flows |
+| M1 Module | Frontend Role | PRP Document | Implementation Focus | Status |
+|-----------|---------------|--------------|----------------------|---------|
+| **M1.2 - Auth Client Integration** | **Primary Lead** | ✅ **READY - Backend M1.1 Complete** | @supabase/ssr integration, middleware.ts, auth UI components, session management | 🚀 **Ready to Begin** |
+| **M1.4 - Profile Management** | **Primary Lead** | ⚠️ *Pending Backend M1.3 Completion* | User profile interfaces, account settings, responsive design | ⏳ **Blocked - Waiting for Backend** |
+| **M1.5 - User Verification** | UI Coordination | ⚠️ *Pending Backend M1.5 Completion* | Document upload UI, verification status display | ⏳ **Blocked - Waiting for Backend** |
+| **M1.6 - Authentication Security** | UI Coordination | ⚠️ *Pending Backend M1.6 Completion* | MFA interfaces, security settings, auth flows | ⏳ **Blocked - Waiting for Backend** |
 
-**⚠️ Governance Cleanup Status**: 
-- **M1.4**: Corrected to Frontend Profile Management (was previously M1.3)
-- **M1.2**: Now Backend responsibility, Frontend provides UI coordination only
-- All existing PRPs archived due to non-compliance with M1 scope (authentication focus required). New compliant PRPs will be generated after PRP_GENERATION_PLAN corrections.
+### **🚀 M1.2 Frontend Task Ready Status**
+
+**✅ Backend Dependencies Satisfied:**
+- ✅ **Backend M1.1 Complete**: Supabase Auth Infrastructure successfully deployed
+- ✅ **Production Environment Ready**: https://dosbevgbkxrtixemfjfl.supabase.co operational
+- ✅ **API Documentation Distributed**: Global Architect certified APIv1.md received (2025-08-30)
+- ✅ **Performance Validated**: Backend queries <1ms (exceeds targets by 150x)
+- ✅ **Security Certified**: HIPAA compliance verified, Zero-PII architecture confirmed
+
+**📋 M1.2 Implementation Requirements:**
+- **API Integration**: Use distributed APIv1.md for all authentication endpoints
+- **Environment Configuration**: Production Supabase instance (dosbevgbkxrtixemfjfl.supabase.co)
+- **Edge Functions Integration**: custom-access-token and auth-email-template-selector support
+- **JWT Claims Support**: Enhanced JWT payload with role and profile_status claims
+- **RLS Policy Compliance**: Align with backend Row Level Security implementation
 
 **Role Definitions**:
 - **Primary Lead**: Frontend owns the complete user experience and coordinates with Backend APIs
 - **UI Coordination**: Frontend provides UI components while Backend leads the core implementation
+- ✅ **Ready Status**: Can proceed immediately without Backend-First constraints
 
 ### Layer 1 决策对下游影响
 
@@ -118,6 +130,36 @@ Frontend战略框架: PLANNING.md (Layer 1战略) → PRPs/PRP-M1.X-*.md (Layer 
 **简化协调检查点**:
 - **Phase完成验证**: 功能完成 + 基础测试通过 + 规范符合
 - **人工修复机制**: 检查失败时人工识别问题，创建简单修复任务
+
+### 🎨 Layer 2 UI/UX Component Decomposition Requirements (MANDATORY)
+
+**UI/UX用户参与原则**:
+Frontend Lead在接收到包含UI/UX开发的PRP任务时，必须在Layer 2 Component分解为Dev-Steps时包含用户参与环节。
+
+**强制用户参与场景**:
+- **Authentication UI Components**: 登录/注册界面设计需要用户反馈
+- **Dashboard Components**: 仪表板布局和信息架构需要用户验证
+- **Data Display Components**: 数据展示方式需要用户偏好确认
+- **Form Components**: 表单设计和验证流程需要用户体验测试
+- **Navigation Components**: 导航结构需要用户路径验证
+
+**Component分解模式示例** (以Authentication UI为例):
+```yaml
+Component 3: Authentication UI Components (7 Dev-Steps) # 原5个增加到7个
+  Dev-Step 3.1: UI/UX需求分析和用户访谈准备
+  Dev-Step 3.2: 创建HTML原型和界面草图
+  Dev-Step 3.3: 【用户参与】原型评审和反馈收集
+  Dev-Step 3.4: 根据反馈实现登录表单组件
+  Dev-Step 3.5: 实现注册表单和角色选择
+  Dev-Step 3.6: 【用户参与】UI测试和体验优化
+  Dev-Step 3.7: 最终优化和文档完成
+```
+
+**执行要求**:
+- 使用 `/sc:improve --loop --interactive` 支持迭代设计循环
+- HTML原型必须在实现前创建供用户评审
+- 用户反馈必须记录在PRP-MX.Y_LOG.md中
+- 每个UI/UX Component必须包含至少2个用户参与Dev-Steps
 
 ### AI Agent估算标准定义 (v6.0简化版) {#ai-agent估算标准定义}
 
