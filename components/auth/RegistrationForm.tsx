@@ -3,26 +3,22 @@
 /**
  * Registration Form Component - M1.2 Authentication UI
  * 
- * @implements Frontend Lead Dev-Step 3.5
+ * @implements Frontend Lead Dev-Step 3.5 & 3.8
  * @design Based on registration.html prototype with TCM elements
- * @features Bilingual support, Role-based fields, Supabase Auth signup
+ * @features Bilingual support, Role-based fields, Adapter Pattern integration
+ * @migration Uses Registration Service with adapter pattern for Edge Function readiness
  */
 
 import { useState, FormEvent } from 'react'
 import { useLanguage } from './hooks/useLanguage'
-import { supabase } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { 
+  getRegistrationService, 
+  RegistrationData,
+  RegistrationErrorCode 
+} from '@/services/auth'
 
 type UserRole = 'tcm_practitioner' | 'pharmacy' | 'admin'
-
-interface UserMetadata {
-  role: UserRole
-  full_name: string
-  phone?: string
-  license_number?: string
-  business_name?: string
-  invite_code?: string
-}
 
 export default function RegistrationForm() {
   const router = useRouter()
@@ -42,53 +38,16 @@ export default function RegistrationForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   
-  // Handle form submission
+  // Handle form submission using Registration Service
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError('')
     setIsLoading(true)
     
     try {
-      // Validate common fields
-      if (!fullName || fullName.length < 2) {
-        setError(texts.invalidEmail) // Using existing error message
-        setIsLoading(false)
-        return
-      }
-      
-      if (!email || !email.includes('@')) {
-        setError(texts.invalidEmail)
-        setIsLoading(false)
-        return
-      }
-      
-      if (!password || password.length < 8) {
-        setError(texts.invalidPassword)
-        setIsLoading(false)
-        return
-      }
-      
+      // Basic validation for password confirmation
       if (password !== confirmPassword) {
         setError(texts.passwordMismatch)
-        setIsLoading(false)
-        return
-      }
-      
-      // Validate role-specific fields
-      if (selectedRole === 'tcm_practitioner' && !licenseNumber) {
-        setError(texts.missingLicenseNumber)
-        setIsLoading(false)
-        return
-      }
-      
-      if (selectedRole === 'pharmacy' && !pharmacyName) {
-        setError(texts.missingPharmacyName)
-        setIsLoading(false)
-        return
-      }
-      
-      if (selectedRole === 'admin' && !inviteCode) {
-        setError(texts.missingInviteCode)
         setIsLoading(false)
         return
       }
@@ -99,44 +58,89 @@ export default function RegistrationForm() {
         return
       }
       
-      // Prepare user metadata based on role
-      const userMetadata: UserMetadata = {
-        role: selectedRole,
-        full_name: fullName,
-      }
-      
-      if (phone) {
-        userMetadata.phone = phone
-      }
-      
-      if (selectedRole === 'tcm_practitioner') {
-        userMetadata.license_number = licenseNumber
-      } else if (selectedRole === 'pharmacy') {
-        userMetadata.business_name = pharmacyName
-      } else if (selectedRole === 'admin') {
-        userMetadata.invite_code = inviteCode
-      }
-      
-      // Sign up with Supabase
-      const { data, error: authError } = await supabase.auth.signUp({
+      // Prepare registration data for adapter pattern
+      const registrationData: RegistrationData = {
         email,
         password,
-        options: {
-          data: userMetadata,
-        },
-      })
+        fullName,
+        phone: phone || undefined,
+        role: selectedRole,
+        licenseNumber: selectedRole === 'tcm_practitioner' ? licenseNumber : undefined,
+        pharmacyName: selectedRole === 'pharmacy' ? pharmacyName : undefined,
+        inviteCode: selectedRole === 'admin' ? inviteCode : undefined,
+      }
       
-      if (authError) {
-        console.error('Registration error:', authError)
-        setError(texts.registrationFailed)
+      // Get registration service instance
+      const registrationService = getRegistrationService()
+      
+      // Log current adapter type for debugging
+      console.log(`Using adapter: ${registrationService.getAdapterType()}`)
+      
+      // Validate using service (includes all field validation)
+      const validation = await registrationService.validate(registrationData)
+      
+      if (!validation.isValid) {
+        // Map validation errors to user-friendly messages
+        const firstError = validation.errors[0]
+        let errorMessage = texts.registrationFailed
+        
+        switch (firstError.code) {
+          case RegistrationErrorCode.INVALID_EMAIL:
+            errorMessage = texts.invalidEmail
+            break
+          case RegistrationErrorCode.WEAK_PASSWORD:
+            errorMessage = texts.invalidPassword
+            break
+          case RegistrationErrorCode.MISSING_REQUIRED_FIELD:
+            if (firstError.field === 'licenseNumber') {
+              errorMessage = texts.missingLicenseNumber
+            } else if (firstError.field === 'pharmacyName') {
+              errorMessage = texts.missingPharmacyName
+            } else if (firstError.field === 'inviteCode') {
+              errorMessage = texts.missingInviteCode
+            } else {
+              errorMessage = firstError.message
+            }
+            break
+          default:
+            errorMessage = firstError.message
+        }
+        
+        setError(errorMessage)
         setIsLoading(false)
         return
       }
       
-      // If registration successful, navigate to appropriate dashboard
-      if (data.user) {
-        // Note: User might need to verify email first
-        router.push('/auth/verify-email')
+      // Submit registration through service
+      const result = await registrationService.register(registrationData)
+      
+      if (result.success) {
+        // Registration successful
+        console.log('Registration successful:', result.user?.id)
+        
+        // Navigate based on email verification requirement
+        if (result.requiresEmailVerification) {
+          router.push('/auth/verify-email')
+        } else {
+          // Direct to dashboard if no verification needed
+          router.push('/dashboard')
+        }
+      } else {
+        // Handle registration error
+        console.error('Registration failed:', result.error)
+        
+        // Map error codes to user-friendly messages
+        let errorMessage = texts.registrationFailed
+        
+        if (result.error?.code === RegistrationErrorCode.EMAIL_ALREADY_EXISTS) {
+          errorMessage = 'This email is already registered'
+        } else if (result.error?.code === RegistrationErrorCode.NETWORK_ERROR) {
+          errorMessage = texts.networkError
+        } else if (result.error?.message) {
+          errorMessage = result.error.message
+        }
+        
+        setError(errorMessage)
       }
     } catch (err) {
       console.error('Unexpected error:', err)
@@ -147,11 +151,19 @@ export default function RegistrationForm() {
   }
   
   // Handle OAuth registration
+  // NOTE: OAuth still uses direct Supabase as it doesn't require validation
+  // Will be migrated to service pattern when OAuth Edge Functions are available
   const handleOAuthSignup = async (provider: 'google' | 'apple') => {
     setError('')
     setIsLoading(true)
     
     try {
+      // TODO: Migrate to registration service when OAuth adapter is ready
+      // For now, OAuth doesn't need business validation so direct call is acceptable
+      
+      // Import supabase client only for OAuth (temporary)
+      const { supabase } = await import('@/lib/supabase/client')
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
