@@ -85,6 +85,17 @@ interface Translations {
   hipaaCompliant: string
   privacyProtected: string
   
+  // TCM Theme Elements
+  tcmTheme: string
+  traditionalTheme: string
+  modernTheme: string
+  herbMedicine: string
+  meridianSystem: string
+  yinYangBalance: string
+  fiveElements: string
+  tcmPhilosophy: string
+  healingArt: string
+  
   // Error Messages
   invalidEmail: string
   invalidPassword: string
@@ -175,6 +186,17 @@ const translations: Record<Language, Translations> = {
     hipaaCompliant: 'HIPAA 合规',
     privacyProtected: '隐私保护',
     
+    // TCM Theme Elements
+    tcmTheme: '中医药主题',
+    traditionalTheme: '传统风格',
+    modernTheme: '现代风格',
+    herbMedicine: '本草医药',
+    meridianSystem: '经络系统',
+    yinYangBalance: '阴阳平衡',
+    fiveElements: '五行学说',
+    tcmPhilosophy: '中医哲学',
+    healingArt: '医道传承',
+    
     // Error Messages
     invalidEmail: '请输入有效的邮箱地址',
     invalidPassword: '密码长度至少为8位',
@@ -262,6 +284,17 @@ const translations: Record<Language, Translations> = {
     secure: 'Secure',
     hipaaCompliant: 'HIPAA Compliant',
     privacyProtected: 'Privacy Protected',
+    
+    // TCM Theme Elements
+    tcmTheme: 'TCM Theme',
+    traditionalTheme: 'Traditional Style',
+    modernTheme: 'Modern Style',
+    herbMedicine: 'Herbal Medicine',
+    meridianSystem: 'Meridian System',
+    yinYangBalance: 'Yin-Yang Balance',
+    fiveElements: 'Five Elements',
+    tcmPhilosophy: 'TCM Philosophy',
+    healingArt: 'Healing Art',
     
     // Error Messages
     invalidEmail: 'Please enter a valid email address',

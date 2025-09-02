@@ -6,6 +6,68 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+
+  /* TCM Design System - Color Palette */
+  /* Sage (青绿) Color Series */
+  --tcm-sage-50: #f0f4f2;
+  --tcm-sage-100: #dce5e0;
+  --tcm-sage-200: #b8cbc1;
+  --tcm-sage-300: #95b1a3;
+  --tcm-sage-400: #7e998a;
+  --tcm-sage-500: #688172;
+  --tcm-sage-600: #536759;
+  --tcm-sage-700: #3e4d41;
+  --tcm-sage-800: #293329;
+  --tcm-sage-900: #141a14;
+
+  /* Bamboo (竹青) Color Series */
+  --tcm-bamboo-100: #e8f5f0;
+  --tcm-bamboo-200: #c4e6d8;
+  --tcm-bamboo-300: #a0d7c0;
+  --tcm-bamboo-400: #7ec8a8;
+  --tcm-bamboo-500: #5cb990;
+  --tcm-bamboo-600: #4a9774;
+
+  /* Herb (药黄) Color Series */
+  --tcm-herb-100: #faf6e9;
+  --tcm-herb-200: #f0e6c4;
+  --tcm-herb-300: #e5d6a0;
+  --tcm-herb-400: #dbc67c;
+  --tcm-herb-500: #d0b658;
+  --tcm-herb-600: #b59d3a;
+
+  /* Semantic Colors */
+  --tcm-success: var(--tcm-bamboo-400);
+  --tcm-warning: var(--tcm-herb-400);
+  --tcm-error: #d97373;
+  --tcm-info: var(--tcm-sage-400);
+
+  /* Spacing System */
+  --tcm-space-xs: 0.25rem;
+  --tcm-space-sm: 0.5rem;
+  --tcm-space-md: 1rem;
+  --tcm-space-lg: 1.5rem;
+  --tcm-space-xl: 2rem;
+  --tcm-space-2xl: 3rem;
+  --tcm-space-3xl: 4rem;
+
+  /* Border Radius */
+  --tcm-radius-sm: 0.25rem;
+  --tcm-radius-md: 0.5rem;
+  --tcm-radius-lg: 0.75rem;
+  --tcm-radius-xl: 1rem;
+  --tcm-radius-full: 9999px;
+
+  /* Shadows */
+  --tcm-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --tcm-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --tcm-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --tcm-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+
+  /* Overlays */
+  --tcm-overlay-light: rgba(255, 255, 255, 0.1);
+  --tcm-overlay-medium: rgba(255, 255, 255, 0.2);
+  --tcm-overlay-dark: rgba(0, 0, 0, 0.1);
 }
 
 @media (prefers-color-scheme: dark) {
