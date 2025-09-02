@@ -1,107 +1,65 @@
-'use client'
+/**
+ * Dashboard Main Page - Role Redirect
+ * 
+ * @implements Dev-Step 3.12: Post-Registration Journeys
+ * @description Detects user role and redirects to appropriate dashboard
+ */
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
 
-// This page should be protected by middleware
-// Access requires valid authentication session
+export default async function DashboardPage() {
+  const supabase = await createServerSupabaseClient()
+  const { data: { user } } = await supabase.auth.getUser()
 
-export default function DashboardPage() {
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) {
-    return <div>Loading...</div>
+  if (!user) {
+    redirect('/auth/login')
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-            <div className="flex space-x-4">
-              <Link 
-                href="/profile" 
-                className="text-blue-600 hover:text-blue-500"
-              >
-                Profile
-              </Link>
-              <button className="text-red-600 hover:text-red-500">
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+  // Get role from user metadata
+  const role = user.user_metadata?.role as string
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">Welcome to your dashboard</h2>
-          
-          <div className="bg-green-50 border border-green-200 rounded-md p-4 mb-6">
-            <div className="text-sm text-green-700">
-              🎉 <strong>Middleware Protection Active</strong><br />
-              You are seeing this page because middleware authentication was successful.
-              If you weren&apos;t authenticated, you would have been redirected to the login page.
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-blue-900">Session Status</h3>
-              <p className="text-blue-700 mt-2">
-                Authentication verified by Next.js middleware
-              </p>
-            </div>
-            
-            <div className="bg-yellow-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-yellow-900">JWT Claims</h3>
-              <p className="text-yellow-700 mt-2">
-                Role-based access control active
-              </p>
-            </div>
-            
-            <div className="bg-green-50 p-4 rounded-lg">
-              <h3 className="font-semibent text-green-900">Route Protection</h3>
-              <p className="text-green-700 mt-2">
-                This route requires authentication
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-8">
-            <h3 className="text-lg font-medium mb-4">Quick Actions</h3>
-            <div className="space-y-2">
-              <Link 
-                href="/profile" 
-                className="block w-full text-left p-3 bg-gray-50 hover:bg-gray-100 rounded-md"
-              >
-                → View Profile Settings
-              </Link>
-              <button className="block w-full text-left p-3 bg-gray-50 hover:bg-gray-100 rounded-md">
-                → Manage Prescriptions (Component 3)
-              </button>
-              <button className="block w-full text-left p-3 bg-gray-50 hover:bg-gray-100 rounded-md">
-                → View Reports (Component 3)
-              </button>
-            </div>
-          </div>
-
-          <div className="mt-8 p-4 bg-blue-50 rounded-md">
-            <h4 className="font-medium text-blue-900">Development Status</h4>
-            <p className="text-blue-700 text-sm mt-1">
-              Component 1: ✅ Supabase Client Infrastructure (Complete)<br />
-              Component 2: 🚧 Next.js Middleware Implementation (In Progress)<br />
-              Component 3: ⏳ Authentication UI Components (Pending)<br />
-              Component 4: ⏳ Session Management & Protection (Pending)
+  // Redirect based on role
+  switch (role) {
+    case 'tcm_practitioner':
+      redirect('/dashboard/tcm_practitioner')
+    case 'pharmacy':
+      redirect('/dashboard/pharmacy')
+    case 'admin':
+      redirect('/dashboard/admin')
+    default:
+      // If no role, show role selection page
+      return (
+        <div className="max-w-md mx-auto mt-8">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              选择您的角色 / Select Your Role
+            </h2>
+            <p className="text-sm text-gray-600 mb-6">
+              请选择您的账户类型以继续
             </p>
+            <div className="space-y-3">
+              <a
+                href="/dashboard/tcm_practitioner"
+                className="block w-full px-4 py-3 bg-tcm-sage-500 text-white rounded-md hover:bg-tcm-sage-600 text-center transition-colors"
+              >
+                中医师 / TCM Practitioner
+              </a>
+              <a
+                href="/dashboard/pharmacy"
+                className="block w-full px-4 py-3 bg-tcm-bamboo-500 text-white rounded-md hover:bg-tcm-bamboo-600 text-center transition-colors"
+              >
+                药房 / Pharmacy
+              </a>
+              <a
+                href="/dashboard/admin"
+                className="block w-full px-4 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 text-center transition-colors"
+              >
+                管理员 / Admin
+              </a>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  )
+      )
+  }
 }

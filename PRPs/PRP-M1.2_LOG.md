@@ -260,19 +260,19 @@
 
 | Component | Dev-Steps | Status | Completion |
 |-----------|-----------|---------|------------|
-| **Component 1: Supabase Client Infrastructure** | 3 Dev-Steps | ✅ **COMPLETED** | **100%** (3/3) |
-| - Dev-Step 1.1: Browser client | 1 | ✅ Complete | 100% |
-| - Dev-Step 1.2: Server client | 1 | ✅ Complete | 100% |  
-| - Dev-Step 1.3: Middleware client | 1 | ✅ Complete | 100% |
-| **Component 2: Next.js Middleware** | 3 Dev-Steps | ✅ **COMPLETED** | **100%** (3/3) |
-| - Dev-Step 2.1: Base middleware.ts | 1 | ✅ Complete | 100% |
-| - Dev-Step 2.2: Protected route definitions | 1 | ✅ Complete | 100% |
-| - Dev-Step 2.3: Session refresh mechanism | 1 | ✅ Complete | 100% |
-| **Component 3: Authentication UI** | 7 Dev-Steps | ⏳ Pending | 0% |
-| - Including 2 user participation phases | | | |
-| **Component 4: Session Management** | 3 Dev-Steps | ⏳ Pending | 0% |
+| **Component 1: Supabase Client Infrastructure** | 3 Dev-Steps | ✅ **COMPLETED** | 3/3 |
+| - Dev-Step 1.1: Browser client | 1 | ✅ Complete | ✅ |
+| - Dev-Step 1.2: Server client | 1 | ✅ Complete | ✅ |  
+| - Dev-Step 1.3: Middleware client | 1 | ✅ Complete | ✅ |
+| **Component 2: Next.js Middleware** | 3 Dev-Steps | ✅ **COMPLETED** | 3/3 |
+| - Dev-Step 2.1: Base middleware.ts | 1 | ✅ Complete | ✅ |
+| - Dev-Step 2.2: Protected route definitions | 1 | ✅ Complete | ✅ |
+| - Dev-Step 2.3: Session refresh mechanism | 1 | ✅ Complete | ✅ |
+| **Component 3: Authentication UI** | 12 Dev-Steps | ⏳ In Progress | 8/12 |
+| - Including 5 parallel streams | | | |
+| **Component 4: Session Management** | 3 Dev-Steps | ⏳ Pending | 0/3 |
 
-**Overall M1.2 Progress**: **38%** (6/16 Dev-Steps completed) - Component 2: 100% Complete
+**Overall M1.2 Progress**: 14/21 Dev-Steps completed - Components 1 & 2 Complete, Component 3 In Progress
 
 ⚠️ **PRP Revision Note [2025-08-29]**: Component 3 expanded from 5 to 7 Dev-Steps to include mandatory user participation phases per Layer 2 UI/UX requirements
 
@@ -300,7 +300,7 @@
   - Public and protected route architecture with authentication UI placeholders
   - Comprehensive validation suite and middleware integration documentation
 
-### **Component 2: 67% Complete** 🎯
+### **Component 2: Next.js Middleware Implementation** 🎯
 - **Status**: Dev-Step 2.2 complete, role-based route protection implemented with pharmacy support  
 - **Progress**: 2/3 Dev-Steps complete (2.1: Base middleware ✅, 2.2: Protected routes ✅)
 - **Next Target**: Dev-Step 2.3 (Session refresh mechanism implementation)
@@ -385,7 +385,6 @@
 
 ### 🎉 **Dev-Step 3.1 Summary: UI/UX Requirements Analysis - COMPLETED (精益修订)**
 
-**Total Duration**: 1.5 hours (Original) + 30分钟 (精益修订)  
 **Files Created**: 
 - 原始: 8个学术研究文档（已废弃）
 - 精益: 3个极简文档（LEAN-UX-APPROACH.md, login-v1.html, feedback-notes.md）
@@ -456,7 +455,6 @@
 
 ### 🎉 **Dev-Step 3.2 Summary: HTML原型创建 - COMPLETED**
 
-**Total Duration**: 1.5 hours  
 **Files Created**: 3个完整HTML原型页面 + 更新反馈记录
 **Status**: ✅ COMPLETE - 准备进入Dev-Step 3.3用户评审
 
@@ -688,7 +686,7 @@
 
 ## **📊 Component 2 Summary: Next.js Middleware Implementation**
 
-### **Overall Progress: 100% Complete (3/3 Dev-Steps)**
+### **Overall Progress: Component 2 Complete (3/3 Dev-Steps)**
 - **✅ Dev-Step 2.1**: Base middleware.ts with JWT claims validation (Complete)
 - **✅ Dev-Step 2.2**: Protected route definitions with role-based access control (Complete)
 - **✅ Dev-Step 2.3**: Session refresh mechanism with enhanced error handling (Complete)
@@ -871,7 +869,7 @@ A message will be sent to Global Architect recommending that future PRP document
 
 ---
 
-**Log Status**: ✅ **Component 1 Complete** | ✅ **Component 2 Complete** | 🎯 **M1.2 Progress: 44%** (7/16 Dev-Steps) | 📋 **Dev-Step 3.4 Complete**
+**Log Status**: ✅ **Component 1 Complete** | ✅ **Component 2 Complete** | 🎯 **M1.2 Progress: 7/16 Dev-Steps** | 📋 **Dev-Step 3.4 Complete**
 
 ---
 
@@ -1038,7 +1036,6 @@ const validation = await supabase.functions.invoke('validate-registration', {
 
 ### 🎉 **Dev-Step 3.8 Summary: Adapter Pattern Implementation - COMPLETED**
 
-**Total Duration**: 20 minutes (Analysis → Implementation → Validation → Integration)  
 **Files Created**: 8 files (5 service files + 2 test files + 1 migration guide)  
 **Lines of Code**: ~1000 lines of production code + tests + documentation  
 **Status**: ✅ **COMPLETE** - Ready for Edge Function migration when backend provides
@@ -1194,7 +1191,6 @@ const validation = await supabase.functions.invoke('validate-registration', {
 
 ### 🎉 **Dev-Step 3.10 Summary: Component Library Extensions - COMPLETED**
 
-**Total Duration**: 45 minutes  
 **Files Created**: 9 files (组件 + 类型 + 文档)  
 **Lines of Code**: ~1000 lines  
 **Status**: ✅ **COMPLETE**
@@ -1293,7 +1289,6 @@ const validation = await supabase.functions.invoke('validate-registration', {
 
 ### 🎉 **Dev-Step 3.11 Summary: TCM Cultural Design Layer - COMPLETED**
 
-**Total Duration**: 35 minutes  
 **Files Created/Modified**: 8 files  
 **Lines of Code**: ~800 lines  
 **Status**: ✅ **COMPLETE**
@@ -1318,4 +1313,97 @@ const validation = await supabase.functions.invoke('validate-registration', {
 
 ---
 
-**Log Status**: ✅ **Component 1 Complete** | ✅ **Component 2 Complete** | 🎯 **M1.2 Progress: 75%** (12/16 Dev-Steps) | ⚠️ **Dev-Step 3.5 PAUSED** | ✅ **Dev-Step 3.8 COMPLETE** | ✅ **Dev-Step 3.9 COMPLETE** | ✅ **Dev-Step 3.10 COMPLETE** | ✅ **Dev-Step 3.11 COMPLETE**
+## Dev-Step 3.12: Post-Registration Journeys 
+状态: 执行中
+
+### Step 1 完成证据 (分析规划)
+- ✅ 角色旅程架构文档: `docs/dashboard-architecture.md:1-185`
+  - 三角色旅程图: Lines 14-42
+  - 路由结构设计: Lines 44-63  
+  - 适配层接口定义: Lines 67-130
+  - 组件复用矩阵: Lines 155-163
+- ✅ Mock适配层实现: `lib/adapters/dashboard-adapter.ts:1-417`
+  - TypeScript接口: Lines 9-99
+  - Mock数据生成: Lines 107-191
+  - Adapter类实现: Lines 194-409
+  - localStorage状态管理: Lines 101-105
+
+### Step 2 完成证据 (实现构建)
+- ✅ Dashboard路由结构: `app/dashboard/[role]/page.tsx`
+  - 共享布局: `app/dashboard/layout.tsx` (91行)
+  - 角色重定向: `app/dashboard/page.tsx` (65行)
+- ✅ TCM医师工作台: `app/dashboard/tcm_practitioner/page.tsx` (207行)
+  - 统计概览: Lines 77-143 (4个stat卡片)
+  - 快速操作: Lines 146-165 (动态actions)
+  - 活动记录: Lines 168-192 (mock activities)
+  - Onboarding: `app/dashboard/tcm_practitioner/onboarding/page.tsx` (159行)
+- ✅ 药房管理界面: `app/dashboard/pharmacy/page.tsx` (265行)
+  - 订单队列: Lines 131-187 (table展示)
+  - 库存预警: Lines 190-223 (alert列表)
+- ✅ 管理员控制台: `app/dashboard/admin/page.tsx` (236行)
+  - 用户审核队列: Lines 147-193
+  - 系统通知: Lines 196-232
+
+### Step 3 完成证据 (验证优化)
+- ✅ 质量门验证:
+  - TypeScript: `npm run type-check` ✅ 0 errors
+  - ESLint: `npm run lint` ✅ No warnings
+  - Build: `npm run build` ✅ Success (17 routes)
+- ✅ 修复清单:
+  - 修复useCallback依赖: pharmacy/tcm_practitioner页面
+  - 修复未使用变量: admin页面profile显示
+  - 修复引号转义: tcm_practitioner中医名言
+  - 修复server.ts顶层cookies()调用问题
+- ✅ 路由增量度量:
+  - /dashboard: 141 B (Dynamic)
+  - /dashboard/admin: 3.83 kB
+  - /dashboard/pharmacy: 3.88 kB
+  - /dashboard/tcm_practitioner: 3.61 kB
+  - /dashboard/tcm_practitioner/onboarding: 12 kB
+- ✅ TCM主题一致性:
+  - 所有仪表板应用tcm-sage/bamboo/herb色系
+  - 响应式布局验证: grid自适应sm/md/lg断点
+
+### Step 4 完成证据 (集成反馈)
+- ✅ 组件库集成:
+  - AuthButton用于onboarding页面导航
+  - 复用TCM色系和设计系统
+  - 双语支持预留(useLanguage hook可扩展)
+- ✅ 角色路由集成:
+  - Middleware保护/dashboard/*路由
+  - 角色检测自动重定向至对应仪表板
+  - 未设置角色时显示选择页面
+- ✅ 导出对齐验证:
+  - dashboardAdapter singleton导出正确
+  - TypeScript类型完整导出
+  - localStorage键一致性验证
+- ✅ EUD证据锚点汇总:
+  - 文件创建: 8个新文件(6个页面+2个服务)
+  - 代码行数: ~1500行(不含文档)
+  - 构建成功: 17个路由全部编译通过
+  - 质量门: TypeScript/ESLint/Build全绿
+
+### 🎉 **Dev-Step 3.12 Summary: Post-Registration Journeys - COMPLETED**
+
+**Files Created**: 8 files (dashboards + onboarding + adapter)
+**Lines of Code**: ~1500 lines
+**Status**: ✅ **COMPLETE**
+
+**Technical Achievements**:
+- ✅ 完整角色仪表板实现(tcm_practitioner/pharmacy/admin)
+- ✅ 首次登录引导流程(4步onboarding)
+- ✅ Mock适配层(无后端API调用)
+- ✅ TCM主题系统集成
+- ✅ 响应式设计支持
+- ✅ localStorage状态管理
+- ✅ 全部质量门通过
+
+**Architect Compliance**:
+- ✅ 仅UI/交互/路由层实现
+- ✅ 无后端私有接口调用
+- ✅ 无患者PII数据
+- ✅ 适配层模拟完整
+- ✅ 体积预算合理(最大12KB)
+- ✅ EUD证据链完整
+
+**Log Status**: ✅ **Component 1 Complete** | ✅ **Component 2 Complete** | 🎯 **M1.2 Progress: 13/16 Dev-Steps** | ⚠️ **Dev-Step 3.5 PAUSED (Backend Now Ready)** | ✅ **Dev-Step 3.8 COMPLETE** | ✅ **Dev-Step 3.9 COMPLETE** | ✅ **Dev-Step 3.10 COMPLETE** | ✅ **Dev-Step 3.11 COMPLETE** | ✅ **Dev-Step 3.12 COMPLETE**

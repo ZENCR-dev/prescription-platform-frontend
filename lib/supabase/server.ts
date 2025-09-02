@@ -321,7 +321,8 @@ export async function serverProtectRoute(options?: {
 }
 
 // Export default server client instance for common usage
-export const serverSupabase = createServerSupabaseClient()
+// Removed top-level instance creation to avoid calling cookies() outside request scope
+// Always call createServerSupabaseClient() within request lifecycle where cookies() is valid
 
 /**
  * Reset server client instance
