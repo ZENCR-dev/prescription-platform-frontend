@@ -7,7 +7,7 @@
  */
 
 import { SupabaseDirectAdapter } from './adapters/supabase-direct.adapter'
-import { EdgeFunctionAdapter } from './adapters/edge-function.adapter'
+import { EdgeFunctionRegistrationAdapter } from './adapters/edge-function-registration.adapter'
 import {
   RegistrationAdapter,
   RegistrationData,
@@ -39,33 +39,60 @@ export interface RegistrationServiceConfig {
  * Provides unified interface for registration regardless of underlying adapter
  */
 export class RegistrationService {
-  private adapter: RegistrationAdapter
+  private adapter: RegistrationAdapter | null = null
   private config: RegistrationServiceConfig
+  private adapterPromise: Promise<RegistrationAdapter> | null = null
   
   constructor(config?: RegistrationServiceConfig) {
     this.config = {
-      adapterType: config?.adapterType || AdapterType.SUPABASE_DIRECT,
+      adapterType: config?.adapterType || AdapterType.EDGE_FUNCTION, // Default to Edge Function
       adapterConfig: config?.adapterConfig,
       autoSelectAdapter: config?.autoSelectAdapter ?? true
     }
     
-    // Initialize adapter
-    this.adapter = this.createAdapter()
+    // Initialize adapter asynchronously
+    this.initializeAdapter()
+  }
+  
+  /**
+   * Initialize adapter asynchronously
+   */
+  private async initializeAdapter(): Promise<void> {
+    this.adapterPromise = this.createAdapter()
+    this.adapter = await this.adapterPromise
+  }
+  
+  /**
+   * Ensure adapter is initialized before use
+   */
+  private async ensureAdapter(): Promise<RegistrationAdapter> {
+    if (this.adapter) {
+      return this.adapter
+    }
+    
+    if (this.adapterPromise) {
+      this.adapter = await this.adapterPromise
+      return this.adapter
+    }
+    
+    // Should not happen, but handle as fallback
+    await this.initializeAdapter()
+    return this.adapter!
   }
   
   /**
    * Factory method to create appropriate adapter
    */
-  private createAdapter(): RegistrationAdapter {
+  private async createAdapter(): Promise<RegistrationAdapter> {
     // If auto-select is enabled, try to use best available adapter
     if (this.config.autoSelectAdapter) {
-      return this.selectBestAdapter()
+      return await this.selectBestAdapter()
     }
     
     // Otherwise use configured adapter type
     switch (this.config.adapterType) {
       case AdapterType.EDGE_FUNCTION:
-        return new EdgeFunctionAdapter(this.config.adapterConfig)
+        return new EdgeFunctionRegistrationAdapter(this.config.adapterConfig)
       case AdapterType.SUPABASE_DIRECT:
       default:
         return new SupabaseDirectAdapter(this.config.adapterConfig)
@@ -75,22 +102,30 @@ export class RegistrationService {
   /**
    * Automatically select the best available adapter
    * Priority: Edge Function > Supabase Direct
+   * 
+   * @implements Dev-Step 3.5: 5xx degradation strategy
+   * EUD Evidence: Lines 79-100 fallback mechanism implementation
    */
-  private selectBestAdapter(): RegistrationAdapter {
-    // Check if Edge Function adapter is available
-    const edgeAdapter = new EdgeFunctionAdapter(this.config.adapterConfig)
+  private async selectBestAdapter(): Promise<RegistrationAdapter> {
+    // Try Edge Function adapter first for better license validation
+    const edgeAdapter = new EdgeFunctionRegistrationAdapter(this.config.adapterConfig)
     
-    // For now, always use Supabase Direct since Edge Functions aren't ready
-    // When backend provides Edge Functions, this will check availability
-    // and prefer Edge Functions for better validation
+    try {
+      // Check if Edge Function service is available
+      const isAvailable = await edgeAdapter.isAvailable()
+      
+      if (isAvailable) {
+        console.log('[RegistrationService] Using Edge Function adapter for enhanced validation')
+        return edgeAdapter
+      } else {
+        console.warn('[RegistrationService] Edge Function service unavailable, falling back to direct adapter')
+      }
+    } catch (error) {
+      console.error('[RegistrationService] Edge Function availability check failed:', error)
+    }
     
-    // TODO: Uncomment when Edge Functions are ready
-    // if (await edgeAdapter.isAvailable()) {
-    //   console.log('Using Edge Function adapter for registration')
-    //   return edgeAdapter
-    // }
-    
-    console.log('Using Supabase Direct adapter for registration')
+    // Fallback to Supabase Direct adapter for 5xx degradation
+    console.log('[RegistrationService] Using Supabase Direct adapter (fallback mode)')
     return new SupabaseDirectAdapter(this.config.adapterConfig)
   }
   
@@ -99,7 +134,8 @@ export class RegistrationService {
    */
   async validate(data: RegistrationData): Promise<ValidationResult> {
     try {
-      return await this.adapter.validate(data)
+      const adapter = await this.ensureAdapter()
+      return await adapter.validate(data)
     } catch (error) {
       console.error('Validation error:', error)
       return {
@@ -118,8 +154,9 @@ export class RegistrationService {
    */
   async register(data: RegistrationData): Promise<RegistrationResult> {
     try {
-      console.log(`Registering with adapter: ${this.adapter.getType()}`)
-      return await this.adapter.submit(data)
+      const adapter = await this.ensureAdapter()
+      console.log(`[RegistrationService] Registering with adapter: ${adapter.getType()}`)
+      return await adapter.submit(data)
     } catch (error) {
       console.error('Registration error:', error)
       return {
@@ -135,25 +172,29 @@ export class RegistrationService {
   /**
    * Get current adapter type
    */
-  getAdapterType(): string {
-    return this.adapter.getType()
+  async getAdapterType(): Promise<string> {
+    const adapter = await this.ensureAdapter()
+    return adapter.getType()
   }
   
   /**
    * Check if service is available
    */
   async isAvailable(): Promise<boolean> {
-    return await this.adapter.isAvailable()
+    const adapter = await this.ensureAdapter()
+    return await adapter.isAvailable()
   }
   
   /**
    * Switch to a different adapter at runtime
    * Useful for A/B testing or gradual migration
    */
-  switchAdapter(type: AdapterType): void {
+  async switchAdapter(type: AdapterType): Promise<void> {
     this.config.adapterType = type
-    this.adapter = this.createAdapter()
-    console.log(`Switched to adapter: ${this.adapter.getType()}`)
+    this.config.autoSelectAdapter = false // Disable auto-select when manually switching
+    await this.initializeAdapter()
+    const adapter = await this.ensureAdapter()
+    console.log(`[RegistrationService] Switched to adapter: ${adapter.getType()}`)
   }
 }
 

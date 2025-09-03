@@ -10,7 +10,7 @@
  * - Lines 201-320: Polling mechanism and helper utilities
  */
 
-import { createBrowserClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import {
   LicenseVerificationRequest,
@@ -103,7 +103,7 @@ export class EdgeFunctionAdapter implements IEdgeFunctionAdapter {
   private baseUrl: string;
 
   constructor(supabaseClient?: SupabaseClient) {
-    this.supabase = supabaseClient || createBrowserClient();
+    this.supabase = supabaseClient || createClient();
     this.baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
     
     if (!this.baseUrl) {

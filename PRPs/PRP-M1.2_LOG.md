@@ -1451,4 +1451,39 @@ EUD Evidence:
 - Error mapping table with all required codes"
 ```
 
-**Log Status**: ✅ **Component 1 Complete** | ✅ **Component 2 Complete** | 🔄 **Dev-Step 3.5 IN PROGRESS (Step 1/4)** | 🎯 **M1.2 Progress: 13.25/16 Dev-Steps**
+#### **Step 2: Implementation & Construction** ✅
+**[2025-09-03 11:00:00] 🚀 Implementation - Dev-Step 3.5 Step 2**
+- Created EdgeFunctionRegistrationAdapter wrapper implementing RegistrationAdapter interface
+- Integrated EdgeFunctionAdapter into registration.service.ts factory pattern
+- Implemented automatic adapter selection with 5xx degradation strategy
+- Added async initialization for adapter availability checks
+- **EUD Evidence Anchors**:
+  - `services/auth/adapters/edge-function-registration.adapter.ts:1-281` - Complete wrapper implementation
+  - `services/auth/registration.service.ts:82-103` - selectBestAdapter with fallback
+  - `services/auth/registration.service.ts:41-81` - Async adapter initialization
+- **Technical Implementation**:
+  - Edge Function priority with automatic fallback to Supabase Direct
+  - License verification workflow integrated with registration flow
+  - Error mapping from Edge Function codes to user-friendly messages
+  - Type checking passes: `npm run type-check` ✅
+
+### Git Operations Required
+```bash
+# User needs to execute on 2025-09-03 branch:
+git add services/auth/adapters/edge-function-registration.adapter.ts
+git add services/auth/registration.service.ts
+git add services/auth/registration.integration.test.ts
+git commit -m "atomic(3.5.2): integrate EdgeFunctionAdapter with registration service
+
+- Create EdgeFunctionRegistrationAdapter wrapper for RegistrationAdapter interface
+- Integrate with registration.service.ts factory pattern
+- Implement 5xx degradation strategy (Edge Function -> Supabase Direct)
+- Add async adapter initialization and availability checks
+
+EUD Evidence:
+- edge-function-registration.adapter.ts:1-281 wrapper implementation
+- registration.service.ts:82-103 fallback strategy
+- Type checking passes"
+```
+
+**Log Status**: ✅ **Component 1 Complete** | ✅ **Component 2 Complete** | 🔄 **Dev-Step 3.5 IN PROGRESS (Step 2/4)** | 🎯 **M1.2 Progress: 13.5/16 Dev-Steps**

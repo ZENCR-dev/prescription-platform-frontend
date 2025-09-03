@@ -126,18 +126,19 @@ async function testRoleSpecificValidation() {
  * Test 4: Adapter Type Verification
  * Ensures correct adapter is being used
  */
-function testAdapterType() {
+async function testAdapterType() {
   console.log('Test 4: Adapter Type Verification')
   
   const service = getRegistrationService()
-  const adapterType = service.getAdapterType()
+  const adapterType = await service.getAdapterType()
   
   console.log('Current adapter type:', adapterType)
+  console.log('Is using Edge Function adapter:', adapterType === 'edge-function')
   console.log('Is using Supabase Direct:', adapterType === 'supabase-direct')
   
   // Test adapter switching (for future use)
-  service.switchAdapter(AdapterType.SUPABASE_DIRECT)
-  console.log('After switch, adapter type:', service.getAdapterType())
+  await service.switchAdapter(AdapterType.SUPABASE_DIRECT)
+  console.log('After switch, adapter type:', await service.getAdapterType())
   
   console.log('✅ Test 4 Passed\n')
 }
