@@ -172,8 +172,7 @@ describe('EdgeFunctionAdapter', () => {
           license_number: 'TCM-123456',
           status: 'verified',
           submitted_at: new Date().toISOString(),
-          verified_at: new Date().toISOString(),
-          user_id: 'test-user-id'
+          verified_at: new Date().toISOString()
         },
         timestamp: new Date().toISOString()
       };

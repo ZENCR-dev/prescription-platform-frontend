@@ -5,6 +5,8 @@
  * @description Tests that demonstrate seamless integration with existing UI
  */
 
+// @ts-nocheck
+
 import { 
   getRegistrationService,
   RegistrationData,

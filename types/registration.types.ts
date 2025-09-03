@@ -102,7 +102,6 @@ export interface VerificationStatusResponse {
     verified_at?: string;
     rejected_at?: string;
     rejection_reason?: string;
-    user_id: string;
   };
   timestamp: string;
 }

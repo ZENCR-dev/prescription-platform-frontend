@@ -44,15 +44,15 @@ describe('RegistrationService', () => {
   })
 
   describe('Adapter Selection', () => {
-    it('should use SupabaseDirectAdapter by default', () => {
+    it('should use SupabaseDirectAdapter by default', async () => {
       const service = getRegistrationService()
-      expect(service.getAdapterType()).toBe('supabase-direct')
+      expect(await service.getAdapterType()).toBe('supabase-direct')
     })
 
-    it('should allow adapter switching', () => {
+    it('should allow adapter switching', async () => {
       const service = getRegistrationService()
-      service.switchAdapter(AdapterType.SUPABASE_DIRECT)
-      expect(service.getAdapterType()).toBe('supabase-direct')
+      await service.switchAdapter(AdapterType.SUPABASE_DIRECT)
+      expect(await service.getAdapterType()).toBe('supabase-direct')
     })
   })
 
