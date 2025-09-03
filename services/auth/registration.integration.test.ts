@@ -190,30 +190,24 @@ const handleSubmit = async (e: FormEvent) => {
 }
 
 /**
- * Run all tests
+ * Jest Integration Tests
  */
-async function runAllTests() {
-  console.log('=== Registration Service Integration Tests ===\n')
-  
-  try {
+describe('Registration Service Integration Tests', () => {
+  it('should pass basic registration flow validation', async () => {
     await testBasicRegistration()
+  })
+
+  it('should handle validation errors correctly', async () => {
     await testErrorHandling()
+  })
+
+  it('should validate role-specific requirements', async () => {
     await testRoleSpecificValidation()
-    testAdapterType()
-    integrationExample()
-    
-    console.log('=== All Tests Passed Successfully! ===')
-    console.log('\n✅ Adapter pattern is ready for integration')
-    console.log('✅ Zero breaking changes to existing UI')
-    console.log('✅ Migration path prepared for Edge Functions')
-  } catch (error) {
-    console.error('Test failed:', error)
-  }
-}
+  })
 
-// Run tests if this file is executed directly
-if (require.main === module) {
-  runAllTests()
-}
+  it('should verify adapter type and switching', async () => {
+    await testAdapterType()
+  })
+})
 
-export { runAllTests }
+export { testBasicRegistration, testErrorHandling, testRoleSpecificValidation, testAdapterType }

@@ -491,7 +491,7 @@ POST /functions/v1/license-verification:
     status: 400
     success: false
     error:
-      code: enum ["VALIDATION_ERROR", "EXPIRED_LICENSE", "INVALID_LICENSE_FORMAT"]
+      code: enum ["VALIDATION_ERROR", "EXPIRED_LICENSE", "INVALID_LICENSE_FORMAT", "STATE_ERROR", "INTERNAL_ERROR"]
       message: string
       field: string (optional, field that failed validation)
     timestamp: timestamp
@@ -526,7 +526,6 @@ GET /functions/v1/license-verification?verification_id={id}:
       verified_at: timestamp (if applicable)
       rejected_at: timestamp (if applicable)
       rejection_reason: string (if rejected)
-      user_id: uuid
     timestamp: timestamp
   Response_Error:
     status: 404
@@ -928,12 +927,19 @@ Registration_Validation_Service:
     EMAIL_EXISTS: "Email already registered"
     WEAK_PASSWORD: "Password doesn't meet requirements"
     INVALID_LICENSE: "License format or expiry invalid"
+    EXPIRED_LICENSE: "License has expired and cannot be verified"
+    INVALID_LICENSE_FORMAT: "License number doesn't match required format (TCM-XXXXXX or PHARM-XXXXXX)"
     INVALID_PHONE: "Phone number format invalid"
     INVALID_DOMAIN: "Admin email domain not allowed"
     MISSING_FIELD: "Required field missing"
     INVALID_ROLE: "Role type not recognized"
     VALIDATION_ERROR: "General validation failure"
+    STATE_ERROR: "Failed to transition verification state"
     INTERNAL_ERROR: "Server error"
+    NOT_FOUND: "Resource not found or access denied"
+    UNAUTHORIZED: "Authentication required"
+    FORBIDDEN: "Insufficient permissions"
+    METHOD_NOT_ALLOWED: "HTTP method not allowed"
   
   Performance_Requirements:
     Response_Time: "< 500ms P95"

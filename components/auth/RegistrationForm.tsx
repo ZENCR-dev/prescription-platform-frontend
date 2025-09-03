@@ -9,7 +9,7 @@
  * @migration Uses Registration Service with adapter pattern for Edge Function readiness
  */
 
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, useEffect } from 'react'
 import { useLanguage } from './hooks/useLanguage'
 import { useRouter } from 'next/navigation'
 import { 
@@ -37,6 +37,29 @@ export default function RegistrationForm() {
   const [agreeToTerms, setAgreeToTerms] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [adapterStatus, setAdapterStatus] = useState<string>('initializing...')
+  
+  // Initialize adapter status display
+  useEffect(() => {
+    const initializeAdapter = async () => {
+      try {
+        const service = getRegistrationService()
+        const adapterType = await service.getAdapterType()
+        const isAvailable = await service.isAvailable()
+        
+        if (adapterType === 'edge-function') {
+          setAdapterStatus(isAvailable ? '🚀 Edge Function (License Verification)' : '⚠️ Edge Function (Unavailable)')
+        } else {
+          setAdapterStatus('🔄 Supabase Direct (Fallback Mode)')
+        }
+      } catch (error) {
+        console.error('Failed to initialize adapter status:', error)
+        setAdapterStatus('❌ Adapter Error')
+      }
+    }
+    
+    initializeAdapter()
+  }, [])
   
   // Handle form submission using Registration Service
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -74,7 +97,8 @@ export default function RegistrationForm() {
       const registrationService = getRegistrationService()
       
       // Log current adapter type for debugging
-      console.log(`Using adapter: ${registrationService.getAdapterType()}`)
+      const adapterType = await registrationService.getAdapterType()
+      console.log(`[RegistrationForm] Using adapter: ${adapterType}`)
       
       // Validate using service (includes all field validation)
       const validation = await registrationService.validate(registrationData)
@@ -132,12 +156,26 @@ export default function RegistrationForm() {
         // Map error codes to user-friendly messages
         let errorMessage = texts.registrationFailed
         
-        if (result.error?.code === RegistrationErrorCode.EMAIL_ALREADY_EXISTS) {
-          errorMessage = 'This email is already registered'
-        } else if (result.error?.code === RegistrationErrorCode.NETWORK_ERROR) {
-          errorMessage = texts.networkError
-        } else if (result.error?.message) {
-          errorMessage = result.error.message
+        switch (result.error?.code) {
+          case RegistrationErrorCode.EMAIL_ALREADY_EXISTS:
+            errorMessage = '该邮箱已被注册'
+            break
+          case RegistrationErrorCode.INVALID_LICENSE_NUMBER:
+            errorMessage = '执照验证失败，请检查执照号码是否正确'
+            break
+          case RegistrationErrorCode.NETWORK_ERROR:
+            errorMessage = texts.networkError
+            break
+          case RegistrationErrorCode.INVALID_EMAIL:
+            errorMessage = texts.invalidEmail
+            break
+          case RegistrationErrorCode.WEAK_PASSWORD:
+            errorMessage = texts.invalidPassword
+            break
+          default:
+            if (result.error?.message) {
+              errorMessage = result.error.message
+            }
         }
         
         setError(errorMessage)
@@ -290,9 +328,14 @@ export default function RegistrationForm() {
             <h2 className="text-2xl font-light text-gray-800 mb-2">
               {texts.createAccount}
             </h2>
-            <p className="text-gray-500 text-sm mb-8">
+            <p className="text-gray-500 text-sm mb-4">
               {texts.professionalInfo}
             </p>
+            
+            {/* Adapter Status Display */}
+            <div className="mb-6 p-2 bg-gray-50 border border-gray-200 rounded text-xs text-gray-600">
+              <span className="font-medium">验证系统: </span>{adapterStatus}
+            </div>
             
             {/* Error Message */}
             {error && (
