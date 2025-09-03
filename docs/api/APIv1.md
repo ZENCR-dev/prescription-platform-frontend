@@ -1,30 +1,5 @@
 # APIv1.md - B2B2C TCM Prescription Fulfillment Platform API Specification
 
-## **Global Architect API Distribution Declaration**
-
-**Distribution Authority**: Global Architect certified distribution per SOP.md Section 156-164  
-**Source Document**: prescription-platform-backend/APIdocs/APIv1.md  
-**Distribution Date**: 2025-08-30  
-**Distribution Status**: ✅ **APPROVED FOR FRONTEND CONSUMPTION**  
-**Backend Readiness**: Production deployed to https://dosbevgbkxrtixemfjfl.supabase.co  
-
-### **Frontend Integration Certification**
-- **API Completion Status**: M1 Core Authentication & User Management **COMPLETE**
-- **Production Environment**: All backend services operational and validated
-- **Performance Metrics**: All queries <1ms (exceeds 150ms P95 target by 150x)
-- **Security Validation**: HIPAA compliance verified, Zero-PII architecture confirmed
-- **Frontend Ready**: Complete @supabase/ssr integration patterns included
-
-### **Distribution Quality Assurance**
-- **Version Synchronization**: Frontend receives Backend Lead certified APIv1.md (2025-08-30)
-- **Technical Review**: Global Architect quality review completed with 5/5 rating
-- **Cross-Workspace Compliance**: Three-workspace governance protocol executed successfully
-- **Integration Timing**: Perfect alignment - Backend M1.1 complete → Frontend M1.2 ready
-
----
-
-# APIv1.md - B2B2C TCM Prescription Fulfillment Platform API Specification
-
 ## **API Documentation Constitutional Authority**
 
 This document serves as the **Single Source of Truth (SSoT)** for all API specifications within the B2B2C Traditional Chinese Medicine Prescription Fulfillment Platform, as mandated by SOP.md Section 103-125.
@@ -478,63 +453,102 @@ POST /rest/v1/profiles/avatar:
   Storage_Policy: "User-specific folder structure in Supabase Storage"
 ```
 
-## **🛡️ License Verification API (M1.5)**
+## **🛡️ License Verification API (M1.1)**
 
-### **Professional License Verification Workflow**
+### **Professional License Verification Workflow (Edge Function Implementation)**
 
 ```yaml
-POST /rest/v1/verification/license:
-  Description: Submit professional license and business verification documents
+POST /functions/v1/license-verification:
+  Description: Submit professional license for verification via Edge Function workflow
   Authentication: Bearer token (tcm_practitioner or pharmacy role required)
   Request_Headers:
     Authorization: "Bearer {access_token}"
-    Content-Type: "multipart/form-data"
+    Content-Type: "application/json"
   Request_Body:
-    license_number: string (required)
-    license_type: enum ["tcm_practitioner", "pharmacy_license"] (required)
-    license_document: file (required, PDF/JPG/PNG, max 10MB)
-    business_registration: file (optional, PDF/JPG/PNG, max 10MB)
-    additional_certifications: array (optional)
-      - file: file
-      - description: string
+    type: enum ["tcm_practitioner", "pharmacy"] (required)
+    license_number: string (required, format: TCM-XXXXXX or PHARM-XXXXXX)
+    license_expiry: string (required, ISO 8601 date, min 30 days future)
+    # user_id field removed - extracted from JWT for security
+    additional_info: object (optional)
+      practitioner_name: string (optional)
+      clinic_name: string (optional)
+      pharmacy_name: string (optional)
+      business_registration: string (optional)
   Response_Success:
-    status: 201
+    status: 200
+    success: true
     data:
-      verification_id: uuid
-      status: "pending"
+      verification_id: string (format: ver_timestamp_random)
+      type: string
+      license_number: string
+      status: enum ["pending", "verifying", "verified", "rejected"]
       submitted_at: timestamp
-      expected_review_time: string
+      verified_at: timestamp (if verified)
+      rejected_at: timestamp (if rejected)
+      rejection_reason: string (if rejected)
+    timestamp: timestamp
   Response_Error:
-    status: 422
+    status: 400
+    success: false
     error:
-      message: "Document validation failed"
-      details: array
-  RLS_Enforcement: "user_id = auth.uid()"
-  Zero_PII: "Professional credentials only, no patient data"
+      code: enum ["VALIDATION_ERROR", "EXPIRED_LICENSE", "INVALID_LICENSE_FORMAT"]
+      message: string
+      field: string (optional, field that failed validation)
+    timestamp: timestamp
+  State_Machine: "pending → verifying → verified/rejected"
+  Mock_Verification_Rules:
+    TCM_Approved: "TCM-1XXXXX range"
+    TCM_Rejected: "TCM-9XXXXX range"
+    Pharmacy_Approved: "PHARM-2XXXXX range"
+    Pharmacy_Rejected: "PHARM-8XXXXX range"
+  Security_Rules:
+    User_ID_Source: "Extracted from JWT auth.uid(), never from request body"
+    Access_Control: "RLS enforced via anon key + Authorization header forwarding"
+    POST_Access: "User ID from JWT prevents impersonation attacks"
+    Service_Role: "Used only for internal state transitions after authentication"
+  RLS_Enforcement: "Service role only for writes, users can SELECT own records"
+  HIPAA_Compliance: "Zero PII in logs, professional credentials only"
 
-GET /rest/v1/verification/status:
-  Description: Check current user's verification status
+GET /functions/v1/license-verification?verification_id={id}:
+  Description: Check verification status by ID
   Authentication: Bearer token (authenticated role required)
   Request_Headers:
     Authorization: "Bearer {access_token}"
   Response_Success:
     status: 200
+    success: true
     data:
-      verification_id: uuid
-      status: enum ["pending", "under_review", "verified", "rejected", "requires_additional_info"]
+      verification_id: string
+      type: string
+      license_number: string
+      status: enum ["pending", "verifying", "verified", "rejected"]
       submitted_at: timestamp
-      reviewed_at: timestamp (if applicable)
-      verification_notes: string (if rejected or requires info)
-      verified_credentials:
-        license_number: string
-        license_type: string
-        verification_date: timestamp
+      verified_at: timestamp (if applicable)
+      rejected_at: timestamp (if applicable)
+      rejection_reason: string (if rejected)
+      user_id: uuid
+    timestamp: timestamp
   Response_Error:
     status: 404
+    success: false
     error:
-      message: "No verification record found"
-  RLS_Enforcement: "user_id = auth.uid()"
-  Privacy_Compliance: "Professional verification only"
+      code: "NOT_FOUND"
+      message: "Verification record not found"
+    timestamp: timestamp
+  Security_Rules:
+    Authentication: "Bearer token required (access_token from auth)"
+    Authorization: "RLS enforced + explicit ownership validation"
+    GET_Access: "Only record owner can view (RLS + explicit ownership check)"
+    Access_Denied: "Returns 404 for unauthorized access (no information leakage)"
+  RLS_Enforcement: "Users can only view their own records via RLS policies"
+  Privacy_Compliance: "Professional verification only, no patient data"
+
+# Legacy REST Endpoints (Planned, Not Currently Implemented)
+# Note: The following endpoints are planned for future REST API implementation
+# but are NOT currently available. Use the Edge Function endpoints above.
+
+POST /rest/v1/verification/license: "(Planned - Not Implemented)"
+GET /rest/v1/verification/status: "(Planned - Not Implemented)"
 ```
 
 ## **🔐 Multi-Factor Authentication API (M1.6)**
@@ -627,6 +641,59 @@ DELETE /rest/v1/auth/mfa/factor/{factor_id}:
 
 ## **⚡ Edge Functions Integration**
 
+### **Session Validation with MFA (Task 3.3)**
+
+```yaml
+POST /functions/v1/validate-session:
+  Description: Validate user session with MFA requirements for sensitive operations
+  Authentication: Bearer token (any authenticated role)
+  Request_Headers:
+    Authorization: "Bearer {access_token}"
+    Content-Type: "application/json"
+  Request_Body:
+    operation_type: enum ["read_only", "profile_update", "financial", "medical", "admin"] (required)
+    resource_id: string (optional - specific resource being accessed)
+  Response_Success:
+    status: 200
+    data:
+      valid: true
+      aal_level: enum ["aal1", "aal2"]
+      user_id: uuid
+  Response_MFA_Required:
+    status: 428 (Precondition Required)
+    data:
+      valid: false
+      error: "mfa_required"
+      aal_level: "aal1"
+      details: "MFA verification required for this operation"
+  Response_MFA_Enrollment_Required:
+    status: 428
+    data:
+      valid: false
+      error: "mfa_enrollment_required"
+      details: "MFA enrollment required for this operation"
+  Response_Insufficient_Privileges:
+    status: 403
+    data:
+      valid: false
+      error: "insufficient_privileges"
+      details: "User role insufficient for this operation"
+  Response_Invalid_Token:
+    status: 401
+    data:
+      valid: false
+      error: "invalid_token"
+      details: "Missing or invalid Authorization header"
+  Security_Rules:
+    read_only: "AAL1 sufficient"
+    profile_update: "AAL2 required if MFA enrolled"
+    financial: "AAL2 always required"
+    medical: "AAL2 always required (HIPAA compliance)"
+    admin: "AAL2 mandatory + admin role required"
+  Audit_Trail: "All validation attempts logged to auth_audit_logs table"
+  Performance: "Target P95 < 50ms response time"
+```
+
 ### **Authentication Hooks & Custom Logic**
 
 ```yaml
@@ -669,6 +736,71 @@ Edge_Functions_Auth_Integration:
         - pharmacy-invitation.html
         - admin-security-alert.html
 
+  License_Verification_Workflow:
+    Purpose: "State-managed license verification for TCM practitioners and pharmacies"
+    Endpoint: "/functions/v1/license-verification"
+    Methods: ["POST", "GET"]
+    State_Transitions: "pending → verifying → verified/rejected"
+    
+    POST_Request:
+      Description: "Submit new license verification request"
+      Request_Body:
+        type: "tcm_practitioner | pharmacy"
+        license_number: "TCM-XXXXXX | PHARM-XXXXXX"
+        license_expiry: "ISO 8601 datetime (must be >30 days future)"
+        user_id?: "UUID (optional)"
+        additional_info?:
+          practitioner_name?: "string (TCM only)"
+          clinic_name?: "string (TCM only)"
+          pharmacy_name?: "string (Pharmacy only)"
+          business_registration?: "string (Pharmacy only)"
+      
+      Response_Success:
+        success: true
+        data:
+          verification_id: "ver_timestamp_random"
+          type: "tcm_practitioner | pharmacy"
+          license_number: "string"
+          status: "pending | verifying | verified | rejected"
+          submitted_at: "ISO 8601"
+          verified_at?: "ISO 8601"
+          rejection_reason?: "string"
+          verification_details:
+            expiry_date: "ISO 8601"
+            issuing_authority?: "string"
+            verification_method?: "string"
+        timestamp: "ISO 8601"
+      
+      Response_Error:
+        success: false
+        error:
+          code: "VALIDATION_ERROR | INTERNAL_ERROR | STATE_ERROR"
+          message: "string"
+          field?: "string"
+          details?: "object"
+        timestamp: "ISO 8601"
+    
+    GET_Request:
+      Description: "Check verification status"
+      Query_Parameters:
+        verification_id: "string (required)"
+      
+      Response_Success: "Same as POST Response_Success"
+      Response_Error:
+        404: "Verification not found"
+        400: "Invalid verification_id"
+        500: "Internal server error"
+    
+    Mock_Verification_Rules:
+      TCM_Approved: "License numbers starting with TCM-1"
+      TCM_Rejected: "License numbers starting with TCM-9"
+      Pharmacy_Approved: "License numbers starting with PHARM-2"  
+      Pharmacy_Rejected: "License numbers starting with PHARM-8"
+    
+    Performance_Target: "< 500ms P95 response time"
+    Security: "HIPAA compliant, no PII in logs"
+    Frontend_Integration: "EdgeFunctionAdapter compatible"
+
 Authentication_Business_Logic:
   User_Registration_Validation:
     Function_Name: "validate-registration"
@@ -701,6 +833,121 @@ Authentication_Business_Logic:
       Low: "Standard session validation"
       Medium: "Additional verification prompt"
       High: "Force re-authentication with MFA"
+
+Registration_Validation_Service:
+  Function_Name: "registration-validator"
+  Endpoint: "/functions/v1/registration-validator"
+  Purpose: "Validate role-specific registration requirements before account creation"
+  
+  Request_Structure:
+    Method: POST
+    Headers:
+      Authorization: "Bearer {anon_key}"
+      Content-Type: "application/json"
+    Body:
+      role: enum ["tcm_practitioner", "pharmacy", "admin"] (required)
+      data: object (role-specific fields)
+  
+  TCM_Practitioner_Validation:
+    Required_Fields:
+      email: "Valid email format"
+      password: "Min 12 chars with uppercase, lowercase, number, symbol"
+      full_name: "2-100 characters"
+      phone: "International format +[country][number]"
+      license_number: "Format: TCM-XXXXXX (6 digits)"
+      license_expiry: "ISO datetime, minimum 30 days future"
+      years_of_practice: "Number 0-70"
+    Optional_Fields:
+      clinic_name: "2-200 characters"
+      clinic_address: "10-500 characters"
+      specializations: "Array, max 10 items"
+    
+  Pharmacy_Validation:
+    Required_Fields:
+      email: "Valid email format"
+      password: "Min 12 chars with complexity requirements"
+      pharmacy_name: "2-200 characters"
+      business_registration: "5-50 characters"
+      pharmacy_license: "Format: PHARM-XXXXXX (6 digits)"
+      license_expiry: "ISO datetime, minimum 30 days future"
+      address: "10-500 characters"
+      contact_phone: "International format"
+      contact_person: "2-100 characters"
+    Optional_Fields:
+      operating_hours: "Valid JSON string"
+      delivery_available: "Boolean"
+  
+  Admin_Validation:
+    Required_Fields:
+      email: "Must be @platform.com domain"
+      password: "Min 16 chars with enhanced complexity"
+      full_name: "2-100 characters"
+      phone: "International format with country code"
+      department: enum ["operations", "finance", "support", "compliance"]
+      access_level: enum ["full", "limited", "readonly"]
+      mfa_required: "Must be true"
+    Conditional_Fields:
+      supervisor_email: "Required for limited/readonly access levels"
+  
+  Response_Formats:
+    Success_Response:
+      status: 200
+      body:
+        success: true
+        data:
+          validated: true
+          role: string
+          message: "Registration data validated successfully"
+        timestamp: ISO8601
+    
+    Validation_Error:
+      status: 400
+      body:
+        success: false
+        error:
+          code: string
+          message: string
+          field: string (optional)
+          details:
+            requirement: string
+            received: string
+        timestamp: ISO8601
+    
+    Email_Conflict:
+      status: 409
+      body:
+        success: false
+        error:
+          code: "EMAIL_EXISTS"
+          message: "This email is already registered"
+          field: "email"
+        timestamp: ISO8601
+  
+  Error_Codes:
+    INVALID_EMAIL: "Email format invalid"
+    EMAIL_EXISTS: "Email already registered"
+    WEAK_PASSWORD: "Password doesn't meet requirements"
+    INVALID_LICENSE: "License format or expiry invalid"
+    INVALID_PHONE: "Phone number format invalid"
+    INVALID_DOMAIN: "Admin email domain not allowed"
+    MISSING_FIELD: "Required field missing"
+    INVALID_ROLE: "Role type not recognized"
+    VALIDATION_ERROR: "General validation failure"
+    INTERNAL_ERROR: "Server error"
+  
+  Performance_Requirements:
+    Response_Time: "< 500ms P95"
+    Validation_Time: "< 100ms for schema validation"
+    Database_Lookup: "< 200ms for email existence check"
+    Total_Processing: "< 400ms including all validations"
+  
+  Security_Considerations:
+    Rate_Limiting: "10 requests per minute per IP"
+    Input_Sanitization: "All inputs sanitized before processing"
+    SQL_Injection_Prevention: "Parameterized queries only"
+    Service_Role_Key: "Never exposed in response or logs"
+    Audit_Logging: "All validation attempts logged (anonymized)"
+    CORS: "Restricted to allowed origins only"
 
 Edge_Functions_Configuration:
   Local_Development:

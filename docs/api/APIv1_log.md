@@ -14,15 +14,15 @@ This document provides **version consumption and integration impact analysis** f
 
 ## **📊 Current Frontend API Consumption Status**
 
-### **Active Frontend API Version: v1.0.0-alpha**
+### **Active Frontend API Version: v1.0.0-beta-secfix**
 
 ```yaml
 Frontend_Integration_Status:
-  Version: "1.0.0-alpha"
-  Authority_Distribution_Date: "2025-08-26"
-  Status: "Three-workspace governance established"
-  Integration_Phase: "M1 Core Authentication & User Management preparation"
-  Frontend_Readiness: "Awaiting Global Architect API distribution"
+  Version: "1.0.0-beta-secfix"
+  Authority_Distribution_Date: "2025-09-02"
+  Status: "Edge Functions deployed and operational"
+  Integration_Phase: "M1.2 Dev-Step 3.5 Registration Form Integration"
+  Frontend_Readiness: "Implementing EdgeFunctionAdapter for license verification"
   
 Integration_Priorities:
   Awaiting_Backend_API_Implementation:
@@ -113,6 +113,52 @@ Frontend_Lead_Next_Actions:
     - Coordinate Global Architect feedback checkpoints for API usage issues
 
 Compliance_Status: "THREE-WORKSPACE GOVERNANCE ESTABLISHED - Ready for API version consumption"
+```
+
+### **v1.0.0-beta-secfix Distribution Record (2025-09-02)**
+
+**Global Architect API Distribution**
+
+```yaml
+Distribution_Type: "Security-Enhanced Edge Function API"
+Distribution_Date: "2025-09-02"
+Distributed_By: "Global Architect"
+Frontend_Lead_Acknowledgment: "2025-09-02"
+
+API_Version_Changes:
+  Edge_Function_Endpoints:
+    - ✅ POST /functions/v1/license-verification (replaces direct DB access)
+    - ✅ GET /functions/v1/license-verification?verification_id=... (query-based retrieval)
+    - ✅ Authentication via Bearer {access_token} required
+    - ✅ User ID extracted from JWT (never from request body)
+  
+  Security_Enhancements:
+    - ✅ RLS policies: REVOKE INSERT/UPDATE, GRANT SELECT only
+    - ✅ Service role key never exposed to frontend
+    - ✅ No sensitive data (license_number) in logs/console
+    - ✅ State machine: pending → verifying → verified/rejected
+    
+  Performance_Metrics:
+    - Response time: <500ms P95 target
+    - Mock verification rules for testing
+    - TCM-1XXXXX (approved), TCM-9XXXXX (rejected)
+    - PHARM-2XXXXX (approved), PHARM-8XXXXX (rejected)
+
+Frontend_Integration_Requirements:
+  Dev_Step_3.5_Scope:
+    - EdgeFunctionAdapter implementation for registration validation
+    - License verification workflow integration
+    - Error code mapping and state machine handling
+    - Fallback strategy for degraded service
+    
+  Security_Compliance:
+    - Authorization header with access_token only
+    - No anon key as authentication token
+    - No user_id in request body
+    - Sensitive field redaction in logs
+
+[2025-09-02] INTEGRATION_PROGRESS: Dev-Step 3.5 - Starting EdgeFunctionAdapter implementation
+[2025-09-02] VERSION_RECEIVED: v1.0.0-beta-secfix from Global Architect - Edge Functions confirmed deployed
 ```
 
 ## **🔄 Frontend API Consumption Tracking Framework**
@@ -217,12 +263,20 @@ M1_Authentication_User_Management_Preparation:
     Integration_Dependencies: "File upload handling, form state management"
     
   License_Verification_Integration:
-    Status: "Document upload UI prepared"
-    Endpoints_Expected:
-      - "POST /rest/v1/verification/license"
-      - "GET /rest/v1/verification/status"
-    Frontend_Preparation: "Document upload UI, verification status tracking components"
-    Integration_Dependencies: "File handling, progress tracking, status polling"
+    Status: "Edge Function integration in progress"
+    Endpoints_Active:
+      - "POST /functions/v1/license-verification"
+      - "GET /functions/v1/license-verification?verification_id=..."
+    Endpoints_Planned_REST:
+      - "POST /rest/v1/verification/license (Planned - Not Implemented)"
+      - "GET /rest/v1/verification/status (Planned - Not Implemented)"
+    Security_Requirements:
+      - "Authorization: Bearer {access_token} required"
+      - "No user_id in request body (extracted from JWT)"
+      - "No sensitive fields (license_number) in logs/console"
+      - "GET returns 404 for unauthorized access (no info leakage)"
+    Frontend_Preparation: "EdgeFunctionAdapter implementation, error mapping, state machine"
+    Integration_Dependencies: "supabase.functions.invoke, fetch with Bearer token, polling logic"
     
   Multi_Factor_Authentication_Integration:
     Status: "MFA UI flows prepared"

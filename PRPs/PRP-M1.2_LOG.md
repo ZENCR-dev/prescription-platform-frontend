@@ -1406,4 +1406,49 @@ const validation = await supabase.functions.invoke('validate-registration', {
 - ✅ 体积预算合理(最大12KB)
 - ✅ EUD证据链完整
 
-**Log Status**: ✅ **Component 1 Complete** | ✅ **Component 2 Complete** | 🎯 **M1.2 Progress: 13/16 Dev-Steps** | ⚠️ **Dev-Step 3.5 PAUSED (Backend Now Ready)** | ✅ **Dev-Step 3.8 COMPLETE** | ✅ **Dev-Step 3.9 COMPLETE** | ✅ **Dev-Step 3.10 COMPLETE** | ✅ **Dev-Step 3.11 COMPLETE** | ✅ **Dev-Step 3.12 COMPLETE**
+---
+
+## 📊 Component 3: Authentication UI Components (Continued)
+
+### **🔄 Dev-Step 3.5: Registration form with Edge Function - IN PROGRESS**
+
+**Implementation Date**: 2025-09-03  
+**QAD Cycle Duration**: 4 Steps (Analysis → Implementation → Validation → Integration)  
+**Git Branch**: `2025-09-03`  
+**Backend Status**: ✅ Edge Functions Deployed (v1.0.0-beta-secfix)
+
+#### **Step 1: Analysis & Planning** ✅
+**[2025-09-03 09:20:00] 📋 Analysis & Planning - Dev-Step 3.5**
+- Analyzed Edge Function API contract from v1.0.0-beta-secfix distribution
+- Designed EdgeFunctionAdapter interface with complete error code mappings
+- Created state machine type definitions (pending → verifying → verified/rejected)
+- Defined error-to-UI message mapping for all 9 error codes
+- **EUD Evidence Anchors**:
+  - `types/registration.types.ts:1-140` - Complete type definitions and state machine
+  - `services/auth/adapters/edge-function.adapter.ts:1-80` - Interface signatures with error mappings
+  - Error codes: VALIDATION_ERROR, EXPIRED_LICENSE, INVALID_LICENSE_FORMAT, STATE_ERROR, INTERNAL_ERROR, NOT_FOUND, UNAUTHORIZED, FORBIDDEN, METHOD_NOT_ALLOWED
+- **Technical Specifications**:
+  - POST: `supabase.functions.invoke('license-verification')`
+  - GET: `fetch` with Bearer {access_token}
+  - Security: No user_id in body, no license_number in logs
+
+### Git Operations Required
+```bash
+# User needs to execute:
+git add types/registration.types.ts
+git add services/auth/adapters/edge-function.adapter.ts
+git add docs/api/APIv1_log.md
+git commit -m "atomic(3.5.1): implement EdgeFunctionAdapter interface and types
+
+- Create complete type definitions for license verification state machine
+- Define all 9 error codes with UI message mappings
+- Implement EdgeFunctionAdapter with POST/GET methods
+- Add security measures: no user_id in body, no sensitive data in logs
+
+EUD Evidence:
+- types/registration.types.ts:1-140 state machine types
+- services/auth/adapters/edge-function.adapter.ts:1-404 complete implementation
+- Error mapping table with all required codes"
+```
+
+**Log Status**: ✅ **Component 1 Complete** | ✅ **Component 2 Complete** | 🔄 **Dev-Step 3.5 IN PROGRESS (Step 1/4)** | 🎯 **M1.2 Progress: 13.25/16 Dev-Steps**
