@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # E2E Assertion Script for License Verification Flow
-# Frontend Lead - Dev-Step 3.5 Joint Testing Evidence
+# Frontend Lead - Standalone License Page Testing Evidence  
+# Target: /professional/license (login required, direct EdgeFunctionAdapter)
 # Non-interactive, minimal output, automated validation
 
 set -e
@@ -54,14 +55,25 @@ test_polling() {
 echo "2️⃣ Testing: UI does not display user_id"
 test_no_user_id_ui() {
     # Check frontend components and types for user_id exposure
-    local components_dir="$PROJECT_ROOT/components"
+    # Target: /professional/license page with direct EdgeFunctionAdapter integration
     local types_file="$PROJECT_ROOT/types/registration.types.ts"
+    local license_page="$PROJECT_ROOT/app/professional/license/page.tsx"
+    local edge_adapter="$PROJECT_ROOT/services/auth/adapters/edge-function.adapter.ts"
     
-    # Check RegistrationForm doesn't display user_id
-    local registration_form="$PROJECT_ROOT/components/auth/RegistrationForm.tsx"
-    if [[ -f "$registration_form" ]]; then
-        if grep -q "user_id" "$registration_form"; then
-            echo -e "❌ RegistrationForm contains user_id references"
+    # Check license page doesn't expose user_id 
+    if [[ -f "$license_page" ]]; then
+        if grep -q "user_id" "$license_page"; then
+            echo -e "❌ License page contains user_id references"
+            NO_USER_ID_RESULT="fail"
+            return 1
+        fi
+    fi
+    
+    # Check EdgeFunctionAdapter doesn't log user_id
+    if [[ -f "$edge_adapter" ]]; then
+        # Should NOT find user_id in logging statements
+        if grep -n "console.log\|console.error" "$edge_adapter" | grep -q "user_id"; then
+            echo -e "❌ EdgeFunctionAdapter logs user_id in console statements"
             NO_USER_ID_RESULT="fail"
             return 1
         fi
@@ -76,7 +88,7 @@ test_no_user_id_ui() {
         fi
     fi
     
-    echo -e "✅ UI verification: no user_id display found"
+    echo -e "✅ UI verification: no user_id display found (license page + adapter)"
     NO_USER_ID_RESULT="ok"
 }
 

@@ -24,7 +24,8 @@ export const productionRouteConfig: MiddlewareRouteConfig = {
     '/profile',       // User profile settings  
     '/settings',      // Account settings
     '/support',       // Help and support center
-    '/notifications'  // User notifications
+    '/notifications', // User notifications
+    '/professional/license'  // License verification (accessible to all logged-in users)
   ],
 
   // Public routes accessible without authentication
@@ -72,7 +73,6 @@ export const productionRouteConfig: MiddlewareRouteConfig = {
     '/professional',            // Professional dashboard
     '/professional/dashboard',  // TCM practitioner main dashboard
     '/professional/profile',    // Professional profile settings
-    '/professional/license',    // License management
     '/professional/continuing-education' // CE credit tracking
   ],
 
@@ -104,7 +104,6 @@ export const productionRouteConfig: MiddlewareRouteConfig = {
     '/patients/manage',         // Managing patients requires verification
     '/pharmacy/orders/accept',  // Accepting orders requires verification
     '/pharmacy/fulfillment',    // Fulfillment operations require verification
-    '/professional/license',    // License management requires verification
     '/pharmacy/compliance'      // Compliance features require verification
   ],
 

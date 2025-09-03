@@ -146,8 +146,11 @@ export default function RegistrationForm() {
         if (result.requiresEmailVerification) {
           router.push('/auth/verify-email')
         } else {
-          // Direct to dashboard if no verification needed
-          router.push('/dashboard')
+          // Stay on current page and show success message - avoid jumping to protected routes
+          // before session is fully established
+          setError('') // Clear any previous errors
+          alert('注册成功！请前往登录页面登录您的账户。')
+          router.push('/auth/login')
         }
       } else {
         // Handle registration error

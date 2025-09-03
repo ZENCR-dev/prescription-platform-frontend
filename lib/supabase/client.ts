@@ -72,6 +72,25 @@ export function createClient() {
   }
   
   clientInstance = createBrowserClient(supabaseUrl, supabaseKey)
+  
+  // Auto-sync session to server cookies via auth state change
+  // This ensures server-side middleware has access to authentication state
+  if (typeof window !== 'undefined') {
+    clientInstance.auth.onAuthStateChange(async (event, session) => {
+      try {
+        // Sync session to server for SSR/middleware access
+        await fetch('/api/auth/callback', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ event, session })
+        })
+      } catch (error) {
+        console.warn('Failed to sync session to server:', error)
+        // Don't throw - this is a background operation
+      }
+    })
+  }
+  
   return clientInstance
 }
 

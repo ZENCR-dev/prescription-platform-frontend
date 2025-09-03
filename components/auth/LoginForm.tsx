@@ -66,22 +66,17 @@ export default function LoginForm() {
         localStorage.removeItem('rememberEmail')
       }
       
-      // Navigate based on user role
+      // Login successful - wait for session sync then navigate safely
       if (data.user) {
-        const role = data.user.user_metadata?.role
-        switch (role) {
-          case 'tcm_practitioner':
-            router.push('/practitioner/dashboard')
-            break
-          case 'pharmacy':
-            router.push('/pharmacy/dashboard')
-            break
-          case 'admin':
-            router.push('/admin/dashboard')
-            break
-          default:
-            router.push('/dashboard')
-        }
+        // Brief delay to allow auth state change to trigger and complete callback
+        await new Promise(resolve => setTimeout(resolve, 500))
+        
+        // Refresh router state to pick up new authentication cookies
+        router.refresh()
+        
+        // Navigate to license verification page instead of protected dashboard routes
+        // This avoids middleware redirect loops while session cookies are being established
+        router.push('/professional/license')
       }
     } catch (err) {
       console.error('Unexpected error:', err)
