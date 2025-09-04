@@ -1,0 +1,32 @@
+# CODEOWNERS - Repository Governance Document Protection
+# 
+# This file defines ownership and review requirements for critical project files.
+# All changes to governance documents require explicit approval from designated owners.
+
+# Governance documents in docs-main branch require owner approval
+/CLAUDE.md @ZENCR-dev
+/INITIAL.md @ZENCR-dev  
+/PLANNING.md @ZENCR-dev
+/FRONTEND_PLAYBOOK.md @ZENCR-dev
+/LEGACY_ASSETS_INVENTORY.md @ZENCR-dev
+
+# Workflow templates and examples
+/examples/ @ZENCR-dev
+/.github/ @ZENCR-dev
+
+# Package configuration and dependencies
+/package.json @ZENCR-dev
+/package-lock.json @ZENCR-dev
+/tsconfig.json @ZENCR-dev
+
+# Environment and configuration files
+/.env.example @ZENCR-dev
+/next.config.js @ZENCR-dev
+/tailwind.config.js @ZENCR-dev
+
+# Security-sensitive files
+/.gitignore @ZENCR-dev
+/.github/workflows/ @ZENCR-dev
+
+# Default fallback for all other files (optional, remove if not needed)
+# * @ZENCR-dev

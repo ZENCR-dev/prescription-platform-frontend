@@ -7,6 +7,7 @@
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
@@ -18,26 +19,17 @@
         "name": "next"
       }
     ],
+    "types": ["jest", "node", "@testing-library/jest-dom"],
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./*"]
     }
   },
-  "include": [
-    "next-env.d.ts", 
-    "app/**/*.ts", 
-    "app/**/*.tsx", 
-    "lib/**/*.ts", 
-    "__tests__/**/*.ts", 
-    "__tests__/**/*.tsx",
-    ".next/types/**/*.ts"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": [
     "node_modules",
-    "Context-Engineering-Intro",
-    "examples",
-    "docs", 
-    "recycle",
-    "draft",
-    "frontend-rebuild-docs"
+    "Context-Engineering-Intro/**/*",
+    "recycle/**/*",
+    "examples/**/*"
   ]
 }
