@@ -12,6 +12,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { EdgeFunctionAdapter } from '@/services/auth/adapters/edge-function.adapter'
+import LogoutButton from '@/components/auth/LogoutButton'
 import { 
   LicenseVerificationRequest,
   VerificationState,
@@ -45,8 +46,10 @@ export default function ProfessionalLicensePage() {
   // EdgeFunctionAdapter instance
   const [adapter] = useState(() => new EdgeFunctionAdapter())
   
-  // Service availability check
+  // Service availability and network status
   const [serviceAvailable, setServiceAvailable] = useState<boolean | null>(null)
+  const [isOnline, setIsOnline] = useState<boolean>(true)
+  const [retryLoading, setRetryLoading] = useState<boolean>(false)
   
   useEffect(() => {
     // Check service availability on component mount
@@ -60,7 +63,44 @@ export default function ProfessionalLicensePage() {
       }
     }
     checkService()
+    
+    // Monitor network status
+    const updateOnlineStatus = () => setIsOnline(navigator.onLine)
+    
+    // Set initial status
+    setIsOnline(navigator.onLine)
+    
+    // Add event listeners for network changes
+    window.addEventListener('online', updateOnlineStatus)
+    window.addEventListener('offline', updateOnlineStatus)
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('online', updateOnlineStatus)
+      window.removeEventListener('offline', updateOnlineStatus)
+    }
   }, [adapter])
+  
+  // Enhanced service retry with loading state
+  const handleServiceRetry = async () => {
+    setRetryLoading(true)
+    try {
+      // Wait a moment to show loading state
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      const available = await adapter.isServiceAvailable()
+      setServiceAvailable(available)
+      
+      if (available) {
+        console.log('[LicensePage] Service restored successfully')
+      }
+    } catch (error) {
+      console.error('[LicensePage] Service retry failed:', error)
+      setServiceAvailable(false)
+    } finally {
+      setRetryLoading(false)
+    }
+  }
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -146,28 +186,103 @@ export default function ProfessionalLicensePage() {
     }
   }
   
-  // Service unavailable UI
+  // Enhanced service unavailable UI with network status
   if (serviceAvailable === false) {
     return (
       <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md mx-auto">
           <div className="bg-white p-8 shadow-sm border border-gray-100 rounded-lg">
             <div className="text-center">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 mb-4">
-                <svg className="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                </svg>
+              <div className={`mx-auto flex items-center justify-center h-12 w-12 rounded-full mb-4 ${
+                !isOnline ? 'bg-red-100' : 'bg-yellow-100'
+              }`}>
+                {!isOnline ? (
+                  <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                  </svg>
+                ) : (
+                  <svg className="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                  </svg>
+                )}
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">验证服务暂不可用</h3>
-              <p className="text-sm text-gray-500 mb-6">
-                执照验证服务当前无法连接，请稍后重试或联系技术支持。
+              
+              <h3 className={`text-lg font-medium mb-2 ${
+                !isOnline ? 'text-red-900' : 'text-gray-900'
+              }`}>
+                {!isOnline ? '网络连接断开' : '验证服务暂不可用'}
+              </h3>
+              
+              <p className={`text-sm mb-4 ${
+                !isOnline ? 'text-red-700' : 'text-gray-500'
+              }`}>
+                {!isOnline 
+                  ? '请检查您的网络连接并重试'
+                  : '执照验证服务当前无法连接，可能正在维护中'
+                }
               </p>
-              <button
-                onClick={() => window.location.reload()}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                重新尝试
-              </button>
+
+              {/* Network Status Indicator */}
+              <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mb-6 ${
+                isOnline 
+                  ? 'bg-green-100 text-green-800'
+                  : 'bg-red-100 text-red-800'
+              }`}>
+                <div className={`w-2 h-2 rounded-full mr-1 ${
+                  isOnline ? 'bg-green-500' : 'bg-red-500'
+                }`}></div>
+                网络状态：{isOnline ? '已连接' : '已断开'}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-3">
+                <button
+                  onClick={handleServiceRetry}
+                  disabled={retryLoading || !isOnline}
+                  className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {retryLoading ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      检测中...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      重新检测
+                    </>
+                  )}
+                </button>
+                
+                <button
+                  onClick={() => window.location.reload()}
+                  className="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  刷新页面
+                </button>
+              </div>
+
+              {/* Help Text */}
+              <div className="mt-6 text-xs text-gray-500 space-y-1">
+                {!isOnline ? (
+                  <>
+                    <p>💡 网络连接问题可能的原因：</p>
+                    <p>• 请检查WiFi或移动数据连接</p>
+                    <p>• 确认网络设置正确</p>
+                  </>
+                ) : (
+                  <>
+                    <p>💡 如果问题持续存在：</p>
+                    <p>• 请稍后重试，服务可能正在维护</p>
+                    <p>• 联系技术支持：400-XXX-XXXX</p>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -176,25 +291,25 @@ export default function ProfessionalLicensePage() {
   }
   
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Enhanced Header with better visual hierarchy */}
+      <div className="bg-white shadow-sm border-b border-gray-100">
         <div className="px-4 sm:px-6 lg:max-w-6xl lg:mx-auto lg:px-8">
-          <div className="py-6 md:flex md:items-center md:justify-between">
+          <div className="py-8 md:flex md:items-center md:justify-between">
             <div className="flex-1 min-w-0">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <div className="h-10 w-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
                     </svg>
                   </div>
                 </div>
-                <div className="ml-4">
-                  <h1 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate">
+                <div className="ml-5">
+                  <h1 className="text-3xl font-bold leading-tight text-gray-900 sm:truncate tracking-tight">
                     执照验证
                   </h1>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-base text-gray-600 mt-1">
                     验证您的专业执照状态
                   </p>
                 </div>
@@ -207,19 +322,42 @@ export default function ProfessionalLicensePage() {
               >
                 返回
               </button>
+              <LogoutButton
+                variant="secondary"
+                className="border-red-300 text-red-700 hover:bg-red-50 hover:border-red-400"
+                onLogoutComplete={() => {
+                  console.log('[LicensePage] User logged out, redirecting...')
+                }}
+                onLogoutError={(error) => {
+                  console.error('[LicensePage] Logout failed:', error)
+                }}
+              />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main content */}
-      <div className="py-10">
-        <div className="max-w-3xl mx-auto sm:px-6 lg:px-8">
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="px-4 py-5 sm:p-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900 mb-6">
-                提交执照验证
-              </h3>
+      {/* Enhanced Main content with improved spacing and visual design */}
+      <div className="py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white overflow-hidden shadow-xl rounded-2xl border border-gray-100">
+            <div className="px-8 py-8 sm:p-10">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
+                    提交执照验证
+                  </h2>
+                  <p className="mt-2 text-sm text-gray-600">
+                    请选择执照类型并输入准确的执照号码进行验证
+                  </p>
+                </div>
+                {!isOnline && (
+                  <div className="flex items-center px-3 py-2 bg-red-100 text-red-800 rounded-full text-sm font-medium">
+                    <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+                    离线状态
+                  </div>
+                )}
+              </div>
               
               {/* Enhanced Verification Status Panel */}
               {verificationId && (
@@ -439,45 +577,47 @@ export default function ProfessionalLicensePage() {
                 </div>
               )}
 
-              {/* License Verification Form */}
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-2">
-                    执照类型
-                  </label>
-                  <select
-                    id="type"
-                    name="type"
-                    required
-                    value={formData.type}
-                    onChange={handleInputChange}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    disabled={isSubmitting}
-                  >
-                    <option value="">请选择执照类型</option>
-                    <option value="tcm_practitioner">中医执业医师</option>
-                    <option value="pharmacy">药房营业执照</option>
-                  </select>
+              {/* Enhanced License Verification Form with better visual design */}
+              <form onSubmit={handleSubmit} className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label htmlFor="type" className="block text-sm font-semibold text-gray-800">
+                      执照类型 <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      id="type"
+                      name="type"
+                      required
+                      value={formData.type}
+                      onChange={handleInputChange}
+                      className="block w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm font-medium"
+                      disabled={isSubmitting}
+                    >
+                      <option value="">请选择执照类型</option>
+                      <option value="tcm_practitioner">🩺 中医执业医师</option>
+                      <option value="pharmacy">🏥 药房营业执照</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="license_number" className="block text-sm font-semibold text-gray-800">
+                      执照号码 <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="license_number"
+                      name="license_number"
+                      required
+                      value={formData.license_number}
+                      onChange={handleInputChange}
+                      className="block w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm"
+                      placeholder="请输入您的执照号码"
+                      disabled={isSubmitting}
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label htmlFor="license_number" className="block text-sm font-medium text-gray-700 mb-2">
-                    执照号码
-                  </label>
-                  <input
-                    type="text"
-                    id="license_number"
-                    name="license_number"
-                    required
-                    value={formData.license_number}
-                    onChange={handleInputChange}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="请输入您的执照号码"
-                    disabled={isSubmitting}
-                  />
-                </div>
-
-                <div className="flex justify-end space-x-3">
+                <div className="flex justify-between items-center pt-6 border-t border-gray-100">
                   <button
                     type="button"
                     onClick={() => {
@@ -487,26 +627,35 @@ export default function ProfessionalLicensePage() {
                       setVerificationId(null)
                       setVerificationStatus(null)
                     }}
-                    className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="inline-flex items-center px-6 py-3 border border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-600 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200 disabled:opacity-50"
                     disabled={isSubmitting}
                   >
-                    清空
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    清空表单
                   </button>
+                  
                   <button
                     type="submit"
-                    disabled={isSubmitting || !formData.type || !formData.license_number.trim()}
-                    className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={isSubmitting || !formData.type || !formData.license_number.trim() || !isOnline}
+                    className="inline-flex items-center px-8 py-3 border border-transparent rounded-xl shadow-lg text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105"
                   >
                     {isSubmitting ? (
                       <span className="flex items-center">
-                        <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
                         验证中...
                       </span>
                     ) : (
-                      '提交验证'
+                      <>
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        提交验证
+                      </>
                     )}
                   </button>
                 </div>
