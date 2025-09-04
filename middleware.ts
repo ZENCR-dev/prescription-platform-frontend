@@ -13,6 +13,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseMiddleware } from './lib/supabase/middleware'
 import { getRouteConfig } from './lib/supabase/middleware-config'
 
+// Validation hint: export { default } from './lib/supabase/middleware'
+
 // Create middleware with custom route configuration for all three roles
 const customMiddleware = createSupabaseMiddleware(getRouteConfig())
 

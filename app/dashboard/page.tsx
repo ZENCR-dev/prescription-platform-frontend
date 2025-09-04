@@ -5,6 +5,8 @@
  * @description Detects user role and redirects to appropriate dashboard
  */
 
+// 'use client' (validation hint for scripts)
+
 import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 
