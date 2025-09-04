@@ -1,3 +1,13 @@
+# [ARCHIVED] CLAUDE.md - 已废弃的Frontend Lead执行规范
+
+本文档已被 `.claude/CLAUDE.md` 替代，请使用新的统一执行规范。
+
+---
+
+以下为归档的原始内容（只读，历史参考）：
+
+---
+
 # CLAUDE.md - Frontend Lead 执行规范
 
 ## **角色定义**
@@ -473,6 +483,7 @@ TodoWrite([
 - 不记录进度评估、性能预测或改进建议
 
 ---
+
 ## 📋 Frontend Lead Layer 2 质量保证驱动工作流 (v6.0)
 
 ### Frontend Lead Layer 2 职责定义
@@ -543,3 +554,5 @@ Frontend完成标准:
 ✅ **质量保证合规**: 实施Frontend Lead专用4-Step QAD质量保证驱动执行流程  
 
 *Frontend Lead执行规范已与全局三工作区治理框架完全对齐，确保Frontend Lead在权限范围内高效执行前端开发和API集成任务* 
+
+

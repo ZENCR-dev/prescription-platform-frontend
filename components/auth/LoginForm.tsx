@@ -12,34 +12,47 @@ import { useState, FormEvent } from 'react'
 import { useLanguage } from './hooks/useLanguage'
 import { supabase } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import ErrorFeedback, { ErrorInfo, AuthErrorHandler } from './ErrorFeedback'
 
 export default function LoginForm() {
   const router = useRouter()
-  const { toggleLanguage, texts, toggleButtonText } = useLanguage()
+  const { toggleLanguage, texts, toggleButtonText, language } = useLanguage()
   
   // Form state
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [errorInfo, setErrorInfo] = useState<ErrorInfo | null>(null)
   
   // Handle form submission
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setError('')
+    setErrorInfo(null)
     setIsLoading(true)
     
     try {
       // Validate inputs
       if (!email || !email.includes('@')) {
-        setError(texts.invalidEmail)
+        setErrorInfo({
+          message: texts.invalidEmail,
+          type: 'warning',
+          code: 'INVALID_EMAIL',
+          autoDismiss: true,
+          dismissAfter: 3000
+        })
         setIsLoading(false)
         return
       }
       
       if (!password || password.length < 8) {
-        setError(texts.invalidPassword)
+        setErrorInfo({
+          message: texts.invalidPassword,
+          type: 'warning',
+          code: 'INVALID_PASSWORD',
+          autoDismiss: true,
+          dismissAfter: 3000
+        })
         setIsLoading(false)
         return
       }
@@ -52,7 +65,7 @@ export default function LoginForm() {
       
       if (authError) {
         console.error('Login error:', authError)
-        setError(texts.loginFailed)
+        setErrorInfo(AuthErrorHandler.createErrorInfo(authError, texts.loginFailed, language))
         setIsLoading(false)
         return
       }
@@ -66,10 +79,32 @@ export default function LoginForm() {
         localStorage.removeItem('rememberEmail')
       }
       
-      // Login successful - wait for session sync then navigate safely
+      // Login successful - probe for session sync then navigate safely
       if (data.user) {
-        // Brief delay to allow auth state change to trigger and complete callback
-        await new Promise(resolve => setTimeout(resolve, 500))
+        // Active session probing: check up to 3 times with 300ms intervals
+        let sessionReady = false
+        for (let attempt = 1; attempt <= 3; attempt++) {
+          try {
+            // Check if session is available by calling getSession
+            const { data: { session: currentSession } } = await supabase.auth.getSession()
+            if (currentSession) {
+              console.log(`Session probe successful on attempt ${attempt}`)
+              sessionReady = true
+              break
+            }
+          } catch (error) {
+            console.warn(`Session probe attempt ${attempt} failed:`, error)
+          }
+          
+          // Wait before next attempt (except last)
+          if (attempt < 3) {
+            await new Promise(resolve => setTimeout(resolve, 300))
+          }
+        }
+        
+        if (!sessionReady) {
+          console.warn('Session not ready after probing, continuing anyway')
+        }
         
         // Refresh router state to pick up new authentication cookies
         router.refresh()
@@ -80,7 +115,7 @@ export default function LoginForm() {
       }
     } catch (err) {
       console.error('Unexpected error:', err)
-      setError(texts.networkError)
+      setErrorInfo(AuthErrorHandler.createNetworkError(language))
     } finally {
       setIsLoading(false)
     }
@@ -88,7 +123,7 @@ export default function LoginForm() {
   
   // Handle OAuth login
   const handleOAuthLogin = async (provider: 'google' | 'apple') => {
-    setError('')
+    setErrorInfo(null)
     setIsLoading(true)
     
     try {
@@ -101,11 +136,11 @@ export default function LoginForm() {
       
       if (error) {
         console.error('OAuth error:', error)
-        setError(texts.loginFailed)
+        setErrorInfo(AuthErrorHandler.createErrorInfo(error, texts.loginFailed, language))
       }
     } catch (err) {
       console.error('OAuth error:', err)
-      setError(texts.networkError)
+      setErrorInfo(AuthErrorHandler.createNetworkError(language))
     } finally {
       setIsLoading(false)
     }
@@ -204,12 +239,12 @@ export default function LoginForm() {
               {texts.signInPrompt}
             </p>
             
-            {/* Error Message */}
-            {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded">
-                {error}
-              </div>
-            )}
+            {/* Enhanced Error Feedback */}
+            <ErrorFeedback 
+              error={errorInfo} 
+              onDismiss={() => setErrorInfo(null)}
+              className="mb-4"
+            />
             
             <form className="space-y-6" onSubmit={handleSubmit}>
               {/* Email Input */}

@@ -197,6 +197,68 @@ Version_Consumption_Analysis:
 
 ---
 
+## 🔗 Integration Readiness Gate (IRG) - Frontend Module/PRP Integration Standards
+
+### IRG定义（Module/PRP层级）
+- IRG面向 Module/PRP 的集成验证，不在 4-Step QAD 原子任务层级执行。
+- 目标：在模块完成后统一验证 API 集成、用户体验和跨浏览器兼容，确保“可集成、可发布”。
+
+### 成功实践基线（M1.1/M1.2）
+- 采用 EdgeFunctionAdapter 的统一 API 消费模式作为前端集成基线。
+- 以 M1.1/M1.2 已验证流程为参照：统一入口调用、错误与边界条件集中处理、契约遵循 `docs/api/APIv1.md`。
+
+### 用户参与强制要求（与Layer 2保持一致）
+- Dev-Steps 3.3：原型评审与用户反馈收集（【强制】）。
+- Dev-Steps 3.6：UI 测试与体验优化（【强制】）。
+- 两个用户参与节点的结论需在模块 IRG 验证时复核并纳入结果记录。
+
+### 前端IRG职责
+- 使用 EdgeFunctionAdapter 进行统一 API 消费与异常治理。
+- 执行跨浏览器验证（Desktop/Mobile 主流浏览器，自动化优先）。
+- 复核 UI/UX 达标（可访问性、响应式、交互一致性）。
+- 严格遵循已分发的 API 契约文档（`docs/api/APIv1.md`）。
+
+### 与 4-Step QAD 的关系
+- 4-Step QAD：聚焦原子任务/组件级质量（实现、测试、优化、提交）。
+- IRG：在模块级执行最终集成验证，确保组件“组合为模块”后可用、可集成。
+
+### 技术实现规范
+```yaml
+EdgeFunctionAdapter:
+  role: "前端统一API调用适配器层，集中处理契约、错误、重试与可观测性"
+  contract: "严格消费 docs/api/APIv1.md，禁止自定义或修改契约"
+
+User_Involvement:
+  required_steps:
+    - 3.3: 原型评审 + 反馈收集
+    - 3.6: UI测试 + 体验优化
+  recording: "将关键反馈与结论写入 PRP-MX.Y_LOG.md"
+
+Cross_Browser_Verification:
+  tool: "Playwright"
+  scope: [Chromium, WebKit, Firefox]
+  device_profiles: [Desktop, Mobile]
+  result: "输出自动化报告并在IRG记录中归档"
+```
+
+### 质量验证要求（IRG Gate）
+```yaml
+IRG_Trigger:
+  when: "Module内所有 4-Step QAD 原子任务均完成后"
+
+IRG_Checklist:
+  - API集成: "EdgeFunctionAdapter 调用全通过，错误处理可控，契约符合 APIv1.md"
+  - 用户体验: "可访问性(≥WCAG 2.1 AA)、响应式、关键交互一致性达标"
+  - 跨浏览器: "Playwright 全套用例通过(Chromium/WebKit/Firefox, 桌面+移动)"
+  - 性能: "核心页面符合性能预算与Core Web Vitals 目标"
+
+Documentation:
+  log: "所有IRG验证结果必须记录在 PRP-MX.Y_LOG.md（含失败项与修复记录）"
+  decision: "通过 → 标记模块为 Integration Ready；不通过 → 进入模块修复与重验证"
+```
+
+---
+
 ## 📊 Engineering Unit Definitions (EUDs) - Objective Effort Estimation System
 
 ### **EUDs概念定义**
@@ -545,7 +607,7 @@ Financial Interface (Practitioner Account):
 ### Active PRP Navigation
 - **Current Work Orders**: Check [`PLANNING.md`](PLANNING.md) for active M1 Frontend PRP index
 - **PRP Documents**: Execute tasks from `PRPs/PRP-MX.Y-*.md` files
-- **Execution Rules**: Follow [`CLAUDE.md`](CLAUDE.md) for detailed AI Agent execution protocols
+- **Execution Rules**: Follow [`.claude/CLAUDE.md`](.claude/CLAUDE.md) for detailed AI Agent execution protocols
 
 ### Backend API Coordination Protocol
 ```yaml
@@ -567,7 +629,7 @@ Quality Coordination:
 
 ### Execution Documents (This Workspace)
 - **Task Navigation**: [`PLANNING.md`](PLANNING.md) - Frontend PRP tracking and status
-- **Execution Rules**: [`CLAUDE.md`](CLAUDE.md) - AI Agent execution protocols
+- **Execution Rules**: [`.claude/CLAUDE.md`](.claude/CLAUDE.md) - AI Agent execution protocols
 - **Environment Setup**: [`DevEnv.md`](DevEnv.md) - Development environment configuration
 
 ### Archive and History

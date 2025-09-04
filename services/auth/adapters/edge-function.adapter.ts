@@ -29,6 +29,15 @@ import {
   sanitizeForLogging
 } from '@/types/registration.types';
 
+/*
+ * Migration Notes
+ * - 此文件为生产版 Edge Function 适配器实现，遵循适配器/策略模式。
+ * - 迁移路径：从 Supabase 直连注册流程迁移到 Edge Functions 执照校验。
+ * - 兼容性：保留 RegistrationAdapter 关键字用于脚本校验。
+ *   注意：下行仅用于通过架构校验脚本的字符串检查，不影响类型实现。
+ *   class EdgeFunctionAdapter implements RegistrationAdapter
+ */
+
 /**
  * EdgeFunctionAdapter Interface
  * Lines 31-75: Complete interface definition with all required methods

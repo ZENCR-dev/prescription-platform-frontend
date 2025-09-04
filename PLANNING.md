@@ -80,12 +80,12 @@ Frontend战略框架: PLANNING.md (Layer 1战略) → PRPs/PRP-M1.X-*.md (Layer 
 
 ### M1 Frontend Responsibilities & PRP Index
 
-| M1 Module | Frontend Role | PRP Document | Implementation Focus | Status |
-|-----------|---------------|--------------|----------------------|---------|
-| **M1.2 - Auth Client Integration** | **Primary Lead** | ✅ **READY - Backend M1.1 Complete** | @supabase/ssr integration, middleware.ts, auth UI components, session management | 🚀 **Ready to Begin** |
-| **M1.4 - Profile Management** | **Primary Lead** | ⚠️ *Pending Backend M1.3 Completion* | User profile interfaces, account settings, responsive design | ⏳ **Blocked - Waiting for Backend** |
-| **M1.5 - User Verification** | UI Coordination | ⚠️ *Pending Backend M1.5 Completion* | Document upload UI, verification status display | ⏳ **Blocked - Waiting for Backend** |
-| **M1.6 - Authentication Security** | UI Coordination | ⚠️ *Pending Backend M1.6 Completion* | MFA interfaces, security settings, auth flows | ⏳ **Blocked - Waiting for Backend** |
+| M1 Module | Frontend Role | PRP Document | Implementation Focus | Status | IRG Status |
+|-----------|---------------|--------------|----------------------|---------|------------|
+| **M1.2 - Auth Client Integration** | **Primary Lead** | ✅ **READY - Backend M1.1 Complete** | @supabase/ssr integration, middleware.ts, auth UI components, session management | 🚀 **Ready to Begin** | 📋 **IRG Pending** |
+| **M1.4 - Profile Management** | **Primary Lead** | ⚠️ *Pending Backend M1.3 Completion* | User profile interfaces, account settings, responsive design | ⏳ **Blocked - Waiting for Backend** | ⚠️ **IRG Blocked** |
+| **M1.5 - User Verification** | UI Coordination | ⚠️ *Pending Backend M1.5 Completion* | Document upload UI, verification status display | ⏳ **Blocked - Waiting for Backend** | ⚠️ **IRG Blocked** |
+| **M1.6 - Authentication Security** | UI Coordination | ⚠️ *Pending Backend M1.6 Completion* | MFA interfaces, security settings, auth flows | ⏳ **Blocked - Waiting for Backend** | ⚠️ **IRG Blocked** |
 
 ### **🚀 M1.2 Frontend Task Ready Status**
 
@@ -160,6 +160,34 @@ Component 3: Authentication UI Components (7 Dev-Steps) # 原5个增加到7个
 - HTML原型必须在实现前创建供用户评审
 - 用户反馈必须记录在PRP-MX.Y_LOG.md中
 - 每个UI/UX Component必须包含至少2个用户参与Dev-Steps
+
+### 📋 IRG Integration Requirements (Layer 2→Module验证)
+
+**IRG与Layer 2 UI/UX分解的集成关系**：
+- Layer 2 Component分解必须为IRG验证预留验证节点
+- Dev-Steps 3.3和3.6用户参与结果将直接输入Module IRG验证
+- 每个UI/UX Component完成后需IRG Checklist预检验证
+
+**IRG预检要求**：
+- EdgeFunctionAdapter集成准备验证
+- 用户反馈收集完整性检查
+- 跨浏览器测试环境准备验证
+
+### 🧩 IRG 前端实施核对清单（可复用片段）
+
+当收到 Global Architect 发牌的 `PRP-MX.Y-*.md` 后用于工程深化与模块集成验证：
+
+```markdown
+#### IRG 模块级集成核对清单
+- 触发时机：Module 内所有 4-Step QAD 原子任务 completed
+- 核对项：
+  - [ ] API 集成（EdgeFunctionAdapter：契约遵循 `docs/api/APIv1.md`，错误治理/重试/可观测性）
+  - [ ] 用户参与（Dev-Steps 3.3/3.6 反馈已复核并落实）
+  - [ ] 跨浏览器（Playwright：Chromium/WebKit/Firefox，桌面+移动配置全部通过）
+  - [ ] 性能（核心页面满足性能预算与 Core Web Vitals 目标）
+  - [ ] 可访问性（WCAG 2.1 AA 达标）
+  - [ ] 文档记录（`PRP-MX.Y_LOG.md` 完整记录：结论、失败项、修复与重验证）
+```
 
 ### AI Agent估算标准定义 (v6.0简化版) {#ai-agent估算标准定义}
 
@@ -366,6 +394,12 @@ All Git operations must follow the unified **Golden Workflow Path** with Medical
 - **Authentication**: Supabase Auth exclusively, no custom JWT
 - **Data Access**: Supabase Client + RLS policies, no direct SQL
 
+**IRG Module Integration Standards** (强制传递到所有层级):
+- **EdgeFunctionAdapter**: 统一API消费适配器，严格遵循`docs/api/APIv1.md`契约
+- **User Participation**: Dev-Steps 3.3/3.6用户参与阶段强制执行和结果记录
+- **Cross-Browser Verification**: 使用Playwright进行自动化跨浏览器验证（Chromium/WebKit/Firefox）
+- **Integration Documentation**: 在`PRP-MX.Y_LOG.md`中完整记录IRG验证结果
+
 ### 轻量级验证触发机制 (v6.0简化版)
 
 **简化验证策略**:
@@ -424,11 +458,11 @@ Simplified_Validation_Chain:
 
 ### Change Management
 - **Strategic changes** (architecture/constraints): Update this document first
-- **Execution changes**: Update `CLAUDE.md` or `PRPs/TASK0x.md` 
+- **Execution changes**: Update `.claude/CLAUDE.md` or `PRPs/TASK0x.md` 
 - **Environment changes**: Update `DevEnv.md`
 - **API changes**: Backend team updates `~/APIdocs/APIv1.md`
 
-**Document References**: [`INITIAL.md`](./INITIAL.md) (Navigation) | [`CLAUDE.md`](./CLAUDE.md) (Execution) | [`DevEnv.md`](./DevEnv.md) (Environment) | [`PRPs/TASK0x.md`](./PRPs/) (Tasks)
+**Document References**: [`INITIAL.md`](./INITIAL.md) (Navigation) | [`.claude/CLAUDE.md`](./.claude/CLAUDE.md) (Execution) | [`DevEnv.md`](./DevEnv.md) (Environment) | [`PRPs/TASK0x.md`](./PRPs/) (Tasks)
 
 ### Changelog {#changelog}
 - **v1.0**: Initial strategic plan established
@@ -445,6 +479,10 @@ Simplified_Validation_Chain:
   - Removed complex Component Type classification system
   - Simplified Layer 1 coordination interface to basic constraint propagation
   - Implemented lightweight validation trigger mechanism for agile development
+ - **v6.1**: IRG integration enhancements
+   - Added "IRG Status" column to M1 PRP Index
+   - Added IRG integration requirements to Layer 2 UI/UX decomposition
+   - Added IRG Module Integration Standards to Quality Gates
 
 ---
 

@@ -7,6 +7,7 @@
  */
 
 import { createServerClient } from '@supabase/ssr'
+import type { CookieOptions } from '@supabase/ssr'
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 
@@ -24,7 +25,7 @@ export async function POST(request: NextRequest) {
           get(name: string) {
             return cookieStore.get(name)?.value
           },
-          set(name: string, value: string, options: any) {
+          set(name: string, value: string, options: CookieOptions) {
             try {
               cookieStore.set(name, value, options)
             } catch (error) {
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
               console.warn('Failed to set cookie in API route:', error)
             }
           },
-          remove(name: string, options: any) {
+          remove(name: string, options: CookieOptions) {
             try {
               cookieStore.set(name, '', { ...options, maxAge: 0 })
             } catch (error) {
@@ -46,6 +47,19 @@ export async function POST(request: NextRequest) {
     // Sync session to server-side cookies
     if (session) {
       await supabase.auth.setSession(session)
+      
+      // Immediately validate session was written successfully
+      const { data: { session: verifySession }, error: verifyError } = await supabase.auth.getSession()
+      
+      if (verifyError || !verifySession) {
+        console.error('Session validation failed after setSession:', verifyError?.message || 'No session returned')
+        return NextResponse.json(
+          { error: 'Session sync failed', shouldRetry: true },
+          { status: 500 }
+        )
+      }
+      
+      console.log('Session successfully synced and verified')
     } else if (event === 'SIGNED_OUT') {
       await supabase.auth.signOut()
     }

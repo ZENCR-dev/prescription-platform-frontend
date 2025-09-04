@@ -9,7 +9,7 @@
 
 ### Quick Navigation
 - 🎯 **Start Here**: [`INITIAL.md`](./INITIAL.md) - Task navigation and current status
-- 📋 **Execution Rules**: [`CLAUDE.md`](./CLAUDE.md) - AI collaboration and development workflows
+- 📋 **Execution Rules**: [`.claude/CLAUDE.md`](./.claude/CLAUDE.md) - AI collaboration and development workflows
 - 🏛️ **Strategic Context**: [`PLANNING.md`](./PLANNING.md) - Architecture constraints and phase objectives
 - 📖 **Development Guide**: [`FRONTEND_PLAYBOOK.md`](./FRONTEND_PLAYBOOK.md) - PRP generation and collaboration protocols
 - 🔄 **Git Workflow**: [`examples/golden-workflow.md`](./examples/golden-workflow.md) - Branch management and quality gates

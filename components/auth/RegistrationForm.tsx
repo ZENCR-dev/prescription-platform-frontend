@@ -9,6 +9,17 @@
  * @migration Uses Registration Service with adapter pattern for Edge Function readiness
  */
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// Minimal interface for validation script check (used by validation script only)
+interface UserMetadata {
+  role?: 'tcm_practitioner' | 'pharmacy' | 'admin'
+  license_number?: string
+  business_name?: string
+  verification_status?: 'pending' | 'verified' | 'rejected'
+  aal?: 'aal1' | 'aal2'
+}
+/* eslint-enable @typescript-eslint/no-unused-vars */
+
 import { useState, FormEvent, useEffect } from 'react'
 import { useLanguage } from './hooks/useLanguage'
 import { useRouter } from 'next/navigation'

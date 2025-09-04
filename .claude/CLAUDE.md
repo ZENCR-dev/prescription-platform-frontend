@@ -11,69 +11,74 @@
 - **PRP执行职责**: 接收和执行Global Architect分发的前端相关PRP任务
 - **协调职责**: 通过Global Architect协调与Backend Lead的技术对接
 
-### **严格行为边界**
-- ✅ **允许操作**: 前端工作区内所有文件的创建、修改、删除
-- ✅ **允许操作**: 消费和集成Global Architect分发的API文档
-- ❌ **禁止操作**: 修改全局治理文档（SOP.md, CLAUDE.md, PRP-*.md等）
-- ❌ **禁止操作**: 修改backend工作区的任何文件
-- ❌ **禁止操作**: 创建或修改API规范文档（只能消费）
-- ❌ **禁止操作**: 跨越Frontend Lead角色权限边界的任何行为
+### **严格行为边界（≤10行）**
+- ✅ 仅限 `prescription-platform-frontend/` 内编辑
+- ✅ 只消费 `docs/api/APIv1.md`（Global Architect 分发）
+- ❌ 禁止 Mock/自定义 API 契约
+- ❌ 禁止修改全局或 backend 工作区文件
+- ❌ 禁止创建/修改 API 规范文档
+- ❌ 禁止越权跨越 Frontend Lead 角色边界
+- ❌ 禁止存储或暴露任何患者 PII
+- ❌ 禁止在本地存储保存认证令牌
+- ❌ 禁止绕过环境变量校验与 HTTPS 要求
+- ❌ 禁止在未通过 lint/test/build 的情况下合并/发布
 
-## **治理框架参考**
+## 阅读路径（单页指引）
 
-> **工作区内治理文档**（通过PLAYBOOK获取）
-> - **核心治理原则**: [`FRONTEND_PLAYBOOK.md#🎯 Global Governance Framework`](FRONTEND_PLAYBOOK.md#🎯-global-governance-framework-embedded-content)
-> - **合规验证机制**: [`FRONTEND_PLAYBOOK.md#🛡️ Compliance and Validation Framework`](FRONTEND_PLAYBOOK.md#🛡️-compliance-and-validation-framework)
-> - **执行标准指南**: [`FRONTEND_PLAYBOOK.md#🔧 Frontend Execution Standards`](FRONTEND_PLAYBOOK.md#🔧-frontend-execution-standards)
-> - **EUDs客观估算**: [`FRONTEND_PLAYBOOK.md#📊 Engineering Unit Definitions (EUDs)`](FRONTEND_PLAYBOOK.md#📊-engineering-unit-definitions-euds---objective-effort-estimation-system)
-> - **API消费接口**: `docs/api/APIv1.md` - 前端工作区API消费文档（版本由Global Architect分发）
-> - **执行模式**: 4-Step QAD Cycle，Frontend Lead权限范围内执行
-> - **关键约束**: 禁止自Mock API，禁止越权集成，必须等待Backend API契约
+- 1）PLAYBOOK：治理/质量门/技术栈 → `FRONTEND_PLAYBOOK.md`
+- 2）PLANNING：IRG清单与状态表 → `PLANNING.md`
+- 3）PRP：执行具体任务 → `PRPs/PRP-MX.Y-*.md`
 
-## 📊 EUDs客观估算系统 (Engineering Unit Definitions)
+---
 
-### **核心概念**
-EUDs是**客观、可计算的工程量度系统**，用于替代主观的时间预估，实现基于工作量本质的精确规划和进度跟踪。
+## 执行总览（怎么做）
 
-### **四层架构体系**
-```yaml
-Dev-Step (原子级): 1个完整的4-Step QAD循环
-  └── Research → Implement → Test → Commit
+- 分工：QAD = 原子任务/组件；IRG = 模块/PRP 集成
+- 4-Step QAD 要点：
+  - Step 1 分析规划：明确需求、接口、验收
+  - Step 2 实现构建：按设计实现与基础验证
+  - Step 3 验证优化：功能/体验/质量改进
+  - Step 4 集成反馈：测试通过后提交与记录
 
-Component (组件级): 3-8个Dev-Step组成
-  └── Frontend UI组件、认证组件、路由组件等
-
-Module (模块级): 5-15个Component组成  
-  └── M1.2 Authentication Client Integration
-
-Milestone (里程碑级): 3-7个Module组成
-  └── M1 Core Authentication & User Management
+TodoWrite 正例（原子任务级，简版）：
+```javascript
+TodoWrite([{ id: "task-1-1", content: "QAD Step 1 分析与规划", status: "in_progress" }])
 ```
 
-### **替代时间预估的核心价值**
-- ❌ **传统时间预估问题**: 主观性、不可比较、难以追踪、积累偏差
-- ✅ **EUDs客观优势**: 可量化、标准化、可验证、可预测
-
-### **Frontend Lead EUDs应用**
-```yaml
-正确的EUDs分解示例:
-  Component 1: @supabase/ssr Integration (5 Dev-Steps)
-  Component 2: Next.js Middleware Setup (4 Dev-Steps)  
-  Component 3: Auth UI Components (6 Dev-Steps)
-  Component 4: Route Protection (3 Dev-Steps)
-  
-EUD-to-Time转换:
-  内部规划: 纯EUD单位 (18 Dev-Steps)
-  外部沟通: EUDs ÷ 团队速率 = 时间区间
-  动态调整: 基于实际完成速率调整预期
+TodoWrite 反例（禁止）：
+```javascript
+// 将多个原子任务批量写入一个TodoWrite调用 ❌
 ```
 
-### **与4-Step QAD的集成**
-- 每个Dev-Step = 1个完整的4-Step QAD循环
-- Frontend Lead使用TodoWrite创建Dev-Step级别的todos
-- 基于完成的Dev-Steps计数追踪进度
+---
 
-> **📖 完整EUDs定义参考**: [`FRONTEND_PLAYBOOK.md#📊 Engineering Unit Definitions`](FRONTEND_PLAYBOOK.md#📊-engineering-unit-definitions-euds---objective-effort-estimation-system)
+## IRG（模块级）最小核对清单（≤15行）
+
+当收到 Global Architect 发牌的 `PRP-MX.Y-*.md` 后用于工程深化与模块集成验证：
+
+```markdown
+#### IRG 模块级集成核对清单
+- 触发时机：Module 内所有 4-Step QAD 原子任务 completed
+- 核对项：
+  - [ ] API 集成（EdgeFunctionAdapter：契约遵循 `docs/api/APIv1.md`，错误治理/重试/可观测性）
+  - [ ] 用户参与（Dev-Steps 3.3/3.6 反馈已复核并落实）
+  - [ ] 跨浏览器（Playwright：Chromium/WebKit/Firefox，桌面+移动配置全部通过）
+  - [ ] 性能（核心页面满足性能预算与 Core Web Vitals 目标）
+  - [ ] 可访问性（WCAG 2.1 AA 达标）
+  - [ ] 文档记录（`PRP-MX.Y_LOG.md` 完整记录：结论、失败项、修复与重验证）
+```
+
+---
+
+## 引用索引（单一可信来源）
+
+- Frontend 执行标准与质量门 → `FRONTEND_PLAYBOOK.md`
+- IRG 清单与 M1 PRP Index → `PLANNING.md`
+- Git 工作流与工具矩阵 → `examples/golden-workflow.md`、`examples/tool-matrix.md`
+- 应急恢复流程 → `examples/emergency-recovery.md`
+
+## 📊 EUDs（外链）
+EUDs 定义、计算规则与实践示例请参见：`FRONTEND_PLAYBOOK.md#📊 Engineering Unit Definitions (EUDs)`
 
 ## 🎨 Layer 2 UI/UX Component分解执行规则 (MANDATORY)
 
@@ -212,117 +217,30 @@ UI/UX Component分解模式:
 
 ---
 
-## ✅ Required Frontend Development Practices
+## ✅ 实践索引（外链）
+Supabase 客户端选择、质量门与命令请参见：
+- 前端执行标准与质量门 → `FRONTEND_PLAYBOOK.md`
+- 质量门与命令索引 → `DevEnv.md#commands`
 
-### Supabase Client Decision Matrix
-| Use Case | Solution | Reason |
-|----------|----------|---------|
-| User authentication | Supabase Auth UI components | Secure, tested auth flows |
-| Real-time data display | Supabase Realtime subscriptions | Live updates |
-| File uploads | Supabase Storage client | Cloud-native file management |
-| Simple CRUD + RLS can handle | Supabase Client direct calls | Immediate updates |
-| Complex calculations/transactions | Call Edge Functions via API | Server-side processing |
-
-### Quality Gates & Standards
-**Reference**: `PLANNING.md#quality-gates` for complete requirements  
-**Commands**: See `DevEnv.md#commands` for complete command reference
-
-## 🔧 Golden Workflow Tool Matrix {#golden-workflow-tool-matrix}
-
-### Command Aliases for Standardized Operations
-
-**Status Monitoring Aliases**:
-- `status-all` → `git status && npm run type-check --noEmit && npm run lint --quiet`
-- `branch-health` → `git branch -vv && git fetch origin && git log --oneline -3`
-- `env-check` → Verify `.env.local` exists and contains required Supabase variables
-
-**Quality Validation Aliases**:
-- `quality-full` → `npm run test && npm run lint && npm run type-check && npm run build`
-- `quality-quick` → `npm run lint && npm run type-check --noEmit`
-- `pre-commit` → `npm run test -- --watchAll=false && npm run lint --fix`
-
-**Security Scanning Aliases**:
-- `security-scan` → `npm audit && git log --grep="secret\|key\|password" --oneline`
-- `env-audit` → Check for sensitive data in tracked files and verify .env.local is gitignored
-- `dependency-check` → `npm audit --audit-level=moderate`
-
-**Emergency Recovery Aliases**:
-- `safe-reset` → `git stash && git checkout main && git pull origin main`
-- `backup-current` → `git branch backup-$(date +%Y%m%d-%H%M) && git add -A && git commit -m "emergency backup"`
-- `restore-clean` → Reset to last known good state with full backup
-
-### Tool Integration Matrix
-
-| Operation | Primary Tool | Backup Tool | Emergency Fallback |
-|-----------|-------------|-------------|-------------------|
-| **Branch Management** | `git` commands | GitHub CLI (`gh`) | Manual GitHub web interface |
-| **Code Quality** | `npm run lint` | ESLint CLI | Manual code review |
-| **Type Checking** | `npm run type-check` | TypeScript CLI | IDE type checking |
-| **Testing** | `npm run test` | Jest CLI | Manual testing |
-| **Build Validation** | `npm run build` | Next.js CLI | Local development server |
-| **Environment Check** | Custom script | Manual .env verification | Environment template comparison |
-
-### Workflow Automation Integration
-
-**Pre-Operation Checklist** (Automated via aliases):
-1. `status-all` - Verify clean working directory and no type/lint errors
-2. `branch-health` - Confirm branch state and remote sync
-3. `env-check` - Validate environment configuration
-4. `security-scan` - Quick security audit before major operations
-
-**Post-Operation Validation** (Automated via aliases):
-1. `quality-full` - Complete quality gate validation
-2. `security-scan` - Final security check
-3. `backup-current` - Create safety backup before commit
-4. Document completion in appropriate PRP-MX.Y-*_LOG.md
+## 🔧 工作流与工具（外链）
+详细 Git 工作流、命令别名与自动化校验见：
+- `examples/golden-workflow.md`
+- `examples/tool-matrix.md`
 
 ---
 
-## 🛡️ Security & Compliance Guidelines
-
-### Supabase Security Requirements
-- Always use RLS policies for data access control
-- Validate user permissions at database level
-- Use Edge Functions for sensitive calculations
-- Never bypass Supabase Auth for authentication
-
-### Privacy Compliance (MANDATORY)
-- Use anonymized identifiers (`prescriptionCode`) instead of patient info
-- Validate GDPR/HIPAA compliance before deployment
-- Remove all patient-identifying fields from data models
-- Never commit patient data or PII to repository
+## 🛡️ 安全与隐私（外链）
+隐私/安全合规列表请参见：`FRONTEND_PLAYBOOK.md` 相应章节。
 
 ---
 
-## 🎯 Legacy Component Migration (from `recycle/`)
-
-### Component Adaptation Strategy
-1. Remove all patient PII fields completely
-2. Replace API calls with Supabase Client calls
-3. Add RLS policy integration
-4. Implement Supabase Realtime subscriptions
-5. Test with anonymized data only
-6. Validate privacy compliance
+## ♻️ 迁移与适配（外链）
+旧组件迁移策略请参见：`FRONTEND_PLAYBOOK.md` 与相关 PRP 文档。
 
 ---
 
-## 📋 三工作区API消费协议
-
-### Frontend Lead API消费职责
-**API消费者角色定义**: `docs/api/APIv1.md`
-- **文档来源权威**: 仅消费Global Architect从Backend工作区审核分发的认证API文档
-- **前端依赖模式**: 只能基于Global Architect已认证分发的API文档进行前端集成开发
-- 🚨 **Frontend Lead绝对禁止**: 永远不创建Mock API、假端点或自定义API规范
-- 🚨 **Backend-First等待原则**: 必须等待Backend MEM完成 → Global Architect分发 → Frontend集成
-- 🚨 **无权威API创建**: Frontend Lead只有API消费权限，无API创建或修改权限
-
-### Frontend Lead API集成日志职责
-**APIv1_log.md Frontend专用内容** (前端消费和集成专用视角):
-- API版本接收确认和Global Architect分发追踪记录
-- 前端集成影响分析和版本变化技术评估
-- Frontend Lead API集成开发执行进度和测试验证结果
-- 前端特定集成问题和向Global Architect的反馈协调记录
-- 前端跨版本兼容性测试和Frontend Lead迁移实施笔记
+## 📋 API 治理（外链）
+三工作区 API 治理职责与日志规范请参见：`FRONTEND_PLAYBOOK.md` 与 `docs/api/APIv1_log.md`。
 
 ### Git Workflow & Branch Management
 
@@ -352,7 +270,7 @@ All Git operations must follow the **Golden Workflow Path** with Medical Complia
 
 ---
 
-## 🏗️ Layer 3: QAD-Todos敏捷组件开发协议 {#layer3-execution-protocol}
+## 🏗️ Layer 3: QAD 执行要点（精简版）
 
 ### Agent执行触发机制
 
@@ -364,133 +282,57 @@ All Git operations must follow the **Golden Workflow Path** with Medical Complia
 - **临时性**: Layer 3 Todos临时生成，不创建持久化文档
 - **操作记录**: 实时记录到PRP-MX.Y-*_LOG.md
 
+### IRG 执行协议（Module 层级）
+- **层级定位**: IRG 仅在 Module/PRP 层级执行，不进入原子任务（Dev-Step/Component）层级。
+- **触发时机**: 当模块内所有 4-Step QAD 原子任务均完成且通过基础验证后，触发 IRG 集成验证。
+- **验证目标**: 统一验证 API 集成（基于 EdgeFunctionAdapter）、用户体验达标与跨浏览器兼容，确保模块“可集成、可发布”。
+
+### IRG ↔ 4-Step QAD 衔接机制
+- **4-Step QAD（原子任务）**: 聚焦组件级实现与质量（实现、测试、优化、提交）。
+- **IRG（模块）**: 聚焦组件组合后的集成质量；在 QAD 全部完成后执行，输出集成验证结论与文档记录。
+- **记录要求**: 所有 IRG 检查与结论记录到 `PRP-MX.Y_LOG.md`，作为 Module Exit 决策依据。
+
+### Frontend Lead 在 IRG 中的职责
+- **API契约消费合规**: 严格基于 `docs/api/APIv1.md` 进行集成验证，禁止自定义或修改契约。
+- **EdgeFunctionAdapter 集成验证**: 通过统一适配器完成 API 调用、错误治理与契约校验。
+- **跨浏览器验证**: 使用 Playwright 在 Chromium/WebKit/Firefox（桌面与移动配置）执行自动化验证。
+- **用户参与结果复核**: 复核 Dev-Steps 3.3/3.6 的用户反馈结论并纳入 IRG 判定。
+- **性能与可访问性**: 复核关键页面的性能预算与 WCAG 2.1 AA 要求达标。
+- **结果输出**: 在 `PRP-MX.Y_LOG.md` 完整记录 IRG 结果（通过/不通过与修复重验证）。
+
+```yaml
+IRG_Checklist (Module Level):
+  trigger: "All atomic QAD tasks completed"
+  api_integration: "EdgeFunctionAdapter 调用全通过，错误处理可控，契约符合 APIv1.md"
+  user_experience: ">= WCAG 2.1 AA，关键交互一致且响应式达标"
+  cross_browser: "Playwright 在 Chromium/WebKit/Firefox（桌面+移动）全部通过"
+  performance: "核心页面满足性能预算与 Core Web Vitals 目标"
+  documentation: "PRP-MX.Y_LOG.md 完整记录（含失败与修复记录）"
+```
+
 **🚨 关键约束**:
 - ❌ **禁止并行执行原子任务**: 同时只能有一个原子任务处于active状态
 - ❌ **禁止跳过需求分析**: 每个原子任务必须从分析和规划开始
 - ❌ **禁止批量创建todos**: 只为当前执行的原子任务创建4-Step QAD todos
 - ✅ **正确执行流程**: 选择原子任务 → 创建4-Step QAD todos → 完整执行 → 下一个原子任务
 
-### 4-Step QAD质量保证驱动开发循环
+### QAD 执行四要点（原子任务级）
+- 分析规划 → 实现构建 → 验证优化 → 集成反馈（每步围绕验收标准）
+- 使用 TodoWrite 串行驱动，一个原子任务仅一个活跃 todo
+- 完成标准：lint/test/build 通过 + 手动功能验证
+- 失败处理：创建修复任务，按同样四步循环执行
 
-**标准执行流程**: 使用`TodoWrite`工具生成4-Step QAD Cycle
-
-#### 1. 分析与规划 【需求分析阶段】(主实现角色负责)
-```bash
-# SuperClaude命令 (根据任务类型选择)
-/sc:analyze [atomic-task] --persona-[frontend|backend|architect]
-
-# Agent行为
-- 主实现角色分析atomic task的需求和技术方案
-- **需求分析和技术可行性评估**
-- 组件设计和接口定义
-- 验收标准制定和风险识别
-- 输出：技术方案、验收清单、依赖分析
+### TodoWrite 最小示例
+正例：
+```javascript
+TodoWrite([{ id: "task-1-1", content: "QAD Step 1 分析与规划", status: "in_progress" }])
+```
+反例（禁止批量/跨原子任务）：
+```javascript
+// 多个原子任务一并写入 TodoWrite ❌
 ```
 
-#### 2. 实现与构建 【快速实现阶段】(主实现角色负责)
-```bash
-# SuperClaude命令
-/sc:implement [feature] --persona-[frontend|backend|architect]
-/sc:build --optimize
-
-# Agent行为
-- 同一主实现角色按设计快速实现核心功能
-- **集成现有组件和服务**
-- 基础功能验证和规范检查
-- 执行代码格式化和基础lint检查
-- 输出：可运行代码、基础测试
-```
-
-#### 3. 验证与优化 【质量保证阶段】(主实现角色负责)
-```bash
-# SuperClaude命令
-/sc:test --comprehensive
-/sc:improve --quality --performance
-
-# Agent行为
-- 同一主实现角色进行全面功能测试和质量检查
-- **性能优化和用户体验改进**
-- 代码质量深度验证
-- 确保满足Layer 2定义的验收标准
-- 输出：测试报告、优化建议
-```
-
-#### 4. 集成与反馈 【提交阶段】(qa persona负责)
-```bash
-# SuperClaude命令
-/sc:test --all-suites
-/sc:git add . --safe-mode
-/sc:git commit --safe-mode --smart-commit
-
-# Agent行为
-- qa persona执行最终质量检查
-- 运行全部测试套件确保无回归
-- 验证功能完整性和集成准备状态
-- **测试通过后进行安全Git提交**
-- 更新任务状态准备下一轮迭代
-```
-
-### 轻量级Phase完成验证 (v6.0简化版)
-
-原子任务级别仅保留基础验证，Phase级别实施统一的轻量级验证：
-
-**Phase完成自动验证**:
-- `npm run test` - 基础单元测试验证
-- `npm run lint` - 代码规范检查
-- `npm run build` - 构建完整性验证
-- 功能手动验证通过
-
-**失败处理**: 检查失败时人工识别问题，创建简单修复任务，使用4-Step QAD Cycle解决。
-
-### AI Agent估算与执行适配
-
-**估算标准**: 参见 [`PLANNING.md#AI Agent估算标准定义`](./PLANNING.md#ai-agent估算标准定义) Layer 1权威标准
-
-**扩展执行指导**:
-Agent可在4步QAD基础循环上根据任务复杂度增加必要的中间步骤，但必须保持同一主实现角色的连续性，避免频繁角色切换。常见扩展场景：
-- **技术调研**: 新技术栈需要POC验证
-- **原型验证**: 复杂功能需要快速原型
-- **依赖协调**: 多模块集成需要额外准备
-
-### TodoWrite工具使用最佳实践
-
-**Agent使用TodoWrite的核心原则**:
-1. **实时更新**: 每完成一个步骤立即更新todo状态
-2. **单一活跃**: 同时只有一个todo处于in_progress状态  
-3. **验证驱动**: 每个todo完成必须有明确的验证标准
-4. **上下文链接**: 每个todo包含对Layer 2 atomic task的引用
-5. **日志记录**: 每个todo执行时必须记录到对应的PRP-MX.Y-*_LOG.md
-
-**Frontend Lead正确的QAD TodoWrite示例**:
-```javascript  
-// Frontend Lead单个原子任务的4步QAD todos示例 (如: PRP-M1.1 Frontend Foundation)
-TodoWrite([
-  {
-    id: "frontend-task01-1-step1",
-    content: "【Frontend Lead】Step 1 前端分析与规划: 分析前端UI/UX需求、设计前端Supabase集成方案、制定前端验收标准和技术可行性评估",
-    status: "in_progress",
-    priority: "high"
-  },
-  {
-    id: "frontend-task01-1-step2", 
-    content: "【Frontend Lead】Step 2 前端实现与构建: 实现前端Next.js项目、配置前端Supabase客户端、构建前端组件和基础验证",
-    status: "pending",
-    priority: "high"
-  },
-  {
-    id: "frontend-task01-1-step3",
-    content: "【Frontend Lead】Step 3 前端验证与优化: 前端功能测试、用户体验优化、前端代码质量检查，确保前端验收标准满足",
-    status: "pending",  
-    priority: "medium"
-  },
-  {
-    id: "frontend-task01-1-step4",
-    content: "【Frontend Lead】Step 4 前端集成与反馈: 前端最终质量检查、前端测试套件、API集成验证、前端安全Git提交",
-    status: "pending",
-    priority: "high"
-  }
-])
-```
+IRG todo：模块完成后单独创建，不嵌入原子任务 todo。
 
 **🚨 错误示例 (禁止)**:
 ```javascript
