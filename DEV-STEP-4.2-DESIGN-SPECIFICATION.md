@@ -1130,6 +1130,33 @@ interface UsageBoundaries {
 - **事件协同矩阵增强** (363-424行): USER_UPDATED和SIGNED_OUT细则
 - **returnTo安全策略** (481-571行): 安全校验、回收策略、清理函数
 - **测试矩阵优先级修正** (775行): "NOT_VERIFIED + MFA_REQUIRED" → "MFA_REQUIRED (优先级2)"
+
+### 7.3 研究原型冻结边界
+
+**架构师纠偏决策**: `hooks/auth/useAuthGuard.ts` 为研究原型状态
+
+- **原型状态**: Prototype-Research - 禁止生产集成
+- **用途限制**: 仅限单元测试验证和架构可行性研究
+- **集成禁止**: 不得在 ProtectedRoute HOC 或任何生产路径中使用
+- **冻结期限**: 保持至 QAD-Implement 阶段再评估
+
+**详细修复指南**: [DEV-STEP-4.2-CORRECTION-GUIDE.md](./DEV-STEP-4.2-CORRECTION-GUIDE.md#1-研究原型冻结边界)
+
+### 7.4 类型单一事实源与缓存策略修正
+
+**拒绝码迁移计划**:
+- **现阶段**: DenialCode 定义在 HOC 内部自用 (components/auth/ProtectedRoute.tsx:36-41)
+- **目标架构**: 迁移至中立层 `security/denial.ts` (QAD-Implement 阶段)
+- **分层约束（已强化）**: 
+  - ❌ **严禁**: Hook 反向 import `@/components/auth/ProtectedRoute` 的任何内容
+  - ✅ **允许**: Hook 使用本地私有枚举 `LocalDenialCode`（不导出）
+  - ✅ **目标**: 统一类型源将迁移至中立层避免分层违规
+
+**缓存策略硬约束**:
+- **HOC 主路径**: 仅允许 `getUserClaims('auth')` - 30s TTL
+- **研究级限制**: `'ui'` (180s) 和 `'mfa'` (300s) 仅限研究原型实验，不得进入生产
+
+**详细修复指南**: [DEV-STEP-4.2-CORRECTION-GUIDE.md](./DEV-STEP-4.2-CORRECTION-GUIDE.md#2-类型单一事实源与缓存策略)
 - **EUD证据清单扩展** (1085-1110行): 9项新增架构师要求全部映射
 
 ### 9.3 类型与导入规范
@@ -1158,6 +1185,107 @@ interface UsageBoundaries {
 - ✅ 测试矩阵同步更新 → 5.1.1节FAILURE_PRIORITY_TESTS数组
 
 **等待架构师绿灯确认 → 启动QAD-Implement阶段**
+
+### 7.3 研究原型文件状态
+
+**架构师修正要求：登记超出QAD-Research阶段边界的原型文件**
+
+```typescript
+/**
+ * 研究原型文件边界与状态管理
+ */
+interface ResearchPrototypeStatus {
+  // 已创建的研究原型文件
+  prototypeFiles: {
+    'hooks/auth/useAuthGuard.ts': {
+      status: 'Prototype-Research',           // 研究级原型状态
+      phase: 'QAD-Research',                  // 所处开发阶段
+      productionUsage: 'FORBIDDEN',           // 禁止生产使用
+      hocIntegration: 'BLOCKED',              // 禁止HOC集成
+      purpose: 'Pure Logic Research Only',    // 仅限纯逻辑研究
+      testScope: 'isolated_unit_tests',       // 隔离单元测试
+      archDecision: 'freeze_until_implement_phase'  // 冻结至实施阶段
+    }
+  }
+  
+  // HOC主路径保护策略
+  hocProtection: {
+    cacheStrategy: "getUserClaims('auth') ONLY",     // HOC仅使用auth缓存
+    typeSource: 'components/auth/ProtectedRoute.tsx', // 唯一类型来源
+    importConstraints: 'NO useAuthGuard imports',    // 禁止导入Hook
+    contractCompliance: 'maintain_existing_30s_TTL'  // 维持现有30s TTL契约
+  }
+  
+  // 阶段边界控制
+  phaseBoundaryControl: {
+    currentPhase: 'QAD-Research',
+    allowedActions: ['design_updates', 'prototype_testing', 'evidence_collection'],
+    forbiddenActions: ['hoc_modification', 'production_integration', 'routing_changes'],
+    nextPhaseGate: 'architect_approval_required'
+  }
+}
+```
+
+### 7.4 类型单一事实源约束 
+
+**架构师修正要求：消除类型重复定义，确保单一权威来源**
+
+```typescript
+/**
+ * 类型来源权威性规范
+ */
+interface TypeAuthorityConstraints {
+  // 拒绝码类型权威源
+  denialCodeAuthority: {
+    sourceFile: 'components/auth/ProtectedRoute.tsx',
+    exportName: 'DenialCode',
+    status: 'SOLE_AUTHORITY',
+    duplicatePolicy: 'FORBIDDEN'
+  }
+  
+  // 禁止重复定义清单
+  forbiddenDuplicates: {
+    'hooks/auth/useAuthGuard.ts': {
+      prohibited: ['DenialReason', 'DenialCode', 'AuthStatus'],
+      required: 'import { DenialCode } from @/components/auth/ProtectedRoute',
+      reason: 'maintain_single_source_of_truth'
+    }
+  }
+  
+  // 缓存类型约束
+  cacheTypeConstraints: {
+    hocAuthorizedTypes: ['auth'],              // HOC授权路径仅限auth
+    researchExperimentalTypes: ['ui', 'mfa'], // 研究原型实验类型
+    contractValidation: 'required_before_usage', // 使用前需契约验证
+    productionGate: 'ui_mfa_types_require_architect_approval'
+  }
+  
+  // UserRole/UserClaims导入约束
+  supabaseTypeImports: {
+    authorizedSource: '@/lib/supabase/client',
+    requiredImports: ['UserRole', 'UserClaims', 'getUserClaims'],
+    importPattern: 'import { UserRole, UserClaims, getUserClaims } from @/lib/supabase/client',
+    singleSourcePolicy: 'all_auth_types_from_supabase_client_only'
+  }
+}
+
+/**
+ * 类型去重验证脚本
+ */
+const TYPE_DEDUPLICATION_VALIDATION = {
+  grepCommands: [
+    'grep -r "export.*DenialReason" --include="*.ts*" .',   // 检查重复拒绝码定义
+    'grep -r "enum.*Denial" --include="*.ts*" .',          // 检查重复拒绝枚举
+    'grep -r "interface.*Denial" --include="*.ts*" .',     // 检查重复拒绝接口
+  ],
+  expectedResults: {
+    denialCodeOccurrences: 1,  // 仅ProtectedRoute.tsx中应有DenialCode
+    denialReasonOccurrences: 0, // 不应存在DenialReason定义
+    importValidation: 'all_denial_types_imported_from_protected_route'
+  },
+  qualityGate: 'zero_duplicate_definitions'
+}
+```
 
 ---
 

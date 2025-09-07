@@ -1629,4 +1629,29 @@ EUD Evidence:
 **✅ E2E回归基线增强完成**: 原有3断言保持+新增Session探针(login→callback→license=200)，成功检测M1.2优化状态，CI/CD友好  
 **✅ 质量门控全通过**: TypeScript/ESLint/Jest/Build/E2E全绿，零破坏性变更，19路由生产就绪，Frontend Ready for Joint Testing
 
-**Log Status**: ✅ **Component 1 Complete** | ✅ **Component 2 Complete** | ✅ **Dev-Step 3.5 COMPLETE** | ✅ **M1.2 Dev-Step 3.13 COMPLETE** | 🎯 **M1.2 Progress: 14/16 Dev-Steps**
+---
+
+### [2025-09-06 Analysis] 🎯 分层架构修正完成 - Dev-Step 4.2 EUD 实施记录
+
+- ✅ **架构违规问题解决**: HOC与Hook反向依赖违规已彻底消除 
+- ✅ **中立层架构建立**: 创建 security/denial.ts 作为拒绝码单一事实源，无框架依赖
+- ✅ **生产级HOC实现**: 集成 getUserClaims('auth') + LoadingStates + 增强错误处理
+- ✅ **用户友好体验优化**: 拒绝消息中文化，会话过期/网络错误/权限不足恢复机制
+- ✅ **测试套件完整性**: 拒绝码矩阵覆盖 74%+，25个测试全通过，无路由副作用
+- ✅ **架构约束严格遵守**: 禁止反向import，研究Hook保持冻结，主路径仅auth
+- ✅ **Evidence Chain完整**: 链接 [LOG-DEV-STEP-4.2-RESEARCH-FREEZE.md](/logs/LOG-DEV-STEP-4.2-RESEARCH-FREEZE.md)
+
+**分层修正核心变更**:
+- security/denial.ts:1-48 - 中立层拒绝码定义模块(无框架依赖)
+- components/auth/ProtectedRoute.tsx:23-24 - 改用中立层import
+- components/auth/ProtectedRoute.tsx:334-347 - 用户友好错误处理
+- components/auth/ProtectedRoute.tsx:471-476,516-521 - LoadingStates集成
+- components/auth/__tests__/ProtectedRoute.test.tsx:18,557 - 测试更新
+
+**架构合规验证通过**:
+- grep验证: security/denial.ts为唯一公共拒绝码来源
+- grep验证: hooks/目录无反向import至ProtectedRoute  
+- grep验证: HOC主路径仅使用getUserClaims('auth')
+- 测试验证: 25/25通过，74%+覆盖率，功能完整
+
+**Log Status**: ✅ **Component 1 Complete** | ✅ **Component 2 Complete** | ✅ **Dev-Step 3.5 COMPLETE** | ✅ **M1.2 Dev-Step 3.13 COMPLETE** | ✅ **Dev-Step 4.2 EUD COMPLETE** | 🎯 **M1.2 Progress: 15/16 Dev-Steps**

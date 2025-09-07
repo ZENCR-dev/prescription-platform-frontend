@@ -38,9 +38,22 @@ global.fetch = jest.fn();
 describe('EdgeFunctionAdapter', () => {
   let adapter;
   
+  // Store original console methods
+  let originalConsoleError: typeof console.error;
+  let originalConsoleWarn: typeof console.warn;
+  
   beforeEach(() => {
     // Reset all mocks
     jest.clearAllMocks();
+    
+    // Mock console.error and console.warn to prevent test noise
+    originalConsoleError = console.error;
+    originalConsoleWarn = console.warn;
+    console.error = jest.fn();
+    console.warn = jest.fn();
+    
+    // Use fake timers for polling tests
+    jest.useFakeTimers();
     
     // Set up default environment
     process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
@@ -61,6 +74,13 @@ describe('EdgeFunctionAdapter', () => {
   
   afterEach(() => {
     jest.clearAllMocks();
+    
+    // Restore original console methods
+    console.error = originalConsoleError;
+    console.warn = originalConsoleWarn;
+    
+    // Restore real timers
+    jest.useRealTimers();
   });
   
   describe('submitLicenseVerification', () => {
@@ -362,9 +382,12 @@ describe('EdgeFunctionAdapter', () => {
         });
       });
       
+      // Use real timers for this test to avoid hanging
+      jest.useRealTimers();
+      
       const result = await adapter.pollVerificationStatus(verificationId, {
         maxAttempts: 5,
-        intervalMs: 10, // Fast for testing
+        intervalMs: 1, // Very fast for testing
         backoffMultiplier: 1.0
       });
       
@@ -373,6 +396,9 @@ describe('EdgeFunctionAdapter', () => {
         expect(result.data.status).toBe('verified');
       }
       expect(global.fetch).toHaveBeenCalledTimes(3);
+      
+      // Restore fake timers
+      jest.useFakeTimers();
     });
     
     it('should handle rejection status', async () => {
@@ -435,14 +461,20 @@ describe('EdgeFunctionAdapter', () => {
         }
       });
       
+      // Use real timers for async polling
+      jest.useRealTimers();
+      
       const result = await adapter.pollVerificationStatus(verificationId, {
         maxAttempts: 5,
-        intervalMs: 10,
+        intervalMs: 1,
         backoffMultiplier: 1.0
       });
       
       expect(result.success).toBe(true);
       expect(global.fetch).toHaveBeenCalledTimes(3);
+      
+      // Restore fake timers
+      jest.useFakeTimers();
     });
     
     it('should timeout after max attempts', async () => {
@@ -460,9 +492,12 @@ describe('EdgeFunctionAdapter', () => {
         })
       });
       
+      // Use real timers for async polling
+      jest.useRealTimers();
+      
       const result = await adapter.pollVerificationStatus(verificationId, {
         maxAttempts: 3,
-        intervalMs: 10,
+        intervalMs: 1,
         backoffMultiplier: 1.0
       });
       
@@ -472,11 +507,12 @@ describe('EdgeFunctionAdapter', () => {
         expect(result.error.message).toContain('timeout');
       }
       expect(global.fetch).toHaveBeenCalledTimes(3);
+      
+      // Restore fake timers
+      jest.useFakeTimers();
     });
     
     it('should apply exponential backoff', async () => {
-      const startTime = Date.now();
-      
       (global.fetch).mockResolvedValue({
         ok: true,
         json: async () => ({
@@ -491,15 +527,25 @@ describe('EdgeFunctionAdapter', () => {
         })
       });
       
-      await adapter.pollVerificationStatus(verificationId, {
+      // Use real timers for this timing-sensitive test
+      jest.useRealTimers();
+      const startTime = Date.now();
+      
+      const result = await adapter.pollVerificationStatus(verificationId, {
         maxAttempts: 3,
-        intervalMs: 20,
+        intervalMs: 5, // Small but measurable
         backoffMultiplier: 2.0
       });
       
       const elapsedTime = Date.now() - startTime;
-      // Should wait: 20ms + 40ms + 80ms = 140ms minimum
-      expect(elapsedTime).toBeGreaterThanOrEqual(100); // Allow some variance
+      
+      // Should wait: 5ms + 10ms + 20ms = 35ms minimum
+      expect(elapsedTime).toBeGreaterThanOrEqual(30); // Allow some variance
+      expect(result.success).toBe(false);
+      expect(global.fetch).toHaveBeenCalledTimes(3);
+      
+      // Restore fake timers
+      jest.useFakeTimers();
     });
   });
   

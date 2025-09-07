@@ -8,8 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "test": "node --max-old-space-size=4096 ./node_modules/jest/bin/jest.js --maxWorkers=50% --logHeapUsage",
+    "test:watch": "jest --watch",
+    "test:research": "node --max-old-space-size=8192 ./node_modules/jest/bin/jest.js --testNamePattern=research --runInBand --logHeapUsage"
   },
   "dependencies": {
     "@supabase/ssr": "^0.7.0",

@@ -15,9 +15,29 @@ import {
 } from '../index'
 
 describe('RegistrationService', () => {
+  // Store original console methods
+  let originalConsoleError: typeof console.error;
+  let originalConsoleWarn: typeof console.warn;
+  let originalConsoleLog: typeof console.log;
+  
   beforeEach(() => {
     // Reset service instance before each test
     resetRegistrationService()
+    
+    // Mock console methods to prevent test noise from Edge Function adapter failures
+    originalConsoleError = console.error;
+    originalConsoleWarn = console.warn;
+    originalConsoleLog = console.log;
+    console.error = jest.fn();
+    console.warn = jest.fn();
+    console.log = jest.fn();
+  })
+  
+  afterEach(() => {
+    // Restore original console methods
+    console.error = originalConsoleError;
+    console.warn = originalConsoleWarn;
+    console.log = originalConsoleLog;
   })
 
   describe('Service Creation', () => {

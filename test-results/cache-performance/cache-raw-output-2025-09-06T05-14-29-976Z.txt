@@ -1,0 +1,12 @@
+STDOUT:
+No tests found, exiting with code 1
+Run with `--passWithNoTests` to exit with code 0
+In /Users/renjie/dev/prescription-platform-frontend
+  288 files checked.
+  testMatch: **/__tests__/**/*.[jt]s?(x), **/?(*.)+(spec|test).[tj]s?(x) - 16 matches
+  testPathIgnorePatterns: /node_modules/, /.next/, /Users/renjie/dev/prescription-platform-frontend/.next/, /Users/renjie/dev/prescription-platform-frontend/node_modules/, /Users/renjie/dev/prescription-platform-frontend/Context-Engineering-Intro/ - 123 matches
+  testRegex:  - 0 matches
+Pattern: test-results/cache-performance/cache-test-2025-09-06T05-14-29-976Z.js - 0 matches
+
+
+STDERR:

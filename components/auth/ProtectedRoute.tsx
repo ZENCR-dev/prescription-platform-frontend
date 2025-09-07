@@ -20,6 +20,8 @@ import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { getUserClaims, type UserClaims, type UserRole } from '@/lib/supabase/client'
 import { useAuth } from '@/contexts/AuthProvider'
+import { DenialCode, type DenialContext, type DenialResponse } from '@/security/denial'
+import { AuthLoadingSkeleton } from './LoadingStates'
 
 // Server Component误用检测 - 架构师要求1.4节
 if (process.env.NODE_ENV === 'development') {
@@ -29,37 +31,8 @@ if (process.env.NODE_ENV === 'development') {
   }
 }
 
-/**
- * 架构师要求枚举错误码 - 设计文档1.1节
- * 失败优先级：NOT_AUTHENTICATED → MFA_REQUIRED → NOT_VERIFIED → ROLE_MISMATCH
- */
-export enum DenialCode {
-  NOT_AUTHENTICATED = 'NOT_AUTHENTICATED',  // 优先级1 - 未认证
-  MFA_REQUIRED = 'MFA_REQUIRED',           // 优先级2 - MFA不足
-  NOT_VERIFIED = 'NOT_VERIFIED',           // 优先级3 - 未验证
-  ROLE_MISMATCH = 'ROLE_MISMATCH'          // 优先级4 - 角色不匹配
-}
-
-/**
- * 拒绝上下文信息
- */
-export interface DenialContext {
-  code: DenialCode
-  reason: string
-  userClaims: UserClaims | null
-  requestedPath: string
-  timestamp: number
-}
-
-/**
- * 拒绝响应处理 - 架构师要求安全约束
- */
-export interface DenialResponse {
-  action: 'redirect' | 'fallback' | 'custom'
-  redirectTo?: string  // 必须经过安全校验，仅允许同源相对路径
-  fallback?: React.ReactNode
-  preventDefault?: boolean
-}
+// 拒绝码类型已迁移至 security/denial.ts 中立层
+// 架构师要求：失败优先级：NOT_AUTHENTICATED → MFA_REQUIRED → NOT_VERIFIED → ROLE_MISMATCH
 
 /**
  * ProtectedRoute HOC Props - 设计文档1.1节最终版
@@ -358,7 +331,7 @@ export default function ProtectedRoute({
       
       const denial: DenialContext = {
         code: denialCode,
-        reason: `Access denied: ${denialCode}`,
+        reason: denialCode === DenialCode.NOT_AUTHENTICATED ? '您需要登录才能访问此页面' : denialCode === DenialCode.MFA_REQUIRED ? '此页面需要多重身份验证，请完成MFA设置' : denialCode === DenialCode.NOT_VERIFIED ? '您需要完成身份验证后才能访问此页面' : denialCode === DenialCode.ROLE_MISMATCH ? '您的账户权限不足以访问此页面' : '访问被拒绝',
         userClaims,
         requestedPath: pathname,
         timestamp: Date.now()
@@ -374,10 +347,35 @@ export default function ProtectedRoute({
     } catch (error) {
       console.error('[ProtectedRoute] 权限验证异常:', error)
       
+      // EUD-4: 增强错误分类与恢复机制
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      
+      // 错误分类与用户友好消息
+      let userFriendlyMessage = '认证过程中发生错误'
+      
+      // 会话过期检测
+      if (errorMessage.includes('expired') || errorMessage.includes('invalid_session') || 
+          errorMessage.includes('JWT expired') || errorMessage.includes('refresh_token_not_found')) {
+        userFriendlyMessage = '您的会话已过期，请重新登录'
+      }
+      // 网络错误检测
+      else if (errorMessage.includes('fetch') || errorMessage.includes('network') || 
+               errorMessage.includes('timeout') || errorMessage.includes('ENOTFOUND')) {
+        userFriendlyMessage = '网络连接异常，请稍后重试'
+        if (diagnostics?.denialReasons) {
+          console.log('[ProtectedRoute] 网络错误检测到:', errorMessage)
+        }
+      }
+      // 权限拒绝检测
+      else if (errorMessage.includes('unauthorized') || errorMessage.includes('forbidden') || 
+               errorMessage.includes('insufficient_privilege')) {
+        userFriendlyMessage = '权限不足，请联系管理员'
+      }
+      
       // 异常情况下的拒绝上下文
       const denial: DenialContext = {
         code: DenialCode.NOT_AUTHENTICATED,
-        reason: `Authentication error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        reason: userFriendlyMessage,
         userClaims: null,
         requestedPath: pathname,
         timestamp: Date.now()
@@ -426,7 +424,12 @@ export default function ProtectedRoute({
     if (onDenied) {
       const response = onDenied(denialContext)
       
-      if (response && !response.preventDefault) {
+      if (response) {
+        // 如果设置了preventDefault，停止执行默认重定向逻辑
+        if (response.preventDefault) {
+          return
+        }
+        
         // 自定义拒绝处理 - 安全约束检查
         if (response.action === 'redirect' && response.redirectTo) {
           if (validateRedirectSecurity(response.redirectTo)) {
@@ -490,12 +493,11 @@ export default function ProtectedRoute({
       case 'checking':
         // 架构师要求：checking期间绝不渲染children
         return (
-          <div className="flex items-center justify-center p-4">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-            {diagnostics?.stateTransitions && (
-              <span className="ml-2 text-sm text-gray-600">验证权限中...</span>
-            )}
-          </div>
+          <AuthLoadingSkeleton 
+            variant="compact" 
+            showProgressIndicator={diagnostics?.stateTransitions}
+            debugMode={debugMode}
+          />
         )
       
       case 'authorized':
@@ -513,10 +515,10 @@ export default function ProtectedRoute({
         
         // 渲染等待重定向的加载状态
         return (
-          <div className="flex items-center justify-center p-4">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-600"></div>
-            <span className="ml-2 text-sm text-gray-600">正在重定向...</span>
-          </div>
+          <AuthLoadingSkeleton 
+            variant="minimal" 
+            debugMode={debugMode}
+          />
         )
       
       default:
@@ -528,4 +530,4 @@ export default function ProtectedRoute({
 }
 
 // 导出类型定义供其他组件使用
-export type { ProtectedRouteProps, DenialContext, DenialResponse }
+// 已在本文件内定义类型，无需重复导出 type 别名
