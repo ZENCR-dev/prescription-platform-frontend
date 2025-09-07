@@ -93,6 +93,11 @@
 - **Dev-Step 3.10 Component Library**: `components/auth/library/README.md` + component library architecture + full component tree evidence
 - **Dev-Step 3.11 TCM Design System**: `docs/tcm-design-system.md` + cultural design layer + CSS variables + decorative components
 - **Dev-Step 3.12 Dashboard Architecture**: `docs/dashboard-architecture.md` + role-specific dashboards + `app/dashboard/` routing implementation
+- **IRG Integration Testing**: `docs/M1.2-IRG-Evidence.md` + backend dependency analysis + 10-line evidence format
+- **IRG Test Framework**: `scripts/simple-irg-test.js:295-324` + architect-compliant evidence format
+- **IRG Environment Config**: `lib/config/feature-flags.ts:32-36` + real views configuration
+- **IRG API Consumption**: `docs/api/APIv1_log.md:541-602` + backend M1.3 dependency gap documentation
+- **IRG HOC Verification**: `components/auth/ProtectedRoute.tsx:306-315` + getUserClaims('auth') compliance evidence
 
 ### **Technical Constraints & Compliance Requirements**
 

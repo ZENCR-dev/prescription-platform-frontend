@@ -19,6 +19,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { getUserClaims, type UserClaims, type UserRole } from '@/lib/supabase/client'
+import { FEATURE_FLAGS, isIRGMode } from '@/lib/config/feature-flags'
 import { useAuth } from '@/contexts/AuthProvider'
 import { DenialCode, type DenialContext, type DenialResponse } from '@/security/denial'
 import { AuthLoadingSkeleton } from './LoadingStates'
@@ -301,6 +302,17 @@ export default function ProtectedRoute({
       
       // 使用既有getUserClaims('auth')能力 - 30s安全TTL + 请求去重
       const userClaims = await getUserClaims('auth')
+      
+      // IRG模式下记录权限检查证据
+      if (isIRGMode()) {
+        console.log('[IRG] ProtectedRoute权限检查:', {
+          pathname,
+          hasAuth: !!userClaims,
+          userRole: userClaims?.role,
+          requiredRoles,
+          checkDuration: performance.now() - perfStartTime.current
+        })
+      }
       
       // 权限判定逻辑
       const hasValidAuth = isAuthenticated && userClaims

@@ -12,13 +12,38 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseMiddleware } from './lib/supabase/middleware'
 import { getRouteConfig } from './lib/supabase/middleware-config'
+import { isIRGMode } from './lib/config/feature-flags'
 
 // Validation hint: export { default } from './lib/supabase/middleware'
 
 // Create middleware with custom route configuration for all three roles
 const customMiddleware = createSupabaseMiddleware(getRouteConfig())
 
-export default customMiddleware
+// Enhanced middleware with IRG logging
+export default async function middleware(req: NextRequest) {
+  // IRG mode logging for JWT consistency validation
+  if (isIRGMode()) {
+    console.log('[IRG] Middleware处理请求:', {
+      path: req.nextUrl.pathname,
+      method: req.method,
+      timestamp: new Date().toISOString()
+    })
+  }
+  
+  const response = await customMiddleware(req)
+  
+  // IRG mode logging for response
+  if (isIRGMode() && response) {
+    console.log('[IRG] Middleware响应:', {
+      path: req.nextUrl.pathname,
+      status: response.status,
+      redirect: response.headers.get('location'),
+      hasAuth: !!req.cookies.get('supabase-auth-token')
+    })
+  }
+  
+  return response
+}
 
 // Export the middleware configuration
 export const config = {
